@@ -14,7 +14,7 @@ int main() {
   int result = 0;
   for (int i = 0; i < n; i++) {
     int v = (br.test(i) ? 2 : 0) + (bc.test(i) ? 1 : 0);
-    result += v * (1 << i * 2);
+    result |= v * (1 << i * 2);
   }
   cout << result << endl;
 
