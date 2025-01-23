@@ -2,13 +2,20 @@
 
 using namespace std;
 
-using Edge = pair<int, pair<int, int>>;
+struct Edge {
+  int s, e, t;
+};
+
 vector<Edge> edges;
 int memo[501];
 
-bool EdgeUniquePredicate(const Edge& lhs, const Edge& rhs) {
-  return lhs.first == rhs.first && lhs.second.first == rhs.second.first;
-}
+// bool EdgeSortPredicate(const Edge& lhs, const Edge& rhs) {
+//   return lhs.s != rhs.s ? lhs.s < rhs.s : lhs.e != rhs.e ? lhs.e < rhs.e : lhs.t < rhs.t;
+// }
+
+// bool EdgeUniquePredicate(const Edge& lhs, const Edge& rhs) {
+//   return lhs.s == rhs.s && lhs.e == rhs.e;
+// }
 
 int main() {
   ios::sync_with_stdio(false);
@@ -24,22 +31,21 @@ int main() {
     for (int i = 0; i < m; i++) {
       int s, e, t;
       cin >> s >> e >> t;
-      edges.push_back(make_pair(s, make_pair(e, t)));
-      edges.push_back(make_pair(e, make_pair(s, t)));
+      edges.push_back(Edge{s, e, t});
+      edges.push_back(Edge{e, s, t});
     }
     for (int i = 0; i < w; i++) {
       int s, e, t;
       cin >> s >> e >> t;
-      edges.push_back(make_pair(s, make_pair(e, -t)));
+      edges.push_back(Edge{s, e, -t});
     }
-    sort(edges.begin(), edges.end());
-    edges.erase(unique(edges.begin(), edges.end(), EdgeUniquePredicate), edges.end());
+    // sort(edges.begin(), edges.end(), EdgeSortPredicate);
+    // edges.erase(unique(edges.begin(), edges.end(), EdgeUniquePredicate), edges.end());
 
     bool cycle = false;
     memset(memo, 0, sizeof(memo));
     for (int i = 1; i <= n; i++) {
-      for (auto [s, et] : edges) {
-        auto [e, t] = et;
+      for (auto [s, e, t] : edges) {
         if (memo[e] > memo[s] + t) {
           if (i == n) {
             cycle = true;
