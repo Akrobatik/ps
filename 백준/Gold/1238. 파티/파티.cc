@@ -3,8 +3,8 @@
 using namespace std;
 
 int n;
-int memo[1001][1001];
-vector<pair<int, int>> edges[1001];
+int memo[2][1001];
+vector<pair<int, int>> edges[2][1001];
 
 struct Comp {
   constexpr bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) const {
@@ -12,17 +12,18 @@ struct Comp {
   }
 };
 
-void Traverse(int start, int end = 0) {
+void Traverse(int start, int direction) {
+  auto* memo_tmp = memo[direction];
+  auto* edge_tmp = edges[direction];
+  fill_n(memo_tmp + 1, n, INT_MAX);
+  memo_tmp[start] = 0;
   priority_queue<pair<int, int>, vector<pair<int, int>>, Comp> pq;
   pq.push(make_pair(start, 0));
-  int* memo_tmp = memo[start];
   while (!pq.empty()) {
     auto [pos, cost] = pq.top();
     pq.pop();
 
-    if (end && end == pos) break;
-
-    for (auto [b, c] : edges[pos]) {
+    for (auto [b, c] : edge_tmp[pos]) {
       if (memo_tmp[b] > cost + c) {
         memo_tmp[b] = cost + c;
         pq.push(make_pair(b, cost + c));
@@ -37,19 +38,18 @@ int main() {
 
   int m, x;
   cin >> n >> m >> x;
-  fill_n((int*)memo, 1001 * 1001, INT_MAX);
-  for (int i = 1; i <= n; i++) memo[i][i] = 0;
 
   while (m--) {
     int a, b, c;
     cin >> a >> b >> c;
-    edges[a].push_back(make_pair(b, c));
+    edges[0][a].push_back(make_pair(b, c));
+    edges[1][b].push_back(make_pair(a, c));
   }
 
   int ans = 0;
-  Traverse(x);
-  for (int i = 1; i <= n; i++) Traverse(i, x);
-  for (int i = 1; i <= n; i++) ans = max<int>(ans, memo[i][x] + memo[x][i]);
+  Traverse(x, 0);
+  Traverse(x, 1);
+  for (int i = 1; i <= n; i++) ans = max<int>(ans, memo[0][i] + memo[1][i]);
   cout << ans << endl;
 
   return 0;
