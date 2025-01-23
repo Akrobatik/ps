@@ -4,7 +4,7 @@ using namespace std;
 
 int n;
 int memo[1001][1001];
-bool visited[1001];
+vector<pair<int, int>> edges[1001];
 
 struct Comp {
   constexpr bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) const {
@@ -13,25 +13,21 @@ struct Comp {
 };
 
 void Traverse(int start, int end = 0) {
-  memset(visited, 0, sizeof(visited));
   priority_queue<pair<int, int>, vector<pair<int, int>>, Comp> pq;
   pq.push(make_pair(start, 0));
-  bool first = true;
+  int* memo_tmp = memo[start];
   while (!pq.empty()) {
     auto [pos, cost] = pq.top();
     pq.pop();
 
     if (end && end == pos) break;
-    if (visited[pos]) continue;
-    visited[pos] = true;
 
-    for (int i = 1; i <= n; i++) {
-      if (!visited[i] && memo[pos][i] != INT_MAX && (memo[start][i] > cost + memo[pos][i] || first)) {
-        memo[start][i] = cost + memo[pos][i];
-        pq.push(make_pair(i, cost + memo[pos][i]));
+    for (auto [b, c] : edges[pos]) {
+      if (memo_tmp[b] > cost + c) {
+        memo_tmp[b] = cost + c;
+        pq.push(make_pair(b, cost + c));
       }
     }
-    first = false;
   }
 }
 
@@ -47,7 +43,7 @@ int main() {
   while (m--) {
     int a, b, c;
     cin >> a >> b >> c;
-    memo[a][b] = c;
+    edges[a].push_back(make_pair(b, c));
   }
 
   int ans = 0;
