@@ -72,37 +72,27 @@ struct Flusher {
 
 int memo[500000];
 
-// int GetParent(int id, int& depth) {
-//   ++depth;
-//   if (memo[id] == id) return id;
-//   return memo[id] = GetParent(memo[id], depth);
-// }
-
-int GetParent(int id, int& depth) {
-  depth++;
+int GetParent(int id) {
   while (memo[id] != id) {
     int parent = memo[id];
     memo[id] = memo[parent];
     id = parent;
-    depth++;
   }
   return id;
 }
 
 int main() {
+  int ans = 0;
   int n = readInt();
   for (int i = 0; i < n; i++) memo[i] = i;
-
-  int ans = 0;
   int m = readInt();
   for (int i = 0; i < m; i++) {
     int a = readInt();
     int b = readInt();
-    int da = 0, db = 0;
-    int pa = GetParent(a, da);
-    int pb = GetParent(b, db);
+    int pa = GetParent(a);
+    int pb = GetParent(b);
     if (pa != pb) {
-      if (da > db) {
+      if (pa % 2) {
         memo[pb] = pa;
       } else {
         memo[pa] = pb;
