@@ -1,5 +1,7 @@
 #pragma GCC optimize("O3")
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <stdio.h>
+#include <time.h>
 using namespace std;
 
 inline int readChar();
@@ -69,51 +71,25 @@ struct Flusher {
   }
 } flusher;
 
-constexpr uint64_t prime = 1e9 + 9;
-const uint64_t base = []() {
-  mt19937 gen(chrono::steady_clock::now().time_since_epoch().count());
-  uniform_int_distribution<uint64_t> dist(1, prime - 1);
-  return dist(gen);
+using ull = unsigned long long;
+
+constexpr ull prime = 1e9 + 9;
+const ull base = []() {
+  ull v = ((ull)time(nullptr) * 1664525 + 1013904223) % prime;
+  return v ? v : 1;
 }();
 
-// uint64_t forwards[2001];
-// uint64_t backwards[2001];
-// uint64_t polyhashes[2001] = {1};
-
-// int main() {
-//   int n = readInt();
-//   for (int i = 0; i < n; i++) {
-//     uint64_t v = readInt();
-//     forwards[i + 1] = (forwards[i] + v * polyhashes[i]) % prime;
-//     backwards[i + 1] = (base * backwards[i] + v) % prime;
-//     polyhashes[i + 1] = (polyhashes[i] * base) % prime;
-//   }
-
-//   n = readInt();
-//   while (n--) {
-//     int x = readInt(), y = readInt();
-//     bool ok = (forwards[y] + polyhashes[y] * backwards[x - 1]) % prime ==
-//               (forwards[x - 1] + polyhashes[x - 1] * backwards[y]) % prime;
-//     writeChar('0' + ok);
-//     writeChar('\n');
-//   }
-
-//   return 0;
-// }
+ull forwards[2001];
+ull backwards[2001];
+ull polyhashes[2001] = {1};
 
 int main() {
   int n = readInt();
-  vector<uint64_t> memo(n * 3 + 3, 0);
-  auto forwards = memo.data();
-  auto backwards = forwards + n + 1;
-  auto polyhashes = backwards + n + 1;
-  *polyhashes = 1;
-  auto fptr = forwards, bptr = backwards, pptr = polyhashes;
-  while (n--) {
-    uint64_t v = readInt();
-    *(++fptr) = (*fptr + v * *pptr) % prime;
-    *(++bptr) = (base * *bptr + v) % prime;
-    *(++pptr) = (*pptr * base) % prime;
+  for (int i = 0; i < n; i++) {
+    ull v = readInt();
+    forwards[i + 1] = (forwards[i] + v * polyhashes[i]) % prime;
+    backwards[i + 1] = (base * backwards[i] + v) % prime;
+    polyhashes[i + 1] = (polyhashes[i] * base) % prime;
   }
 
   n = readInt();
