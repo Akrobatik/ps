@@ -9,7 +9,7 @@ int memo[10001];
 int GetParent(int a, int& depth) {
   depth++;
   if (memo[a] == a) return a;
-  return GetParent(memo[a], depth);
+  return memo[a] = GetParent(memo[a], depth);
 }
 
 bool Union(int a, int b) {
@@ -30,12 +30,15 @@ int main() {
   cin.tie(nullptr);
 
   cin >> nv >> ne;
+  edges.resize(ne);
   for (int i = 0; i < ne; i++) {
     int a, b, c;
     cin >> a >> b >> c;
-    edges.push_back({c, a, b});
+    edges[i] = {c, a, b};
   }
-  sort(edges.begin(), edges.end());
+  sort(edges.begin(), edges.end(), [](const tuple<int, int, int>& lhs, const tuple<int, int, int>& rhs) {
+    return get<0>(lhs) < get<0>(rhs);
+  });
 
   int ans = 0;
   auto it = edges.begin();
