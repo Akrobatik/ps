@@ -79,24 +79,28 @@ const ull base = []() {
   return v ? v : 1;
 }();
 
+int nums[2001];
 ull forwards[2001];
 ull backwards[2001];
 ull polyhashes[2001] = {1};
 
 int main() {
   int n = readInt();
-  for (int i = 0; i < n; i++) {
+  register ull* fptr = forwards;
+  register ull* bptr = backwards;
+  register ull* pptr = polyhashes;
+  while (n--) {
     ull v = readInt();
-    forwards[i + 1] = (forwards[i] + v * polyhashes[i]) % prime;
-    backwards[i + 1] = (base * backwards[i] + v) % prime;
-    polyhashes[i + 1] = (polyhashes[i] * base) % prime;
+    *(++fptr) = (*fptr + v * *pptr) % prime;
+    *(++bptr) = (base * *bptr + v) % prime;
+    *(++pptr) = (*pptr * base) % prime;
   }
 
   n = readInt();
   while (n--) {
-    int x = readInt(), y = readInt();
-    bool ok = (forwards[y] + polyhashes[y] * backwards[x - 1]) % prime ==
-              (forwards[x - 1] + polyhashes[x - 1] * backwards[y]) % prime;
+    int x = readInt() - 1, y = readInt();
+    bool ok = (forwards[y] + polyhashes[y] * backwards[x]) % prime ==
+              (forwards[x] + polyhashes[x] * backwards[y]) % prime;
     writeChar('0' + ok);
     writeChar('\n');
   }
