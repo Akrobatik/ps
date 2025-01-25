@@ -8,7 +8,7 @@ inline T readInt();
 template <class T>
 inline void writeInt(T x, char end = 0);
 inline void writeChar(int x);
-inline void writeWord(const char *s);
+inline void writeWord(const char* s);
 static const int buf_size = 1 << 18;
 inline int getChar() {
 #ifndef LOCAL
@@ -60,7 +60,7 @@ inline void writeInt(T x, char end) {
   while (n--) writeChar(s[n]);
   if (end) writeChar(end);
 }
-inline void writeWord(const char *s) {
+inline void writeWord(const char* s) {
   while (*s) writeChar(*s++);
 }
 struct Flusher {
@@ -70,35 +70,58 @@ struct Flusher {
 } flusher;
 
 constexpr uint64_t prime = 1e9 + 9;
-uint64_t base = []() {
+const uint64_t base = []() {
   mt19937 gen(chrono::steady_clock::now().time_since_epoch().count());
   uniform_int_distribution<uint64_t> dist(1, prime - 1);
   return dist(gen);
 }();
 
-uint64_t forwards[2001];
-uint64_t backwards[2001];
-uint64_t polyhashes[2001];
+// uint64_t forwards[2001];
+// uint64_t backwards[2001];
+// uint64_t polyhashes[2001] = {1};
+
+// int main() {
+//   int n = readInt();
+//   for (int i = 0; i < n; i++) {
+//     uint64_t v = readInt();
+//     forwards[i + 1] = (forwards[i] + v * polyhashes[i]) % prime;
+//     backwards[i + 1] = (base * backwards[i] + v) % prime;
+//     polyhashes[i + 1] = (polyhashes[i] * base) % prime;
+//   }
+
+//   n = readInt();
+//   while (n--) {
+//     int x = readInt(), y = readInt();
+//     bool ok = (forwards[y] + polyhashes[y] * backwards[x - 1]) % prime ==
+//               (forwards[x - 1] + polyhashes[x - 1] * backwards[y]) % prime;
+//     writeChar('0' + ok);
+//     writeChar('\n');
+//   }
+
+//   return 0;
+// }
 
 int main() {
   int n = readInt();
-  fill_n(polyhashes, n + 1, 1);
-  for (int i = 0; i < n; i++) {
+  vector<uint64_t> memo(n * 3 + 3, 0);
+  auto forwards = memo.data();
+  auto backwards = forwards + n + 1;
+  auto polyhashes = backwards + n + 1;
+  *polyhashes = 1;
+  auto fptr = forwards, bptr = backwards, pptr = polyhashes;
+  while (n--) {
     uint64_t v = readInt();
-    forwards[i + 1] = (forwards[i] + v * polyhashes[i]) % prime;
-    backwards[i + 1] = (base * backwards[i] + v) % prime;
-    polyhashes[i + 1] = (polyhashes[i] * base) % prime;
+    *(++fptr) = (*fptr + v * *pptr) % prime;
+    *(++bptr) = (base * *bptr + v) % prime;
+    *(++pptr) = (*pptr * base) % prime;
   }
 
-  int m = readInt();
-  while (m--) {
+  n = readInt();
+  while (n--) {
     int x = readInt(), y = readInt();
-    if ((forwards[y] + (polyhashes[y] * backwards[x - 1]) % prime) % prime ==
-        (forwards[x - 1] + (polyhashes[x - 1] * backwards[y]) % prime) % prime) {
-      writeChar('1');
-    } else {
-      writeChar('0');
-    }
+    bool ok = (forwards[y] + polyhashes[y] * backwards[x - 1]) % prime ==
+              (forwards[x - 1] + polyhashes[x - 1] * backwards[y]) % prime;
+    writeChar('0' + ok);
     writeChar('\n');
   }
 
