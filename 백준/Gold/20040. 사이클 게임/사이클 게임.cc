@@ -82,7 +82,6 @@ int main() {
   int n = readInt();
   for (int i = 0; i < n; i++) memo[i] = i;
 
-  int a, b;
   int ans = 0;
   int m = readInt();
   for (int i = 0; i < m; i++) {
