@@ -1,5 +1,6 @@
 #pragma GCC optimize("O3")
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <stdio.h>
 using namespace std;
 
 inline int readChar();
@@ -69,7 +70,6 @@ struct Flusher {
   }
 } flusher;
 
-int n, m;
 int memo[500000];
 
 int GetParent(int id, int& depth) {
@@ -78,34 +78,32 @@ int GetParent(int id, int& depth) {
   return memo[id] = GetParent(memo[id], depth);
 }
 
-bool Union(int a, int b) {
-  int da = 0, db = 0;
-  int pa = GetParent(a, da);
-  int pb = GetParent(b, db);
-  if (pa == pb) return false;
-  if (da > db) swap(pa, pb);
-  memo[pa] = pb;
-  return true;
-}
+int main() {
+  int n = readInt();
+  for (int i = 0; i < n; i++) memo[i] = i;
 
-int Play() {
+  int a, b;
+  int ans = 0;
+  int m = readInt();
   for (int i = 0; i < m; i++) {
     int a = readInt();
     int b = readInt();
-    if (!Union(a, b)) return i + 1;
+    int da = 0, db = 0;
+    int pa = GetParent(a, da);
+    int pb = GetParent(b, db);
+    if (pa != pb) {
+      if (da > db) {
+        memo[pb] = pa;
+      } else {
+        memo[pa] = pb;
+      }
+    } else {
+      ans = i + 1;
+      break;
+    }
   }
-  return 0;
-}
 
-int main() {
-  // ios::sync_with_stdio(false);
-  // cin.tie(nullptr);
-
-  n = readInt();
-  m = readInt();
-
-  for (int i = 0; i < n; i++) memo[i] = i;
-  writeInt(Play(), '\n');
+  writeInt(ans, '\n');
 
   return 0;
 }
