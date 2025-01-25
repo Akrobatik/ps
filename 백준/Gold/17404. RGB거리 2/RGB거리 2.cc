@@ -7,7 +7,6 @@ int cost[1000][3];
 int memo[3][1000][3];
 
 void Traverse(int sp, int m[1000][3]) {
-  fill_n(m[0], 3, INT_MAX);
   for (int i = 0; i < 3; i++) {
     if (i == sp) {
       m[1][i] = INT_MAX;
