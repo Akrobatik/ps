@@ -2,9 +2,7 @@
 
 using namespace std;
 
-int seq[32000];
 int memo[32001];
-bool visited[32001];
 vector<int> conds[32001];
 
 int main() {
@@ -25,14 +23,11 @@ int main() {
     if (memo[i] == 0) q.push(i);
   }
 
-  int* ptr = seq;
   while (!q.empty()) {
     int id = q.front();
     q.pop();
 
-    if (visited[id]) continue;
-    visited[id] = true;
-    *ptr++ = id;
+    cout << id << " ";
 
     for (int cid : conds[id]) {
       if (--memo[cid] == 0) {
@@ -40,10 +35,6 @@ int main() {
       }
     }
   }
-
-  ptr = seq;
-  while (n--) cout << *ptr++ << " ";
-  cout << "\n";
 
   return 0;
 }
