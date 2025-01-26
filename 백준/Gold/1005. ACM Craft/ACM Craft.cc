@@ -3,9 +3,9 @@
 #include <stdio.h>
 
 #include <algorithm>
+#include <cstring>
 #include <queue>
 #include <vector>
-#include <cstring>
 using namespace std;
 
 inline int readChar();
@@ -76,20 +76,22 @@ struct Flusher {
 } flusher;
 
 int cost[1001];
-vector<int> cond[1001];
+short memo[1001];
 bool visited[1001];
+vector<int> cond[1001];
 
 void Solve() {
   int n = readInt(), k = readInt();
   for (int i = 1; i <= n; i++) cost[i] = readInt();
   for (int i = 0; i < k; i++) {
     int x = readInt(), y = readInt();
-    cond[y].push_back(x);
+    ++memo[y];
+    cond[x].push_back(y);
   }
   int w = readInt();
   priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
   for (int i = 1; i <= n; i++) {
-    if (cond[i].empty()) pq.push({cost[i], i});
+    if (memo[i] == 0) pq.push({cost[i], i});
   }
 
   while (!pq.empty()) {
@@ -98,7 +100,7 @@ void Solve() {
 
     if (id == w) {
       writeInt(sec, '\n');
-
+      memset(memo + 1, 0, n * 4);
       memset(visited + 1, 0, n);
       for (int i = 1; i <= n; i++) cond[i].clear();
       return;
@@ -107,15 +109,8 @@ void Solve() {
     if (visited[id]) continue;
     visited[id] = true;
 
-    for (int i = 1; i <= n; i++) {
-      auto pred = [](int _id) {
-        return !visited[_id];
-      };
-
-      if (visited[i]) continue;
-      auto& vec = cond[i];
-      if (auto it = find_if(vec.begin(), vec.end(), pred); it != vec.end()) continue;
-      pq.push({sec + cost[i], i});
+    for (int cid : cond[id]) {
+      if (--memo[cid] == 0) pq.push({sec + cost[cid], cid});
     }
   }
 }
@@ -123,6 +118,5 @@ void Solve() {
 int main() {
   int t = readInt();
   while (t--) Solve();
-
   return 0;
 }
