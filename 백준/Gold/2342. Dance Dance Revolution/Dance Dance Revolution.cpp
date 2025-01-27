@@ -2,26 +2,27 @@
 
 using namespace std;
 
+constexpr int kMax = 1 << 19;
+
+int cost[5][5] = {
+    {kMax, 2, 2, 2, 2},
+    {kMax, 1, 3, 4, 3},
+    {kMax, 3, 1, 3, 4},
+    {kMax, 4, 3, 1, 3},
+    {kMax, 3, 4, 3, 1}};
+
 char seq[100001];
 int memo[100000][5][5];
 
-int GetCost(char a, char b) {
-  if (a == b) return 1;
-  if (a == 0) return 2;
-  if (abs(a - b) != 2) return 3;
-  return 4;
-}
-
 int Solve(int id, char l, char r) {
   char c = seq[id];
+  if (l > r) swap(l, r);
   int& v = memo[id][l][r];
   if (c == 0) return 0;
   if (v != -1) return v;
-  if (l == r && l != 0) return 1 << 19;
-
-  int lv = GetCost(l, c) + Solve(id + 1, c, r);
-  int rv = GetCost(r, c) + Solve(id + 1, l, c);
-  v = lv < rv ? lv : rv;
+  int lv = cost[l][c] + Solve(id + 1, c, r);
+  int rv = cost[r][c] + Solve(id + 1, l, c);
+  v = min<int>(lv, rv);
   return v;
 }
 
