@@ -1,8 +1,94 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <iostream>
 
 using namespace std;
 
-constexpr char kBoard[] = R"(..----..----..----..----..----..
+constexpr char kDelta[30][5] = {
+    {5, 1, 2, 3, 4},
+    {6, 2, 3, 4, 5},
+    {7, 3, 4, 5, 6},
+    {8, 4, 5, 6, 7},
+    {9, 5, 6, 7, 8},
+    {24, 21, 22, 29, 23},
+    {11, 7, 8, 9, 10},
+    {12, 8, 9, 10, 11},
+    {13, 9, 10, 11, 12},
+    {14, 10, 11, 12, 13},
+    {28, 25, 26, 29, 27},
+    {16, 12, 13, 14, 15},
+    {17, 13, 14, 15, 16},
+    {18, 14, 15, 16, 17},
+    {19, 15, 16, 17, 18},
+    {20, 16, 17, 18, 19},
+    {-1, 17, 18, 19, 20},
+    {-1, 18, 19, 20, -1},
+    {-1, 19, 20, -1, -1},
+    {-1, 20, -1, -1, -1},
+    {-1, -1, -1, -1, -1},
+    {15, 22, 29, 23, 24},
+    {16, 29, 23, 24, 15},
+    {18, 24, 15, 16, 17},
+    {19, 15, 16, 17, 18},
+    {20, 26, 29, 27, 28},
+    {-1, 29, 27, 28, 20},
+    {-1, 28, 20, -1, -1},
+    {-1, 20, -1, -1, -1},
+    {-1, 27, 28, 20, -1}};
+
+constexpr char kCellCoords[30][2] = {
+    {0, 0},
+    {24, 30},
+    {18, 30},
+    {12, 30},
+    {6, 30},
+    {0, 30},
+    {0, 24},
+    {0, 18},
+    {0, 12},
+    {0, 6},
+    {0, 0},
+    {6, 0},
+    {12, 0},
+    {18, 0},
+    {24, 0},
+    {30, 0},
+    {30, 6},
+    {30, 12},
+    {30, 18},
+    {30, 24},
+    {30, 30},
+    {5, 25},
+    {10, 20},
+    {20, 10},
+    {25, 5},
+    {5, 5},
+    {10, 10},
+    {20, 20},
+    {25, 25},
+    {15, 15}};
+
+constexpr char kNameTable[] = "ABCDabcd";
+
+constexpr char kIdTable[] =
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\x00\x01\x02\x03\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\x04\x05\x06\x07\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff";
+
+char board[] =
+    R"(..----..----..----..----..----..
 ..    ..    ..    ..    ..    ..
 | \                          / |
 |  \                        /  |
@@ -38,223 +124,107 @@ constexpr char kBoard[] = R"(..----..----..----..----..----..
 struct Cell;
 
 struct Piece {
-  Piece() : id(0), foothold(nullptr) {}
-
-  char GetName() {
-    return GetTeamId() * 32 + GetMemberId() + 'A';
+  inline int GetId() {
+    return (team_id << 2) | member_idx;
   }
 
-  int GetTeamId() {
-    return id / 4;
+  inline char GetName() {
+    return kNameTable[GetId()];
   }
 
-  int GetMemberId() {
-    return id % 4;
-  }
-
-  bool IsEnemy(Piece* other) {
-    return GetTeamId() != other->GetTeamId();
-  }
-
-  void Move(int steps, Cell* root);
-
-  char id;
+  int team_id, member_idx;
   Cell* foothold;
 };
 
 struct Cell {
-  Cell() : x(0), y(0) {
-    for (int i = 0; i < 4; i++) pieces[i] = nullptr;
-    for (int i = 0; i < 5; i++) next[i] = nullptr;
-  }
-
-  bool HasEnemy(int team_id) {
-    for (auto piece : pieces) {
-      if (piece && piece->GetTeamId() != team_id) return true;
+  inline bool HasEnemy(int team_id) {
+    for (auto p : pieces) {
+      if (p && p->team_id != team_id) return true;
     }
     return false;
   }
 
-  void Print(string& board) {
-    for (int i = 0; i < 4; i++) {
-      int yy = y + i / 2;
-      int xx = x + i % 2;
-      board[yy * 33 + xx] = pieces[i] ? pieces[i]->GetName() : '.';
-    }
-  }
-
-  void MoveTo(Piece* leader, Cell* dst, Cell* root) {
-    if (dst->HasEnemy(leader->GetTeamId())) {
-      for (int i = 0; i < 4; i++) {
-        if (dst->pieces[i]) dst->pieces[i]->foothold = root;
-        dst->pieces[i] = nullptr;
-      }
-    }
-
-    if (this == root) {
-      dst->pieces[leader->GetMemberId()] = leader;
-      leader->foothold = dst;
-      return;
-    }
-
-    for (int i = 0; i < 4; i++) {
-      if (pieces[i]) pieces[i]->foothold = dst;
-    }
-
-    for (int i = 0; i < 4; i++) {
-      dst->pieces[i] = pieces[i];
-      pieces[i] = nullptr;
-    }
-  }
-
-  int y, x;
   Piece* pieces[4];
   Cell* next[5];
+  char y, x;
 };
 
-void Piece::Move(int steps, Cell* root) {
-  auto src = foothold;
-  auto dst = src->next[steps - 1];
-  if (dst) {
-    src->MoveTo(this, dst, root);
-  } else {
-    for (auto piece : src->pieces) {
-      if (piece) {
-        piece->foothold = nullptr;
-        piece = nullptr;
-      }
-    }
-  }
-}
-
-struct Board {
-  Board() : board(kBoard) {
-    Init();
-  }
-
-  void Init() {
-    for (int i = 0; i < 8; i++) {
-      pieces[i].id = i;
-      pieces[i].foothold = cells;
-    }
-
-    // xy
-    for (int i = 0; i < 5; i++) {
-      cells[5 - i].y = i * 6;
-      cells[5 - i].x = 30;
-
-      cells[10 + i].y = i * 6;
-      cells[10 + i].x = 0;
-    }
-
-    for (int i = 0; i < 6; i++) {
-      cells[15 + i].y = 30;
-      cells[15 + i].x = i * 6;
-    }
-
-    for (int i = 0; i < 4; i++) {
-      cells[6 + i].y = 0;
-      cells[6 + i].x = 24 - i * 6;
-    }
-
-    for (int i = 0; i < 2; i++) {
-      cells[21 + i].y = i * 5 + 5;
-      cells[21 + i].x = 25 - i * 5;
-
-      cells[23 + i].y = i * 5 + 20;
-      cells[23 + i].x = 10 - i * 5;
-
-      cells[25 + i].y = i * 5 + 5;
-      cells[25 + i].x = i * 5 + 5;
-
-      cells[27 + i].y = i * 5 + 20;
-      cells[27 + i].x = i * 5 + 20;
-    }
-
-    cells[29].y = 15;
-    cells[29].x = 15;
-
-    // next
-    for (int i = 0; i < 20; i++) {
-      if (i == 5 || i == 10) continue;
-      for (int j = 0; j < 5 && i + j < 20; j++) {
-        cells[i].next[j] = cells + i + j + 1;
-      }
-    }
-
-    vector<Cell*> vec;
-    vec.reserve(11);
-    vec.push_back(cells + 5);
-    for (int i = 0; i < 2; i++) vec.push_back(cells + i + 21);
-    vec.push_back(cells + 29);
-    for (int i = 0; i < 2; i++) vec.push_back(cells + i + 23);
-    for (int i = 0; i < 5; i++) vec.push_back(cells + i + 15);
-    for (int i = 0; i < 6; i++) {
-      for (int j = 0; j < 5; j++) {
-        vec[i]->next[j] = vec[i + j + 1];
-      }
-    }
-
-    vec.clear();
-    vec.push_back(cells + 10);
-    for (int i = 0; i < 2; i++) vec.push_back(cells + i + 25);
-    vec.push_back(cells + 29);
-    for (int i = 0; i < 2; i++) vec.push_back(cells + i + 27);
-    vec.push_back(cells + 20);
-    for (int i = 0; i < 6; i++) {
-      for (int j = 0; j < 5 && i + j < 6; j++) {
-        vec[i]->next[j] = vec[i + j + 1];
-      }
-    }
-
-    cells[29].next[0] = cells + 27;
-    cells[29].next[1] = cells + 28;
-    cells[29].next[2] = cells + 20;
-    cells[29].next[3] = cells[29].next[4] = nullptr;
-  }
-
-  void Input() {
-    auto piece = InputPiece();
-    int steps = InputSteps();
-    piece->Move(steps, cells);
-  }
-
-  void Print() {
-    for (int i = 1; i < 30; i++) cells[i].Print(board);
-    cout << board;
-  }
-
-  Piece* InputPiece() {
-    char c;
-    cin >> c;
-    if (c < 'a') return pieces + (c - 'A');
-    return pieces + (c - 'a' + 4);
-  }
-
-  int InputSteps() {
-    char s[8];
-    cin >> s;
-    int steps = 4;
-    for (int i = 0; i < 4; i++) {
-      if (s[i] == 'B') --steps;
-    }
-    return steps ? steps : 5;
-  }
-
-  string board;
-  Cell cells[30];
-  Piece pieces[8];
-};
+Piece pieces[8];
+Cell cells[30];
 
 int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+  for (int i = 0; i < 8; i++) {
+    pieces[i].team_id = i >> 2;
+    pieces[i].member_idx = i & 3;
+    pieces[i].foothold = cells;
+  }
 
-  Board board;
+  for (int i = 0; i < 30; i++) {
+    cells[i].y = kCellCoords[i][0];
+    cells[i].x = kCellCoords[i][1];
+    for (int j = 0; j < 5; j++) {
+      if (kDelta[i][j] == -1) continue;;
+      cells[i].next[j] = cells + kDelta[i][j];
+    }
+  }
+
   int n;
   cin >> n;
-  while (n--) board.Input();
-  board.Print();
+  while (n--) {
+    char name;
+    cin >> name;
+    int cnt = 0;
+    for (int i = 0; i < 4; i++) {
+      char c;
+      cin >> c;
+      if (c == 'F') ++cnt;
+    }
+
+    auto selected = pieces + kIdTable[name];
+    auto src = selected->foothold;
+    auto dst = src->next[cnt];
+    if (dst) {
+      if (dst->HasEnemy(selected->team_id)) {
+        for (auto& p : dst->pieces) {
+          if (p) {
+            p->foothold = cells;
+            p = nullptr;
+          }
+        }
+      }
+
+      if (src == cells) {
+        dst->pieces[selected->member_idx] = selected;
+        selected->foothold = dst;
+      } else {
+        for (int i = 0; i < 4; i++) {
+          if (src->pieces[i]) {
+            dst->pieces[i] = src->pieces[i];
+            src->pieces[i]->foothold = dst;
+            src->pieces[i] = nullptr;
+          }
+        }
+      }
+    } else {
+      for (auto& p : src->pieces) {
+        if (p) {
+          p->foothold = nullptr;
+          p = nullptr;
+        }
+      }
+    }
+  }
+
+  for (int i = 1; i < 30; i++) {
+    for (int j = 0; j < 4; j++) {
+      int y = cells[i].y + (j >> 1);
+      int x = cells[i].x + (j & 1);
+      auto p = cells[i].pieces[j];
+      board[y * 33 + x] = p ? p->GetName() : '.';
+    }
+  }
+
+  cout << board;
 
   return 0;
 }
