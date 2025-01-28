@@ -2,12 +2,8 @@
 
 using namespace std;
 
-struct Node {
-  Node() : left(nullptr), right(nullptr), idx(0), team_id(0) {}
-
-  Node *left, *right;
-  int idx, team_id;
-};
+int votes[100001];
+int memo[100001];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -18,30 +14,22 @@ int main() {
   while (t--) {
     int n;
     cin >> n;
-    vector<int> votes;
-    votes.resize(n + 1);
-    for (int i = 1; i <= n; i++) cin >> votes[i];
-
-    vector<Node> _nodes(n + 1, Node());
-    auto nodes = _nodes.data();
-
-    int sum = 0;
     for (int i = 1; i <= n; i++) {
-      auto cur = nodes + i;
-      if (cur->right) continue;
+      cin >> votes[i];
+      memo[i] = 0;
+    }
 
-      int cnt = 0;
-      while (cur->right == nullptr) {
-        int id = cur - nodes;
-        auto next = nodes + votes[id];
-        cur->idx = cnt++;
-        cur->team_id = i;
-        cur->right = next;
-        next->left = cur;
-        cur = next;
+    int sum = 0, cnt = 1;
+    for (int i = 1; i <= n; i++) {
+      if (memo[i]) continue;
+
+      int cur = i, start = cnt;
+      while (memo[cur] == 0) {
+        memo[cur] = cnt++;
+        cur = votes[cur];
       }
 
-      if (cur->team_id == i) sum += cnt - cur->idx;
+      if (memo[cur] >= start) sum += cnt - memo[cur];
     }
 
     cout << n - sum << "\n";
