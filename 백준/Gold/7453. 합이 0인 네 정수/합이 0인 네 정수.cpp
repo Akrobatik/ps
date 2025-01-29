@@ -10,20 +10,34 @@ int main() {
   cin >> n;
   vector<int> a(n), b(n), c(n), d(n);
   for (int i = 0; i < n; i++) cin >> a[i] >> b[i] >> c[i] >> d[i];
+  sort(a.begin(), a.end());
+  sort(b.begin(), b.end());
+  sort(c.begin(), c.end());
+  sort(d.begin(), d.end());
 
-  vector<int> ab;
-  ab.reserve(n * n);
-  for (auto av : a) {
-    for (auto bv : b) ab.push_back(av + bv);
-  }
-  sort(ab.begin(), ab.end());
+  priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<>> pq;
 
-  vector<int> cd;
-  cd.reserve(n * n);
-  for (auto cv : c) {
-    for (auto dv : d) cd.push_back(cv + dv);
+  vector<int> ab(n * n);
+  auto _ab = ab.data();
+  for (int i = 0; i < n; i++) pq.emplace(a[0] + b[i], 0, i);
+  while (!pq.empty()) {
+    auto [v, i, j] = pq.top();
+    pq.pop();
+
+    *_ab++ = v;
+    if (i + 1 < n) pq.emplace(a[i + 1] + b[j], i + 1, j);
   }
-  sort(cd.begin(), cd.end());
+
+  vector<int> cd(n * n);
+  auto _cd = cd.data();
+  for (int i = 0; i < n; i++) pq.emplace(c[0] + d[i], 0, i);
+  while (!pq.empty()) {
+    auto [v, i, j] = pq.top();
+    pq.pop();
+
+    *_cd++ = v;
+    if (i + 1 < n) pq.emplace(c[i + 1] + d[j], i + 1, j);
+  }
 
   int64_t sum = 0;
   auto ab_it = ab.begin(), ab_end = ab.end();
