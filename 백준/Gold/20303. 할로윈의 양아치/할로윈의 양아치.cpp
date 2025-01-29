@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int kids[30001][3];
+int kids[30001][4];
 int memo[3001];
 
 int Find(int id, int& depth) {
