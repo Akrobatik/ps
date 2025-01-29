@@ -49,7 +49,6 @@ int main() {
   for (int i = 1; i <= n; i++) {
     if (kids[i][0]) vec.push_back({kids[i][2], kids[i][0]});
   }
-  sort(vec.begin(), vec.end());
 
   int maxx = 0;
   memset(memo, -1, k << 2);
