@@ -21,6 +21,9 @@ constexpr char kDeltaX[] =
 int memo[1 << 20][2];
 
 int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
   int rows, cols;
   cin >> rows >> cols;
   for (int i = 0; i < rows; i++) {
