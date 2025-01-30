@@ -31,7 +31,7 @@ int main() {
   int b312 = GetDirection(c312);
   int b412 = GetDirection(c412);
 
-  if (b134 == 0 && b234 == 0 && b312 == 0 && b412 == 0) {
+  if (b134 == 0 && b234 == 0) {
     pair<int, int> d1 = {x1, y1};
     pair<int, int> d2 = {x2, y2};
     pair<int, int> d3 = {x3, y3};
