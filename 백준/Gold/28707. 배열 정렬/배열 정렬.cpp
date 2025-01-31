@@ -40,7 +40,7 @@ int main() {
     edges[i] = {c, l - 1, r - 1};
   }
 
-  unordered_set<uint32_t> memo;
+  unordered_map<uint32_t, int> memo;
   priority_queue<pair<int, uint32_t>, vector<pair<int, uint32_t>>, greater<>> pq;
   pq.push({0, seq});
 
@@ -53,13 +53,14 @@ int main() {
       return 0;
     }
 
-    if (memo.contains(sbits)) continue;
-    memo.insert(sbits);
+    if (cost > memo[sbits]) continue;
 
     for (auto [c, l, r] : edges) {
       uint32_t tmp = Swap(sbits, l, r);
-      if (memo.contains(tmp)) continue;
-      pq.push({cost + c, tmp});
+      if (auto it = memo.find(tmp); it == memo.end() || cost + c < it->second) {
+        memo[tmp] = cost + c;
+        pq.push({cost + c, tmp});
+      }
     }
   }
   cout << -1;
