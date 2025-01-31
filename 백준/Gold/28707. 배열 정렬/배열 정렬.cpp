@@ -39,7 +39,8 @@ uint32_t Sort(uint32_t bits, int n) {
   return bits;
 }
 
-short memo[1 << 24];
+// short memo[1 << 24];
+tuple<int, int, int>* edges_bucket[8][8];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -55,14 +56,28 @@ int main() {
   int m;
   cin >> m;
   tuple<int, int, int> edges[10];
+  auto _edges = edges;
   for (int i = 0; i < m; i++) {
     int l, r, c;
     cin >> l >> r >> c;
-    edges[i] = {c, l - 1, r - 1};
+    --l, --r;
+    if (edges_bucket[l][r]) {
+      if (get<0>(*edges_bucket[l][r]) > c) {
+        get<0>(*edges_bucket[l][r]) = c;
+      }
+    } else {
+      edges_bucket[l][r] = _edges;
+      *_edges++ = {c, l, r};
+    }
   }
-  sort(edges, edges + m);
+  m = _edges - edges;
 
-  priority_queue<pair<int, uint32_t>, vector<pair<int, uint32_t>>, greater<>> pq;
+  auto cmp = [](const pair<int, uint32_t>& lhs, const pair<int, uint32_t>& rhs) {
+    return lhs.first > rhs.first;
+  };
+
+  unordered_map<uint32_t, int> memo;
+  priority_queue<pair<int, uint32_t>, vector<pair<int, uint32_t>>, decltype(cmp)> pq;
   pq.push({0, compressed});
 
   while (!pq.empty()) {
@@ -79,7 +94,7 @@ int main() {
     for (int i = 0; i < m; i++) {
       auto [c, l, r] = edges[i];
       uint32_t tmp = Swap(sbits, l, r);
-      if (memo[tmp] == 0 || memo[tmp] > cost + c) {
+      if (auto it = memo.find(tmp); it == memo.end() || cost + c < it->second) {
         memo[tmp] = cost + c;
         pq.push({cost + c, tmp});
       }
