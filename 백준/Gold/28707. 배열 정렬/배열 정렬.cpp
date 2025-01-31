@@ -54,12 +54,13 @@ int main() {
 
   int m;
   cin >> m;
-  vector<tuple<int, int, int>> edges(m);
+  tuple<int, int, int> edges[10];
   for (int i = 0; i < m; i++) {
     int l, r, c;
     cin >> l >> r >> c;
     edges[i] = {c, l - 1, r - 1};
   }
+  sort(edges, edges + m);
 
   priority_queue<pair<int, uint32_t>, vector<pair<int, uint32_t>>, greater<>> pq;
   pq.push({0, compressed});
@@ -75,7 +76,8 @@ int main() {
 
     if (cost > memo[sbits]) continue;
 
-    for (auto [c, l, r] : edges) {
+    for (int i = 0; i < m; i++) {
+      auto [c, l, r] = edges[i];
       uint32_t tmp = Swap(sbits, l, r);
       if (memo[tmp] == 0 || memo[tmp] > cost + c) {
         memo[tmp] = cost + c;
