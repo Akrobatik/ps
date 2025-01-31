@@ -29,9 +29,8 @@ int main() {
   int64_t sum = 0;
   for (int i = 0; i <= 9; i++) {
     sum += memo[n - 1][i][1023];
-    sum %= kMod;
   }
-  cout << sum;
+  cout << sum % kMod;
 
   return 0;
 }
