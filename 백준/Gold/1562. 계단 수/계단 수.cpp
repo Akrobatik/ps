@@ -4,7 +4,7 @@ using namespace std;
 
 constexpr int kMod = 1000000000;
 
-int memo[2][10][1 << 10];
+int64_t memo[2][10][1 << 10];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -17,13 +17,18 @@ int main() {
   auto m = memo[1], m_old = memo[0];
   for (int i = 1; i < n; i++) {
     for (int j = 0; j < 1024; j++) {
-      m[0][j | (1 << 0)] = (m[0][j | (1 << 0)] + m_old[1][j]) % kMod;
-      m[9][j | (1 << 9)] = (m[9][j | (1 << 9)] + m_old[8][j]) % kMod;
+      m[0][j | (1 << 0)] += m_old[1][j];
+      m[9][j | (1 << 9)] += m_old[8][j];
       for (int k = 1; k <= 8; k++) {
-        m[k][j | (1 << k)] = (m[k][j | (1 << k)] + m_old[k - 1][j]) % kMod;
-        m[k][j | (1 << k)] = (m[k][j | (1 << k)] + m_old[k + 1][j]) % kMod;
+        m[k][j | (1 << k)] += m_old[k - 1][j];
+        m[k][j | (1 << k)] += m_old[k + 1][j];
       }
     }
+
+    for (int j = 0; j <= 9; j++) {
+      for (int k = 0; k < 1024; k++) m[j][k] %= kMod;
+    }
+
     swap(m, m_old);
     memset(m, 0, sizeof(memo[0]));
   }
