@@ -7,34 +7,39 @@ uint32_t Compress(uint32_t* nums, int n) {
     while (find(nums, nums + n, i) == nums + n) {
       bool skip = true;
       for (int j = 0; j < n; j++) {
-        if (nums[j] > i) --nums[j];
+        if (nums[j] > i) {
+          --nums[j];
+          skip = false;
+        }
       }
       if (skip) break;
     }
   }
 
   uint32_t bits = 0;
-  for (int i = 0; i < n; i++) bits |= nums[i] << (i << 2);
+  for (int i = 0; i < n; i++) bits |= nums[i] << (i * 3);
   return bits;
 }
 
 uint32_t Swap(uint32_t bits, int l, int r) {
-  uint32_t lb = bits & (0xF << (l << 2));
-  uint32_t rb = bits & (0xF << (r << 2));
-  uint32_t d = (r - l) << 2;
+  uint32_t lb = bits & (0x7 << (l * 3));
+  uint32_t rb = bits & (0x7 << (r * 3));
+  uint32_t d = (r - l) * 3;
   return bits ^ lb ^ rb ^ (lb << d) ^ (rb >> d);
 }
 
 uint32_t Sort(uint32_t bits, int n) {
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n - i - 1; j++) {
-      uint32_t lb = (bits >> (j << 2)) & 0xF;
-      uint32_t rb = (bits >> ((j + 1) << 2)) & 0xF;
+      uint32_t lb = (bits >> (j * 3)) & 0x7;
+      uint32_t rb = (bits >> ((j + 1) * 3)) & 0x7;
       if (lb > rb) bits = Swap(bits, j, j + 1);
     }
   }
   return bits;
 }
+
+short memo[1 << 24];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -56,7 +61,6 @@ int main() {
     edges[i] = {c, l - 1, r - 1};
   }
 
-  unordered_map<uint32_t, int> memo;
   priority_queue<pair<int, uint32_t>, vector<pair<int, uint32_t>>, greater<>> pq;
   pq.push({0, compressed});
 
@@ -73,7 +77,7 @@ int main() {
 
     for (auto [c, l, r] : edges) {
       uint32_t tmp = Swap(sbits, l, r);
-      if (auto it = memo.find(tmp); it == memo.end() || cost + c < it->second) {
+      if (memo[tmp] == 0 || memo[tmp] > cost + c) {
         memo[tmp] = cost + c;
         pq.push({cost + c, tmp});
       }
