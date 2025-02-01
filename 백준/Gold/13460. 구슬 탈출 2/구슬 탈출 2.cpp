@@ -2,85 +2,103 @@
 
 using namespace std;
 
-struct Board {
-  Board(int r, int c) : rows(r), cols(c), m(r * c) {}
+int rows, cols;
+char board[10][10];
+int oy, ox;
 
-  char* operator[](int row) { return m.data() + row * cols; }
-  const char* operator[](int row) const { return m.data() + row * cols; }
-
-  int rows, cols;
-  int ry, rx, by, bx;
-  vector<char> m;
-};
-
-int Solve(const Board& board, int depth) {
-  if (depth == 10) return INT_MAX;
-
+int Solve(int ry, int rx, int by, int bx, int depth) {
   int minn = INT_MAX;
+  if (depth == 10) return minn;
+
   for (int i = 0; i < 4; i++) {
-    Board b(board);
     int dy = i < 2 ? 0 : (i & 1 ? -1 : 1);
     int dx = i < 2 ? (i & 1 ? -1 : 1) : 0;
-    int ry = b.ry + dy, rx = b.rx + dx;
-    int by = b.by + dy, bx = b.bx + dx;
+    int rty = ry, rtx = rx;
+    int bty = by, btx = bx;
+    int nry = ry + dy, nrx = rx + dx;
+    int nby = by + dy, nbx = bx + dx;
+
+    auto clear = [&]() {
+      board[rty][rtx] = board[bty][btx] = '.';
+      board[oy][ox] = 'O';
+      board[ry][rx] = 'R';
+      board[by][bx] = 'B';
+    };
 
     bool ro = false;
-    while (0 <= ry && ry < b.rows && 0 <= rx && rx < b.cols) {
-      if (b[ry][rx] != '.') {
-        if (b[ry][rx] == 'O') {
-          ro = true;
-          b[b.ry][b.rx] = '.';
-        }
+    bool rb = false;
+    while (0 <= nry && nry < rows && 0 <= nrx && nrx < cols) {
+      if (board[nry][nrx] != '.') {
+        if (board[nry][nrx] == 'O') ro = true, board[rty][rtx] = '.';
+        rb = board[nry][nrx] == 'B';
         break;
       }
-      ry += dy, rx += dx;
+      nry += dy, nrx += dx;
     }
-    swap(b[ry - dy][rx - dx], b[b.ry][b.rx]);
-    b.ry = ry - dy, b.rx = rx - dx;
+    swap(board[rty][rtx], board[nry - dy][nrx - dx]);
+    rty = nry - dy, rtx = nrx - dx;
 
     bool bo = false;
-    while (0 <= by && by < b.rows && 0 <= bx && bx < b.cols) {
-      if (b[by][bx] != '.') {
-        bo = b[by][bx] == 'O';
+    while (0 <= nby && nby < rows && 0 <= nbx && nbx < cols) {
+      if (board[nby][nbx] != '.') {
+        bo = board[nby][nbx] == 'O';
         break;
       }
-      by += dy, bx += dx;
+      nby += dy, nbx += dx;
     }
-    swap(b[by - dy][bx - dx], b[b.by][b.bx]);
-    b.by = by - dy, b.bx = bx - dx;
+    swap(board[bty][btx], board[nby - dy][nbx - dx]);
+    bty = nby - dy, btx = nbx - dx;
 
-    if (bo) continue;
-    if (ro) return depth + 1;
-
-    while (0 <= ry && ry < b.rows && 0 <= rx && rx < b.cols) {
-      if (b[ry][rx] != '.') break;
-      ry += dy, rx += dx;
+    if (bo) {
+      clear();
+      continue;
     }
-    swap(b[ry - dy][rx - dx], b[b.ry][b.rx]);
-    b.ry = ry - dy, b.rx = rx - dx;
 
-    int v = Solve(b, depth + 1);
+    if (ro) {
+      clear();
+      return depth + 1;
+    }
+
+    if (rb) {
+      while (0 <= nry && nry < rows && 0 <= nrx && nrx < cols) {
+        if (board[nry][nrx] != '.') break;
+        nry += dy, nrx += dx;
+      }
+      swap(board[rty][rtx], board[nry - dy][nrx - dx]);
+      rty = nry - dy, rtx = nrx - dx;
+    }
+
+    if (ry == rty && rx == rtx && by == bty && bx == btx) {
+      clear();
+      continue;
+    }
+
+    int v = Solve(rty, rtx, bty, btx, depth + 1);
     minn = min<int>(minn, v);
+
+    clear();
   }
-  return minn == INT_MAX && depth == 0 ? -1 : minn;
+
+  if (depth == 0 && minn == INT_MAX) return -1;
+  return minn;
 }
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int r, c;
-  cin >> r >> c;
-  Board board(r, c);
-  for (int i = 0; i < r; i++) {
-    for (int j = 0; j < c; j++) {
+  cin >> rows >> cols;
+  int ry, rx, by, bx;
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
       cin >> board[i][j];
-      if (board[i][j] == 'R') board.ry = i, board.rx = j;
-      if (board[i][j] == 'B') board.by = i, board.bx = j;
+      if (board[i][j] == 'R') ry = i, rx = j;
+      if (board[i][j] == 'B') by = i, bx = j;
+      if (board[i][j] == 'O') oy = i, ox = j;
     }
   }
 
-  cout << Solve(board, 0);
+  cout << Solve(ry, rx, by, bx, 0);
 
   return 0;
 }
