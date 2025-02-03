@@ -21,17 +21,17 @@ int main() {
   int n;
   cin >> n;
 
-  int64_t ans1 = 0, ans2 = 0;
+  int64_t ans = 0;
   for (int i = 4; i <= n; i += 4) {
     int64_t v = Comb(13, i >> 2) * Comb(52 - i, n - i);
     if ((i >> 2) & 1) {
-      ans1 += v;
+      ans += v;
     } else {
-      ans2 += v;
+      ans -= v;
     }
   }
 
-  cout << abs(ans1 - ans2) % kMod;
+  cout << abs(ans) % kMod;
 
   return 0;
 }
