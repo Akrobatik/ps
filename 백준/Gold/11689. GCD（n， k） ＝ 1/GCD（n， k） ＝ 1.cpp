@@ -10,13 +10,15 @@ int main() {
 
   int64_t n;
   cin >> n;
-  int nn = sqrt(n);
+  int64_t nn = sqrt(n);
   int64_t ans = n;
-  for (int i = 2; i <= nn; i++) {
+  for (int64_t i = 2; i <= nn; i++) {
     if (memo[i]) continue;
     for (int j = (i << 1); j <= nn; j += i) memo[j] = true;
-    if (n % i != 0) continue;
+    auto dv = div(n, i);
+    if (dv.rem) continue;
     ans -= ans / i;
+    n = dv.quot;
     while (n % i == 0) n /= i;
   }
   if (n != 1) ans -= ans / n;
