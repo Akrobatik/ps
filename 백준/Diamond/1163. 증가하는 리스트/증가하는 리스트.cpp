@@ -73,36 +73,39 @@ string Solve(vector<string_view>& tokens, string_view cond) {
     if (tokens[0].size() > tokens[i].size()) self = false;
   }
 
-  string res;
-  string smin(tokens[0].size(), 'X');
+  vector<string> cands;
+  cands.reserve(max<int>(maxx - minn + 1, 0) + self);
   for (int i = minn; i <= maxx; i++) {
     if (tokens[0][i] != '?' || tokens[0][i + 1] == '0') continue;
     string token = MakeToken(tokens[0].substr(0, i), cond);
-    if (token.empty() || token >= smin) continue;
-
-    string_view org = tokens[0];
-    tokens[0] = org.substr(i + 1);
-    string s = Solve(tokens, token);
-    tokens[0] = org;
-    if (!s.empty()) res = token + "," + s, smin = token;
+    if (!token.empty()) cands.emplace_back(token);
   }
-
   if (self) {
     string token = MakeToken(tokens[0], cond);
-    if (!token.empty() && token < smin) {
+    if (!token.empty()) cands.emplace_back(token);
+  }
+  sort(cands.begin(), cands.end());
+
+  for (auto& token : cands) {
+    if (token.size() == tokens[0].size()) {
       if (tokens.size() == 1) {
-        res = token;
+        return token;
       } else {
         string_view tmp = tokens[0];
         tokens.erase(tokens.begin());
         string s = Solve(tokens, token);
         tokens.insert(tokens.begin(), tmp);
-        if (!s.empty()) res = token + "," + s;
+        if (!s.empty()) return token + "," + s;
       }
+    } else {
+      string_view org = tokens[0];
+      tokens[0] = org.substr(token.size() + 1);
+      string s = Solve(tokens, token);
+      tokens[0] = org;
+      if (!s.empty()) return token + "," + s;
     }
   }
-
-  return res;
+  return string();
 }
 
 int main() {
