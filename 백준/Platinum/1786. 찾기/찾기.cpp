@@ -5,7 +5,7 @@
 using namespace std;
 
 char in[2000002];
-char out[6000000];
+char out[7000000];
 auto bo = out + 7;
 auto eo = out + 8;
 int table[1000000];
@@ -47,21 +47,21 @@ int main() {
     if (p[i] == p[idx]) table[i] = ++idx;
   }
 
-	int cnt = 0;
+  int cnt = 0;
   idx = 0;
   for (int i = 0; i < nt; i++) {
     while (idx && t[i] != p[idx]) idx = table[idx - 1];
     if (t[i] == p[idx]) {
       if (++idx == np) {
-				++cnt;
-				writeIndex(i - np + 2);
+        ++cnt;
+        writeIndex(i - np + 2);
         idx = table[idx - 1];
       }
     }
   }
-	writeSize(cnt);
+  writeSize(cnt);
 
-	fwrite(bo, 1, eo - bo, stdout);
+  fwrite(bo, 1, eo - bo, stdout);
 
   return 0;
 }
