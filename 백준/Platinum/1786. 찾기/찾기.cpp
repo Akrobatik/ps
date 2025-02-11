@@ -4,8 +4,8 @@
 
 using namespace std;
 
-char in[3000000];
-char out[7000000];
+char in[2000002];
+char out[6000000];
 auto bo = out + 7;
 auto eo = out + 8;
 int table[1000000];
