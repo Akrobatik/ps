@@ -3,64 +3,37 @@
 using namespace std;
 
 vector<pair<int, int>> edges[40001];
-int memo[40001][3];
-// parent dist depth
+vector<pair<int, int>> queries[40001];
+int memo[40001][2];
+int ans[10001];
 
-pair<int, vector<int>> bfs(int start) {
-  vector<int> dist(40001, -1);
-  queue<int> q;
-  q.push(start);
-  dist[start] = 0;
-  int farthest = start;
-
-  while (!q.empty()) {
-    int node = q.front();
-    q.pop();
-
-    for (auto [neighbor, _] : edges[node]) {
-      if (dist[neighbor] == -1) {
-        dist[neighbor] = dist[node] + 1;
-        q.push(neighbor);
-        farthest = neighbor;
-      }
-    }
+int Find(int id) {
+  while (memo[id][1] != id) {
+    int parent = memo[id][1];
+    memo[id][1] = memo[parent][1];
+    id = parent;
   }
-  return {farthest, dist};
+  return id;
 }
 
-int find_min_height_roots() {
-  auto [A, _] = bfs(1);
-  auto [B, dist_from_A] = bfs(A);
-  vector<int> path;
-  int node = B;
-  while (node != A) {
-    path.push_back(node);
-    for (auto [neighbor, _] : edges[node]) {
-      if (dist_from_A[neighbor] == dist_from_A[node] - 1) {
-        node = neighbor;
-        break;
-      }
-    }
+void Traverse(int cur, int parent, int dist) {
+  memo[cur][0] = dist;
+  memo[cur][1] = cur;
+  for (auto [id, w] : edges[cur]) {
+    if (id == parent) continue;
+    Traverse(id, cur, dist + w);
+    memo[id][1] = cur;
   }
-  path.push_back(A);
-  return path[path.size() / 2];
-}
 
-void Traverse(int cur, int parent, int depth) {
-  for (auto [to, dist] : edges[cur]) {
-    if (to == parent) {
-      memo[cur][0] = parent;
-      memo[cur][1] = dist;
-      memo[cur][2] = depth;
-    } else {
-      Traverse(to, cur, depth + 1);
-    }
+  for (auto [id, ai] : queries[cur]) {
+    if (memo[id][0] == 0) continue;
+    ans[ai] = memo[cur][0] + memo[id][0] - (memo[Find(id)][0] << 1);
   }
 }
 
 int main() {
   ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+  cin.tie(0);
 
   int n;
   cin >> n;
@@ -70,29 +43,17 @@ int main() {
     edges[a].push_back({b, c});
     edges[b].push_back({a, c});
   }
-  int roots = find_min_height_roots();
-  Traverse(roots, 0, 0);
 
   cin >> n;
-  while (n--) {
+  for (int i = 0; i < n; i++) {
     int a, b;
     cin >> a >> b;
-    if (memo[a][2] > memo[b][2]) swap(a, b);
-
-    int d = 0;
-    while (memo[a][2] != memo[b][2]) {
-      d += memo[b][1];
-      b = memo[b][0];
-    }
-
-    while (a != b) {
-      d += memo[a][1] + memo[b][1];
-      a = memo[a][0];
-      b = memo[b][0];
-    }
-
-    cout << d << "\n";
+    queries[a].push_back({b, i});
+    queries[b].push_back({a, i});
   }
+
+  Traverse(1, 0, 1);
+  for (int i = 0; i < n; i++) cout << ans[i] << "\n";
 
   return 0;
 }
