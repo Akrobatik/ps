@@ -2,28 +2,35 @@
 
 using namespace std;
 
-constexpr int kMax = 1000000;
+constexpr int kMax = (1 << 20) - 1;
 int tree[1 << 21];
 
-void Update(int node, int b, int e, int idx, int v) {
-  if (b == e) {
-    tree[node] += v;
-  } else {
-    int mid = ((b + e) >> 1);
-    if (idx <= mid) {
-      Update(node << 1, b, mid, idx, v);
-    } else {
-      Update((node << 1) + 1, mid + 1, e, idx, v);
-    }
-    tree[node] = tree[node << 1] + tree[(node << 1) + 1];
-  }
+void Update(int idx, int v) {
+  int node = idx + kMax + 1;
+  tree[node] += v;
+  while (node >>= 1) tree[node] += v;
 }
 
-int Query(int node, int b, int e, int nth) {
-  if (b == e) return b;
-  int mid = ((b + e) >> 1);
-  if (tree[node << 1] >= nth) return Query(node << 1, b, mid, nth);
-  return Query((node << 1) + 1, mid + 1, e, nth - tree[node << 1]);
+int Query(int nth) {
+  int node = 1;
+  int b = 0;
+  int e = kMax;
+  while (b != e) {
+    int mid = (b + e) >> 1;
+    if (tree[node << 1] >= nth) {
+      node <<= 1;
+      e = mid;
+    } else {
+      nth -= tree[node << 1];
+      node = (node << 1) + 1;
+      b = mid + 1;
+    }
+  }
+
+  --tree[node];
+  while (node >>= 1) --tree[node];
+
+  return b + 1;
 }
 
 int main() {
@@ -36,12 +43,11 @@ int main() {
     int a, b, c;
     cin >> a >> b;
     if (a == 1) {
-      int v = Query(1, 1, kMax, b);
-      Update(1, 1, kMax, v, -1);
+      int v = Query(b);
       cout << v << "\n";
     } else {
       cin >> c;
-      Update(1, 1, kMax, b, c);
+      Update(b - 1, c);
     }
   }
 
