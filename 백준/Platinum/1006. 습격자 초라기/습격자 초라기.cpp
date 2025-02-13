@@ -2,11 +2,6 @@
 
 using namespace std;
 
-tuple<int, int, int> GetNear(int pos, int n) {
-  return pos < n ? make_tuple(pos != 0 ? pos - 1 : n - 1, pos + 1 != n ? pos + 1 : 0, pos + n)
-                 : make_tuple(pos != n ? pos - 1 : (n << 1) - 1, pos + 1 != (n << 1) ? pos + 1 : n, pos - n);
-}
-
 int n, w;
 int enemies[10001][2];
 int memo[10001][3];
