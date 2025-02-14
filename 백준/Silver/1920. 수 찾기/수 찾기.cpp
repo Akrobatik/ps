@@ -2,24 +2,23 @@
 
 using namespace std;
 
+int nums[100000];
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  set<int> s;
   int n;
   cin >> n;
-  while (n--) {
-    int v;
-    cin >> v;
-    s.insert(v);
-  }
-
+  auto e = nums + n;
+  while (n--) cin >> nums[n];
+  sort(nums, e);
   cin >> n;
   while (n--) {
     int v;
     cin >> v;
-    cout << (s.contains(v) ? '1' : '0') << '\n';
+    auto it = lower_bound(nums, e, v);
+    cout << (char)('0' + (it != e && *it == v)) << '\n';
   }
 
   return 0;
