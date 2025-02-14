@@ -9,14 +9,14 @@ int main() {
   int n;
   cin >> n;
   vector<string> ss(n);
-  while (n--) cin >> ss[n];
+  for (int i = 0; i < n; i++) cin >> ss[i];
   sort(ss.begin(), ss.end(), [](const string& lhs, const string& rhs) {
     return lhs.size() != rhs.size() ? lhs.size() < rhs.size() : lhs < rhs;
   });
-  string last;
-  for (auto& s : ss) {
-    if (s.compare(last) != 0) cout << s << "\n";
-    last = s;
+
+  cout << ss.front() << "\n";
+  for (int i = 1; i < n; i++) {
+    if (ss[i - 1].compare(ss[i]) != 0) cout << ss[i] << "\n";
   }
 
   return 0;
