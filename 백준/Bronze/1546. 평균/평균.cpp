@@ -2,9 +2,6 @@
 
 using namespace std;
 
-constexpr int64_t kMod = 1234567891;
-constexpr int64_t kBase = 31;
-
 int nums[1000];
 
 int main() {
