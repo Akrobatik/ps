@@ -8,15 +8,12 @@ int main() {
 
   int n;
   cin >> n;
-  deque<int> dq(n);
-  iota(dq.begin(), dq.end(), 1);
-
-  while (dq.size() != 1) {
-    dq.pop_front();
-    dq.push_back(dq.front());
-    dq.pop_front();
+  int msb = 1 << (bit_width((unsigned int)n) - 1);
+  if (n == msb) {
+    cout << n;
+  } else {
+    cout << ((n ^ msb) << 1);
   }
-  cout << dq.front();
 
   return 0;
 }
