@@ -2,9 +2,6 @@
 
 using namespace std;
 
-constexpr int64_t kMod = 1234567891;
-constexpr int64_t kBase = 31;
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
