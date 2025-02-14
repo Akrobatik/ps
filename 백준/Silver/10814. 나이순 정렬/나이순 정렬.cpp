@@ -2,7 +2,11 @@
 
 using namespace std;
 
-tuple<int, int, string> mans[100000];
+struct Man {
+  char name[101];
+};
+
+vector<Man> mans[201];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -12,12 +16,12 @@ int main() {
   cin >> n;
   for (int i = 0; i < n; i++) {
     int age;
-    string name;
-    cin >> age >> name;
-    mans[i] = {age, i, name};
+    cin >> age;
+    auto& man = mans[age].emplace_back();
+    cin >> man.name;
   }
-  sort(mans, mans + n);
-  for (int i = 0; i < n; i++) cout << get<0>(mans[i]) << " " << get<2>(mans[i]) << "\n";
-
+  for (int i = 1; i <= 200; i++) {
+    for (auto& man : mans[i]) cout << i << " " << man.name << "\n";
+  }
   return 0;
 }
