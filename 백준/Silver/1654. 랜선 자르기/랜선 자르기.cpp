@@ -25,7 +25,7 @@ int main() {
     if (sum < n) {
       e = mid - 1;
     } else {
-      if (ans < mid) ans = mid;
+      ans = mid;
       b = mid + 1;
     }
   }
