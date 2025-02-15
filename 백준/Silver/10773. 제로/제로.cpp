@@ -10,20 +10,19 @@ int main() {
 
   int n;
   cin >> n;
-  auto e = nums;
+  auto it = nums;
+  int sum = 0;
   while (n--) {
     int v;
     cin >> v;
+    sum += v;
     if (v) {
-      *e++ = v;
+      *it++ = v;
     } else {
-      --e;
+      sum -= *--it;
     }
   }
 
-  int sum = 0;
-  auto it = nums;
-  while (it != e) sum += *it++;
   cout << sum;
 
   return 0;
