@@ -3,7 +3,13 @@
 using namespace std;
 
 bool Check(int board[9][9], int idx, int* yx, int* sub_masks, int* row_masks, int* col_masks) {
-  if (idx == 5) return true;
+  if (idx == 5) {
+    for (int i = 0; i < 9; i++) {
+      constexpr int kMask = (1 << 9) - 1;
+      if ((sub_masks[i] ^ kMask) || (row_masks[i] ^ kMask) || (col_masks[i] ^ kMask)) return false;
+    }
+    return true;
+  }
 
   int y = yx[idx] >> 16;
   int x = yx[idx] & 0xF;
@@ -48,18 +54,7 @@ void Solve() {
     }
   }
 
-  bool ok = Check(board, 0, yx, sub_masks, row_masks, col_masks);
-  if (ok) {
-    for (int i = 0; i < 9; i++) {
-      constexpr int kMask = (1 << 9) - 1;
-      if ((sub_masks[i] ^ kMask) || (row_masks[i] ^ kMask) || (col_masks[i] ^ kMask)) {
-        ok = false;
-        break;
-      }
-    }
-  }
-
-  if (ok) {
+  if (Check(board, 0, yx, sub_masks, row_masks, col_masks)) {
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) cout << board[i][j];
       cout << "\n";
