@@ -16,7 +16,7 @@ struct Node {
 
 Node root;
 int board[kSize][kSize];
-bool found;
+int column_remains;
 
 Node* FindMinColumn() {
   int minn = INT_MAX;
@@ -33,6 +33,8 @@ Node* FindMinColumn() {
 }
 
 void CoverColumn(Node* column) {
+  --column_remains;
+
   column->left->right = column->right;
   column->right->left = column->left;
 
@@ -46,6 +48,8 @@ void CoverColumn(Node* column) {
 }
 
 void UncoverColumn(Node* column) {
+  ++column_remains;
+
   for (Node* row = column->up; row != column; row = row->up) {
     for (Node* node = row->left; node != row; node = node->left) {
       ++node->head->size;
@@ -83,19 +87,7 @@ void AddRow(int row_id, vector<vector<Node>>& nodes, const vector<int>& column_i
 }
 
 void Search() {
-  bool all_cover = true;
-  for (int i = 0; i < kSize; i++) {
-    for (int j = 0; j <kSize; j++) {
-      if (board[i][j]) continue;
-      all_cover = false;
-      break;
-    }
-  }
-
-  if (all_cover) {
-    found = true;
-    return;
-  }
+  if (column_remains == 0) return;
 
   auto min_node = FindMinColumn();
   if (min_node == nullptr) return;
@@ -108,7 +100,7 @@ void Search() {
     board[y][x] = v + 1;
     for (auto n2 = n1->right; n2 != n1; n2 = n2->right) CoverColumn(n2->head);
     Search();
-    if (found) return;
+    if (column_remains == 0) return;
     board[y][x] = 0;
     for (auto n2 = n1->left; n2 != n1; n2 = n2->left) UncoverColumn(n2->head);
   }
@@ -171,6 +163,8 @@ void Solve() {
     column_ids[3] = (x * kSize + v) + kSizeSqr * 3;
     AddRow(i, nodes, column_ids, column_nodes);
   }
+
+  for (auto& node : column_nodes) column_remains += (node.size != 0);
 
   Search();
 }
