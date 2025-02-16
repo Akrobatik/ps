@@ -24,7 +24,7 @@ Node* FindMinColumn() {
   Node* min_node = nullptr;
   Node* node = root.right;
   while (node != &root) {
-    if (node->size > 0 && minn > node->size) {
+    if (minn > node->size) {
       minn = node->size;
       min_node = node;
     }
@@ -162,9 +162,16 @@ void Solve() {
     AddRow(i, nodes, column_ids, column_nodes);
   }
 
-  for (auto& node : column_nodes) column_remains += (node.size != 0);
-  pick.reserve(kSizeSqr);
+  for (auto& node : column_nodes) {
+    if (node.size == 0) {
+      node.left->right = node.right;
+      node.right->left = node.left;
+    } else {
+      ++column_remains;
+    }
+  }
 
+  pick.reserve(kSizeSqr);
   Search();
 
   for (auto id : pick) {
