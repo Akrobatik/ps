@@ -17,6 +17,7 @@ struct Node {
 Node root;
 int board[kSize][kSize];
 int column_remains;
+vector<int> pick;
 
 Node* FindMinColumn() {
   int minn = INT_MAX;
@@ -94,14 +95,11 @@ void Search() {
 
   CoverColumn(min_node);
   for (auto n1 = min_node->down; n1 != min_node; n1 = n1->down) {
-    int y = n1->id / (kSize * kSize);
-    int x = (n1->id / kSize) % kSize;
-    int v = n1->id % kSize;
-    board[y][x] = v + 1;
+    pick.push_back(n1->id);
     for (auto n2 = n1->right; n2 != n1; n2 = n2->right) CoverColumn(n2->head);
     Search();
     if (column_remains == 0) return;
-    board[y][x] = 0;
+    pick.pop_back();
     for (auto n2 = n1->left; n2 != n1; n2 = n2->left) UncoverColumn(n2->head);
   }
   UncoverColumn(min_node);
@@ -165,8 +163,16 @@ void Solve() {
   }
 
   for (auto& node : column_nodes) column_remains += (node.size != 0);
+  pick.reserve(kSizeSqr);
 
   Search();
+
+  for (auto id : pick) {
+    int y = id / (kSize * kSize);
+    int x = (id / kSize) % kSize;
+    int v = id % kSize;
+    board[y][x] = v + 1;
+  }
 }
 
 int main() {
