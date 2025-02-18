@@ -16,9 +16,10 @@ int main() {
   for (int i = 1; i <= n; i++) {
     for (int j = 0; j <= 9; j++) {
       for (int k = j; k <= 9; k++) {
-        memo[i][k] = (memo[i][k] + memo[i - 1][j]) % kMod;
+        memo[i][k] += memo[i - 1][j];
       }
     }
+    for (int j = 0; j <= 9; j++) memo[i][j] %= kMod;
   }
 
   int ans = 0;
