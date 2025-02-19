@@ -23,12 +23,12 @@ int main() {
 
   for (int i = 0; i < 2047; i++) {
     for (int j = 0; j < 11; j++) {
-      if (pts[i][j] == pt1[j]) ++cnt[j];
+      cnt[j] += ((pts[i][j] == pt1[j]) << 1) - 1;
     }
   }
 
   for (int i = 0; i < 11; i++) {
-    cout << (!(cnt[i] >> 10) ? pt1[i] : pt2[i]) << " ";
+    cout << ((cnt[i] ^ 1) ? pt1[i] : pt2[i]) << " ";
   }
 
   return 0;
