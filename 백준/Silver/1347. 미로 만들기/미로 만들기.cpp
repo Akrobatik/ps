@@ -6,61 +6,19 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  // 1 0
-  // 0 -1
-  // -1 0
-  // 0 1
-  // 1 0
+  char cells[99][99];
+  fill_n((char*)cells, 99 * 99, '#');
+  cells[49][49] = '.';
+  int y = 49, x = 49;
+  int miny = 49, maxy = 49;
+  int minx = 49, maxx = 49;
+  int dy = 1, dx = 0;
 
   int n;
   cin >> n;
-  vector<char> ops(n);
-  for (int i = 0; i < n; i++) cin >> ops[i];
-
-  int y = 0, x = 0;
-  int miny = 0, maxy = 0;
-  int minx = 0, maxx = 0;
-  int dy = 1, dx = 0;
-  for (auto op : ops) {
-    if (op == 'R') {
-      if (dy) {
-        dx = -dy;
-        dy = 0;
-      } else {
-        dy = dx;
-        dx = 0;
-      }
-    } else if (op == 'L') {
-      if (dy) {
-        dx = dy;
-        dy = 0;
-      } else {
-        dy = -dx;
-        dx = 0;
-      }
-    } else {
-      y += dy;
-      x += dx;
-      if (miny > y) {
-        miny = y;
-      } else if (maxy < y) {
-        maxy = y;
-      }
-      if (minx > x) {
-        minx = x;
-      } else if (maxx < x) {
-        maxx = x;
-      }
-    }
-  }
-
-  dy = 1, dx = 0;
-  y = -miny, x = -minx;
-  maxy -= miny, maxx -= minx;
-  miny = minx = 0;
-  vector<vector<char>> cells(maxy + 1, vector<char>(maxx + 1, '#'));
-  cells[y][x] = '.';
-  for (char op : ops) {
+  while (n--) {
+    char op;
+    cin >> op;
     if (op == 'R') {
       if (dy) {
         dx = -dy;
@@ -81,11 +39,21 @@ int main() {
       y += dy;
       x += dx;
       cells[y][x] = '.';
+      if (miny > y) {
+        miny = y;
+      } else if (maxy < y) {
+        maxy = y;
+      }
+      if (minx > x) {
+        minx = x;
+      } else if (maxx < x) {
+        maxx = x;
+      }
     }
   }
 
-  for (auto& e : cells) {
-    for (auto c : e) cout << c;
+  for (int i = miny; i <= maxy; i++) {
+    for (int j = minx; j <= maxx; j++) cout << cells[i][j];
     cout << "\n";
   }
 
