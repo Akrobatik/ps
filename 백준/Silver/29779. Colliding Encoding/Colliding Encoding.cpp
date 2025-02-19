@@ -16,15 +16,17 @@ int main() {
     int n;
     cin >> n;
     set<int64_t> st;
+    bool ok = true;
+    char str[12];
     for (int i = 0; i < n; i++) {
-      string s;
-      cin >> s;
+      cin >> str;
+      if (!ok) continue;
       int64_t key = 0;
-      for (char c : s) key <<= 4, key |= (table[c - 'A'] + 1);
-      st.insert(key);
+      for (auto ptr = str; *ptr; ++ptr) key = (key << 4) | (table[*ptr - 'A'] + 1);
+      ok = st.insert(key).second;
     }
 
-    cout << "Case #" << ti << ": " << (st.size() != n ? "YES" : "NO") << "\n";
+    cout << "Case #" << ti << ": " << (ok ? "NO" : "YES") << "\n";
   }
 
   return 0;
