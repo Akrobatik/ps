@@ -2,37 +2,27 @@
 
 using namespace std;
 
+int cnts[100001];
+bool memo[100001];
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  bool memo[100001];
   memo[0] = memo[1] = true;
-  for (int i = 2; i <= 100000; i++) {
+  for (int64_t i = 2; i <= 100000; i++) {
     if (memo[i]) continue;
-    for (int j = (i << 1); j <= 100000; j += i) memo[j] = true;
-  }
+    for (int j = (i << 1); j <= 100000; j += i) memo[j] = true, ++cnts[j];
 
-  vector<int> primes;
-  primes.reserve(9331);
-  for (int i = 2; i <= 100000; i++) {
-    if (memo[i]) continue;
-    primes.push_back(i);
+    for (int64_t j = i * i; j <= 100000; j *= i) {
+      for (int k = j; k <= 100000; k += j) ++cnts[k];
+    }
   }
 
   int a, b;
   cin >> a >> b;
   int ans = 0;
-  for (int i = a; i <= b; i++) {
-    if (!memo[i]) continue;
-    int cnt = 0;
-    int n = i;
-    for (auto prime : primes) {
-      if (n == 1) break;
-      while ((n % prime) == 0) n /= prime, ++cnt;
-    }
-    if (!memo[cnt]) ++ans;
-  }
+  for (int i = a; i <= b; i++) ans += (!memo[cnts[i]]);
   cout << ans;
 
   return 0;
