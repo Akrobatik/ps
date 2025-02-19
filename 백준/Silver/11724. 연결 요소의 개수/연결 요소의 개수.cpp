@@ -27,7 +27,7 @@ int main() {
     cin >> u >> v;
     int hu, hv;
     int pu = Find(u, hu), pv = Find(v, hv);
-    if (hu < hv) swap(pu, pv);
+    if (hu > hv) swap(pu, pv);
     memo[pu] = pv;
   }
 
