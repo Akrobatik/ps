@@ -14,6 +14,7 @@ int main() {
   }
 
   vector<int> primes;
+  primes.reserve(9331);
   for (int i = 2; i <= 100000; i++) {
     if (memo[i]) continue;
     primes.push_back(i);
@@ -23,6 +24,7 @@ int main() {
   cin >> a >> b;
   int ans = 0;
   for (int i = a; i <= b; i++) {
+    if (!memo[i]) continue;
     int cnt = 0;
     int n = i;
     for (auto prime : primes) {
