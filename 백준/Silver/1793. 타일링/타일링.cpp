@@ -66,7 +66,9 @@ int main() {
   BigInt memo[251] = {1, 1, 3};
   BigInt b2 = 2;
   for (int i = 3; i <= 250; i++) {
-    memo[i] = memo[i - 2] * b2 + memo[i - 1];
+    memo[i] += memo[i - 2];
+    memo[i] += memo[i - 2];
+    memo[i] += memo[i - 1];
   }
 
   for (;;) {
