@@ -3,7 +3,7 @@
 using namespace std;
 
 struct SegmentTree {
-  SegmentTree(int n) : nmax(GetMaxN(n)), tree(nmax, 0) {}
+  SegmentTree(int n) : nmax(GetMaxN(n)), tree(nmax) {}
 
   void Update(int idx, int value) {
     int node = idx + nmax;
