@@ -3,7 +3,10 @@
 using namespace std;
 
 struct SegmentTree {
-  SegmentTree(int n) : nmax(GetMaxN(n)), tree(nmax) {}
+  void Init(int n) {
+    nmax = has_single_bit((uint32_t)n) ? n : (1 << (32 - countl_zero((uint32_t)n)));
+    tree.clear(), tree.resize(nmax);
+  }
 
   void Update(int idx, int value) {
     int node = idx + nmax;
