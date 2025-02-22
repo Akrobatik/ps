@@ -3,18 +3,27 @@
 using namespace std;
 
 vector<int> edges[1001];
-bool visited[1001];
 
 void DFS(int cur) {
-  cout << cur << " ";
-  visited[cur] = true;
-  for (int to : edges[cur]) {
-    if (visited[to]) continue;
-    DFS(to);
+  bool visited[1001] = {};
+  stack<int> st;
+  st.push(cur);
+  while (!st.empty()) {
+    cur = st.top();
+    st.pop();
+    if (visited[cur]) continue;
+    visited[cur] = true;
+    cout << cur << " ";
+    for (int to : ranges::views::reverse(edges[cur])) {
+      if (visited[to]) continue;
+      st.push(to);
+    }
   }
+  cout << "\n";
 }
 
 void BFS(int cur) {
+  bool visited[1001] = {};
   queue<int> q;
   visited[cur] = true;
   q.push(cur);
@@ -28,6 +37,7 @@ void BFS(int cur) {
       q.push(to);
     }
   }
+  cout << "\n";
 }
 
 int main() {
@@ -48,8 +58,6 @@ int main() {
   }
 
   DFS(v);
-  cout << "\n";
-  memset(visited, 0, sizeof(visited));
   BFS(v);
 
   return 0;
