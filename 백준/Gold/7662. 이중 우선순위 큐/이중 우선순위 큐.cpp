@@ -2,6 +2,32 @@
 
 using namespace std;
 
+struct DualPQ {
+  void Push(int v) {
+    ++mp[v];
+  }
+
+  void PopMax() {
+    if (mp.empty()) return;
+    if (--mp.rbegin()->second == 0) mp.erase(--mp.end());
+  }
+
+  void PopMin() {
+    if (mp.empty()) return;
+    if (--mp.begin()->second == 0) mp.erase(mp.begin());
+  }
+
+  void Print() {
+    if (mp.empty()) {
+      cout << "EMPTY\n";
+    } else {
+      cout << mp.rbegin()->first << " " << mp.begin()->first << "\n";
+    }
+  }
+
+  map<int, int> mp;
+};
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -9,10 +35,7 @@ int main() {
   int t;
   cin >> t;
   while (t--) {
-    int len = 0;
-    map<int, int> mp;
-    priority_queue<int> maxq;
-    priority_queue<int, vector<int>, greater<>> minq;
+    DualPQ dpq;
 
     int n;
     cin >> n;
@@ -21,40 +44,16 @@ int main() {
       int v;
       cin >> c >> v;
       if (c == 'I') {
-        ++len;
-        ++mp[v];
-        maxq.push(v);
-        minq.push(v);
+        dpq.Push(v);
       } else {
-        if (len == 0) continue;
-        --len;
         if (v == 1) {
-          for (;;) {
-            int vv = maxq.top();
-            maxq.pop();
-            if (mp.contains(vv)) {
-              if (--mp[vv] == 0) mp.erase(vv);
-              break;
-            }
-          }
+          dpq.PopMax();
         } else {
-          for (;;) {
-            int vv = minq.top();
-            minq.pop();
-            if (mp.contains(vv)) {
-              if (--mp[vv] == 0) mp.erase(vv);
-              break;
-            }
-          }
+          dpq.PopMin();
         }
       }
     }
-
-    if (len == 0) {
-      cout << "EMPTY\n";
-    } else {
-      cout << (--mp.end())->first << " " << mp.begin()->first << "\n";
-    }
+    dpq.Print();
   }
 
   return 0;
