@@ -4,7 +4,7 @@ using namespace std;
 
 struct FenwickTree {
   void Init(int n) {
-    tree.clear(), tree.resize(n);
+    tree.clear(), tree.resize(n + 1);
   }
 
   // Inverse element required
