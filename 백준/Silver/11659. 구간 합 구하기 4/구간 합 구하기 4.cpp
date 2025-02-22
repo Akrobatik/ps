@@ -6,16 +6,14 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
+  int arr[100001];
   int psum[100001];
-  psum[0] = 0;
 
   int n, m;
   cin >> n >> m;
-  for (int i = 1; i <= n; i++) {
-    int v;
-    cin >> v;
-    psum[i] = psum[i - 1] + v;
-  }
+  for (int i = 1; i <= n; i++) cin >> arr[i];
+  int sum = 0;
+  for (int i = 1; i <= n; i++) psum[i] = (sum += arr[i]);
 
   while (m--) {
     int i, j;
