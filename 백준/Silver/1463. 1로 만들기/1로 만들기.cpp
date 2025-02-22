@@ -2,7 +2,7 @@
 
 using namespace std;
 
-bool memo[1000001];
+int memo[1000001];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -10,28 +10,13 @@ int main() {
 
   int n;
   cin >> n;
-  vector<int> vec;
-  memo[1] = true;
-  vec.push_back(1);
-  int i = 0;
-  for (; !memo[n]; i++) {
-    vector<int> nxt;
-    nxt.reserve(vec.size() * 3);
-    for (int v : vec) {
-      int arr[] = {
-          v + 1,
-          v * 2,
-          v * 3};
-      for (int e : arr) {
-        if (e > 1000000 || memo[e]) continue;
-        memo[e] = true;
-        nxt.push_back(e);
-      }
-    }
-    vec.swap(nxt);
+  for (int i = 2; i <= n; i++) {
+    memo[i] = memo[i - 1] + 1;
+    auto d2 = div(i, 2), d3 = div(i, 3);
+    if (!d2.rem && memo[i] > memo[d2.quot] + 1) memo[i] = memo[d2.quot] + 1;
+    if (!d3.rem && memo[i] > memo[d3.quot] + 1) memo[i] = memo[d3.quot] + 1;
   }
-
-  cout << i;
+  cout << memo[n];
 
   return 0;
 }
