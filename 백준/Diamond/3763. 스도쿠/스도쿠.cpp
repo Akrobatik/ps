@@ -3,119 +3,116 @@
 using namespace std;
 
 struct DLX {
-  struct Node {
-    int id;
-    int size;
-    Node *head, *up, *down, *left, *right;
-  };
+  void Init(int cols, vector<pair<int, vector<int>>>& covers) {
+    int total = cols + 1;
+    for (auto& e : covers) total += e.second.size();
 
-  DLX() : root(new Node()) {}
-  ~DLX() { delete root; }
+    id.clear(), id.resize(total);
+    size.clear(), size.resize(cols + 1);
+    head.clear(), head.resize(total);
+    up.clear(), up.resize(total);
+    down.clear(), down.resize(total);
+    left.clear(), left.resize(total);
+    right.clear(), right.resize(total);
 
-  void Init(int rows, int cols) {
-    column_nodes.clear(), column_nodes.resize(cols);
-    cover_nodes.clear(), cover_nodes.resize(rows);
-    solution.clear();
+    // Root
+    left[0] = cols;
+    right[0] = 1;
 
-    root->right = &column_nodes.front();
-    root->left = &column_nodes.back();
-    for (int i = 0; i < cols; i++) {
-      column_nodes[i].id = i;
-      column_nodes[i].size = 0;
-      column_nodes[i].head = &column_nodes[i];
-      column_nodes[i].up = column_nodes[i].down = &column_nodes[i];
+    // Columns
+    int l = 0, r = 2;
+    for (int i = 1; i <= cols; i++) {
+      id[i] = l;
+      size[i] = 0;
+      head[i] = up[i] = down[i] = i;
+      left[i] = l++;
+      right[i] = r++;
+    }
+    right[cols] = 0;
 
-      column_nodes[i].left = i == 0 ? root : &column_nodes[i - 1];
-      column_nodes[i].right = i == cols - 1 ? root : &column_nodes[i + 1];
+    // Covers
+    int cur = cols + 1;
+    for (auto& [rid, cids] : covers) {
+      int nc = cids.size();
+      if (!nc) continue;
+      for (int _cid : cids) {
+        int cid = _cid + 1;
+        if (down[cid] == cid) down[cid] = cur;
+        ++size[cid];
+        id[cur] = rid;
+        down[up[cid]] = cur;
+        up[cur] = up[cid];
+        up[cid] = cur;
+        head[cur] = down[cur] = cid;
+        left[cur] = cur - 1;
+        right[cur] = cur + 1;
+        ++cur;
+      }
+      left[cur - nc] += nc;
+      right[cur - 1] -= nc;
     }
   }
 
-  void AddRows(int row_id, span<int> column_ids) {
-    int size = column_ids.size();
-    if (!size) return;
-
-    auto& row_nodes = cover_nodes[row_id];
-    row_nodes.reserve(size);
-    for (int column_id : column_ids) {
-      Node* column_node = &column_nodes[column_id];
-      Node* node = &row_nodes.emplace_back();
-      if (column_node->down == column_node) column_node->down = node;
-      ++column_node->size;
-      node->id = row_id;
-      column_node->up->down = node;
-      node->up = column_node->up;
-      column_node->up = node;
-      node->head = node->down = column_node;
-    }
-
-    for (int i = 0; i < size; i++) {
-      int l = (i + size - 1) % size;
-      int r = (i + 1) % size;
-      row_nodes[i].left = &row_nodes[l];
-      row_nodes[i].right = &row_nodes[r];
-    }
-  }
-
-  void CoverColumn(Node* column) {
-    column->left->right = column->right;
-    column->right->left = column->left;
-    for (Node* row = column->down; row != column; row = row->down) {
-      for (Node* node = row->right; node != row; node = node->right) {
-        node->up->down = node->down;
-        node->down->up = node->up;
-        --node->head->size;
+  void CoverColumn(int col) {
+    right[left[col]] = right[col];
+    left[right[col]] = left[col];
+    for (int row = down[col]; row != col; row = down[row]) {
+      for (int node = right[row]; node != row; node = right[node]) {
+        down[up[node]] = down[node];
+        up[down[node]] = up[node];
+        --size[head[node]];
       }
     }
   }
 
-  void UncoverColumn(Node* column) {
-    for (Node* row = column->up; row != column; row = row->up) {
-      for (Node* node = row->left; node != row; node = node->left) {
-        ++node->head->size;
-        node->up->down = node;
-        node->down->up = node;
+  void UncoverColumn(int col) {
+    for (int row = up[col]; row != col; row = up[row]) {
+      for (int node = left[row]; node != row; node = left[node]) {
+        ++size[head[node]];
+        down[up[node]] = node;
+        up[down[node]] = node;
       }
     }
-    column->left->right = column;
-    column->right->left = column;
+    right[left[col]] = col;
+    left[right[col]] = col;
   }
 
-  Node* FindMinColumn() {
-    Node* min_node = root->right;
-    int minn = min_node->size;
-    for (Node* node = min_node->right; node != root; node = node->right) {
-      if (minn > node->size) min_node = node, minn = node->size;
+  int FindMinColumn() {
+    int min_col = right[0];
+    int minn = size[min_col];
+    for (int col = right[min_col]; col; col = right[col]) {
+      if (minn > size[col]) min_col = col, minn = size[col];
     }
-    return min_node;
+    return min_col;
   }
 
   bool Search() {
-    for (auto& node : column_nodes) {
-      if (node.size) continue;
-      node.left->right = node.right;
-      node.right->left = node.left;
+    int cols = size.size() - 1;
+    for (int i = 1; i <= cols; i++) {
+      if (size[i]) continue;
+      right[left[i]] = right[i];
+      left[right[i]] = left[i];
     }
     return _Search();
   }
 
   bool _Search() {
-    if (root->right == root) return true;
-    Node* min_node = FindMinColumn();
-    CoverColumn(min_node);
-    for (Node* row = min_node->down; row != min_node; row = row->down) {
-      solution.push_back(row->id);
-      for (Node* node = row->right; node != row; node = node->right) CoverColumn(node->head);
+    if (!right[0]) return true;
+    int col = FindMinColumn();
+    CoverColumn(col);
+    for (int row = down[col]; row != col; row = down[row]) {
+      solution.push_back(id[row]);
+      for (int node = right[row]; node != row; node = right[node]) CoverColumn(head[node]);
       if (_Search()) return true;
-      for (Node* node = row->left; node != row; node = node->left) UncoverColumn(node->head);
+      for (int node = left[row]; node != row; node = left[node]) UncoverColumn(head[node]);
       solution.pop_back();
     }
-    UncoverColumn(min_node);
+    UncoverColumn(col);
     return false;
   }
 
-  Node* root;
-  vector<Node> column_nodes;
-  vector<vector<Node>> cover_nodes;
+  vector<int> id, size;
+  vector<int> head, up, down, left, right;
   vector<int> solution;
 };
 
@@ -129,8 +126,6 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  DLX dlx;
-  dlx.Init(kRows, kCols);
   int board[kSize][kSize];
   int sub_masks[kSize] = {};
   int row_masks[kSize] = {};
@@ -158,16 +153,20 @@ int main() {
            ((col_masks[x] & m) == 0);
   };
 
+  vector<pair<int, vector<int>>> covers;
+  covers.reserve(kRows);
+
   int y = 0, x = 0, v = 0;
   for (int i = 0; i < kRows; i++) {
     int s = y - y % kSqrt + x / kSqrt;
     if (check(s, y, x, v)) {
-      int ids[] = {
-          y * kSize + x,
-          s * kSize + v + kSqr,
-          y * kSize + v + kSqr * 2,
-          x * kSize + v + kSqr * 3};
-      dlx.AddRows(i, ids);
+      auto& [rid, cids] = covers.emplace_back();
+      rid = i;
+      cids.resize(4);
+      cids[0] = y * kSize + x;
+      cids[1] = s * kSize + v + kSqr;
+      cids[2] = y * kSize + v + kSqr * 2;
+      cids[3] = x * kSize + v + kSqr * 3;
     }
 
     if (++v == kSize) {
@@ -179,6 +178,8 @@ int main() {
     }
   }
 
+  DLX dlx;
+  dlx.Init(kCols, covers);
   dlx.Search();
 
   for (auto id : dlx.solution) {
