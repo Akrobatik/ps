@@ -14,13 +14,10 @@ int Traverse(int b, int e) {
   auto& v = memo[b][e];
   if (v != -1) return v;
 
-  v = (Traverse(b + 1, e) + Traverse(b, e - 1)) % kMod;
-  if (s[b] == s[e]) {
-    if (++v == kMod) v = 0;
-  } else {
-    v = (v - Traverse(b + 1, e - 1) + kMod) % kMod;
-  }
-  return v;
+  v = Traverse(b + 1, e) + Traverse(b, e - 1);
+  v += kMod - Traverse(b + 1, e - 1);
+  if (s[b] == s[e]) v += Traverse(b + 1, e - 1) + 1;
+  return v %= kMod;
 }
 
 int main() {
