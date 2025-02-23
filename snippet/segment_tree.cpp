@@ -28,11 +28,6 @@ struct SegmentTree {
     return tree[idx + nmax];
   }
 
-  static int GetMaxN(int n) {
-    if (has_single_bit((uint32_t)n)) return n;
-    return 1 << (32 - countl_zero((uint32_t)n));
-  }
-
   int nmax;
   vector<int> tree;
 };
