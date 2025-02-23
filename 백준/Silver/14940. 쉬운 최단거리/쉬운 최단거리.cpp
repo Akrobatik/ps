@@ -12,6 +12,9 @@ short memo[1000][1000];
 bool visited[1000][1000];
 
 int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
   int n, m;
   cin >> n >> m;
   for (int i = 0; i < n; i++) {
