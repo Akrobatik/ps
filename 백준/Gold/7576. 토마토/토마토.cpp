@@ -8,28 +8,26 @@ constexpr pair<int, int> kDelta[] = {
     {0, -1},
     {0, 1}};
 
-bool memo[1000][1000];
+short memo[1000][1000];
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
+  queue<int> q;
   int n, m;
   cin >> m >> n;
-  int rem = 0;
-  queue<pair<int, int>> q;
   for (int y = 0; y < n; y++) {
     for (int x = 0; x < m; x++) {
-      int v;
-      cin >> v;
-      if (v == 1) {
-        memo[y][x] = true;
-        q.push({y, x});
-      } else if (v == 0) {
-        ++rem;
-      } else {
-        memo[y][x] = true;
-      }
+      cin >> memo[y][x];
+      if (memo[y][x] == 1) q.push((y << 16) | x);
+    }
+  }
+
+  int rem = 0;
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < m; x++) {
+      rem += memo[y][x] == 0;
     }
   }
 
@@ -37,25 +35,22 @@ int main() {
   for (i = 0; rem && !q.empty(); i++) {
     int nq = q.size();
     while (nq--) {
-      auto [y, x] = q.front();
+      auto yx = q.front();
       q.pop();
 
+      int y = yx >> 16, x = yx & 0xFFFF;
       for (auto [dy, dx] : kDelta) {
         int yy = y + dy, xx = x + dx;
         if (0 <= yy & yy < n && 0 <= xx && xx < m && !memo[yy][xx]) {
           --rem;
           memo[yy][xx] = true;
-          q.push({yy, xx});
+          q.push((yy << 16) | xx);
         }
       }
     }
   }
 
-  if (rem) {
-    cout << "-1";
-  } else {
-    cout << i;
-  }
+  cout << (rem ? -1 : i);
 
   return 0;
 }
