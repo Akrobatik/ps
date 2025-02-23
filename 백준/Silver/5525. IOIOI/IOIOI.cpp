@@ -8,21 +8,19 @@ int main() {
 
   int n, m;
   cin >> n >> m;
-  string s, token;
+  string s;
   cin >> s;
-  token.resize(n * 2 + 1);
-  token[0] = 'I';
-  for (int i = 0; i < n; i++) {
-    token[i * 2 + 1] = 'O';
-    token[i * 2 + 2] = 'I';
+  int ans = 0;
+  int b = 0;
+  while ((b = s.find_first_of('I', b)) != string::npos) {
+    int cnt = 0;
+    for (++b; b < m - 1; b += 2) {
+      if (s[b] != 'O' || s[b + 1] != 'I') break;
+      ++cnt;
+    }
+    if (cnt >= n) ans += cnt - n + 1;
   }
-
-  int cnt = 0, b = 0;
-  while ((b = s.find(token, b)) != string::npos) {
-    ++cnt;
-    b += 2;
-  }
-  cout << cnt;
+  cout << ans;
 
   return 0;
 }
