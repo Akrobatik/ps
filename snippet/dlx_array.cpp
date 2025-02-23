@@ -53,6 +53,13 @@ struct DLX {
       left[cur - n] += n;
       right[cur - 1] -= n;
     }
+    
+    // Cover childless columns
+    for (int i = 1; i <= cols; i++) {
+      if (size[i]) continue;
+      right[left[i]] = right[i];
+      left[right[i]] = left[i];
+    }
   }
 
   void CoverColumn(int col) {
@@ -89,23 +96,13 @@ struct DLX {
   }
 
   bool Search() {
-    int cols = size.size() - 1;
-    for (int i = 1; i <= cols; i++) {
-      if (size[i]) continue;
-      right[left[i]] = right[i];
-      left[right[i]] = left[i];
-    }
-    return _Search();
-  }
-
-  bool _Search() {
     if (!right[0]) return true;
     int col = FindMinColumn();
     CoverColumn(col);
     for (int row = down[col]; row != col; row = down[row]) {
       solution.push_back(id[row]);
       for (int node = right[row]; node != row; node = right[node]) CoverColumn(head[node]);
-      if (_Search()) return true;
+      if (Search()) return true;
       for (int node = left[row]; node != row; node = left[node]) UncoverColumn(head[node]);
       solution.pop_back();
     }
