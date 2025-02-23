@@ -8,52 +8,60 @@ constexpr pair<int, int> kDelta[] = {
     {0, -1},
     {0, 1}};
 
-using tup = tuple<int, int, int>;
-
-int memo[1000][1000];
+short memo[1000][1000];
 bool visited[1000][1000];
 
 int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
   int n, m;
   cin >> n >> m;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      char c;
+      cin >> c;
+      memo[i][j] = c;
+    }
+  }
+
   int cy, cx;
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < m; j++) {
-      int v;
-      cin >> v;
-      if (v == 0) {
-        visited[i][j] = true;
-      } else {
-        memo[i][j] = INT_MAX;
-        if (v == 2) cy = i, cx = j;
-      }
+      if (memo[i][j] ^ '2') continue;
+      cy = i, cx = j;
+      break;
     }
   }
 
-  priority_queue<tup, vector<tup>, greater<>> pq;
-  pq.push({0, cy, cx});
-  while (!pq.empty()) {
-    auto [d, y, x] = pq.top();
-    pq.pop();
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      visited[i][j] = memo[i][j] == '0';
+      memo[i][j] = visited[i][j] - 1;
+    }
+  }
 
-    if (visited[y][x]) continue;
-    visited[y][x] = true;
-    memo[y][x] = d;
+  queue<int> q;
+  visited[cy][cx] = true;
+  q.push((cy << 16) | cx);
+  for (int i = 0; !q.empty(); i++) {
+    int nq = q.size();
+    while (nq--) {
+      auto yx = q.front();
+      q.pop();
 
-    for (auto [dy, dx] : kDelta) {
-      int yy = y + dy, xx = x + dx;
-      if (0 <= yy && yy < n && 0 <= xx && xx < m && !visited[yy][xx] && memo[yy][xx] > d + 1) {
-        pq.push({d + 1, yy, xx});
+      int y = yx >> 16, x = yx & 0xFFFF;
+      memo[y][x] = i;
+      for (auto [dy, dx] : kDelta) {
+        int yy = y + dy, xx = x + dx;
+        if (0 <= yy && yy < n && 0 <= xx && xx < m && !visited[yy][xx]) {
+          visited[yy][xx] = true;
+          q.push((yy << 16) | xx);
+        }
       }
     }
   }
 
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < m; j++) {
-      cout << (memo[i][j] != INT_MAX ? memo[i][j] : -1) << " ";
+      cout << memo[i][j] << " ";
     }
     cout << "\n";
   }
