@@ -47,19 +47,21 @@ int main() {
   cin >> s;
   int n = s.size();
   tree.Init(n);
-  for (int i = 0; i < n; i++) tree.Update(i, 1);
 
-  for (int i = 1; i < n; i++) {
-    for (int j = 0; j < i; j++) {
-      if (s[i] == s[j]) {
-        int delta = 1;
-        if (j + 1 != i) {
-          delta += tree.Query(j + 1, i - 1);
-          if (delta == kMod) delta = 0;
-        }
-        tree.Update(j, delta);
+  vector<int> memo[26];
+
+  for (int i = 0; i < n; i++) {
+    tree.Update(i, 1);
+    int v = s[i] - 'a';
+    for (auto j : memo[v]) {
+      int delta = 1;
+      if (j + 1 != i) {
+        delta += tree.Query(j + 1, i - 1);
+        if (delta == kMod) delta = 0;
       }
+      tree.Update(j, delta);
     }
+    memo[v].push_back(i);
   }
 
   cout << tree.tree[1];
