@@ -5,7 +5,7 @@ using namespace std;
 struct SegmentTree {
   void Init(int n) {
     nmax = has_single_bit((uint32_t)n) ? n : (1 << (32 - countl_zero((uint32_t)n)));
-    tree.clear(), tree.resize(nmax);
+    tree.clear(), tree.resize(nmax << 1);
   }
 
   void Update(int idx, int value) {
