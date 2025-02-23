@@ -2,30 +2,41 @@
 
 using namespace std;
 
+template <typename Pred>
+struct PQ {
+  void Push(int v) { pq.push(v); }
+  void Erase(int v) { eq.push(v); }
+  bool Pop(int& out) {
+    while (!pq.empty() && !eq.empty() && pq.top() == eq.top()) pq.pop(), eq.pop();
+    if (pq.empty()) return false;
+    out = pq.top();
+    pq.pop();
+    return true;
+  }
+
+  priority_queue<int, vector<int>, Pred> pq, eq;
+};
+
 struct DualPQ {
   void Push(int v) {
-    ++mp[v];
+    maxq.Push(v);
+    minq.Push(v);
   }
 
-  void PopMax() {
-    if (mp.empty()) return;
-    if (--mp.rbegin()->second == 0) mp.erase(--mp.end());
+  bool PopMax(int& out) {
+    if (!maxq.Pop(out)) return false;
+    minq.Erase(out);
+    return true;
   }
 
-  void PopMin() {
-    if (mp.empty()) return;
-    if (--mp.begin()->second == 0) mp.erase(mp.begin());
+  bool PopMin(int& out) {
+    if (!minq.Pop(out)) return false;
+    maxq.Erase(out);
+    return true;
   }
 
-  void Print() {
-    if (mp.empty()) {
-      cout << "EMPTY\n";
-    } else {
-      cout << mp.rbegin()->first << " " << mp.begin()->first << "\n";
-    }
-  }
-
-  map<int, int> mp;
+  PQ<less<int>> maxq;
+  PQ<greater<int>> minq;
 };
 
 int main() {
@@ -36,24 +47,29 @@ int main() {
   cin >> t;
   while (t--) {
     DualPQ dpq;
-
     int n;
     cin >> n;
     while (n--) {
-      char c;
+      char op;
       int v;
-      cin >> c >> v;
-      if (c == 'I') {
+      cin >> op >> v;
+      if (op == 'I') {
         dpq.Push(v);
       } else {
         if (v == 1) {
-          dpq.PopMax();
+          dpq.PopMax(v);
         } else {
-          dpq.PopMin();
+          dpq.PopMin(v);
         }
       }
     }
-    dpq.Print();
+    int maxx, minn;
+    if (!dpq.PopMax(maxx)) {
+      cout << "EMPTY\n";
+    } else {
+      if (!dpq.PopMin(minn)) minn = maxx;
+      cout << maxx << " " << minn << "\n";
+    }
   }
 
   return 0;
