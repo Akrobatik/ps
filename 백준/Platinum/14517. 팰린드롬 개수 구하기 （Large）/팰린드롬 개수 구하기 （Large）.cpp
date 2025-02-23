@@ -10,20 +10,24 @@ int memo[1000][1000];
 int Traverse(int b, int e) {
   if (b > e) return 0;
   if (b == e) return 1;
-  if (memo[b][e]) return memo[b][e];
 
-  memo[b][e] = (Traverse(b + 1, e) + Traverse(b, e - 1)) % kMod;
+  auto& v = memo[b][e];
+  if (v != -1) return v;
+
+  v = (Traverse(b + 1, e) + Traverse(b, e - 1)) % kMod;
   if (s[b] == s[e]) {
-    if (++memo[b][e] == kMod) memo[b][e] = 0;
+    if (++v == kMod) v = 0;
   } else {
-    memo[b][e] = (memo[b][e] - Traverse(b + 1, e - 1) + kMod) % kMod;
+    v = (v - Traverse(b + 1, e - 1) + kMod) % kMod;
   }
-  return memo[b][e];
+  return v;
 }
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
+
+  memset(memo, -1, sizeof(memo));
 
   cin >> s;
   cout << Traverse(0, s.size() - 1);
