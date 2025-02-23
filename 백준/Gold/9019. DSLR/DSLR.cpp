@@ -2,34 +2,40 @@
 
 using namespace std;
 
-int D(int n) {
-  return (n << 1) % 10000;
+constexpr int D(int n) {
+  return n * 2 % 10000;
 }
 
-int S(int n) {
+constexpr int S(int n) {
   return n ? n - 1 : 9999;
 }
 
-int L(int n) {
+constexpr int L(int n) {
   return (n % 1000 / 100) * 1000  //
          + (n % 100 / 10) * 100   //
          + (n % 10) * 10          //
          + (n / 1000);
 }
 
-int R(int n) {
+constexpr int R(int n) {
   return (n % 10) * 1000          //
          + (n / 1000) * 100       //
          + (n % 1000 / 100) * 10  //
          + (n % 100 / 10);
 }
 
-const pair<char, int (*)(int)> kOps[] = {
-    {'D', D},
-    {'S', S},
-    {'L', L},
-    {'R', R},
-};
+constexpr array<int[4], 10000> kTable = []() {
+  array<int[4], 10000> arr{};
+  for (int i = 0; i < 10000; i++) {
+    arr[i][0] = D(i);
+    arr[i][1] = S(i);
+    arr[i][2] = L(i);
+    arr[i][3] = R(i);
+  }
+  return arr;
+}();
+
+constexpr const char* kOps = "DSLR";
 
 int main() {
   ios::sync_with_stdio(false);
@@ -52,12 +58,11 @@ int main() {
     while (!visited[b]) {
       auto cur = q.front();
       q.pop();
-
-      for (auto [op, fn] : kOps) {
-        int nxt = fn(cur);
+      for (int i = 0; i < 4; i++) {
+        auto nxt = kTable[cur][i];
         if (visited[nxt]) continue;
         visited[nxt] = true;
-        ops[nxt] = op;
+        ops[nxt] = kOps[i];
         memo[nxt] = cur;
         q.push(nxt);
       }
