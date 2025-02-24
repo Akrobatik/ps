@@ -2,6 +2,7 @@
 
 using namespace std;
 
+int maxt[10001];
 int memo[10001];
 vector<pair<int, int>> edges[10001], r_edges[10001];
 
@@ -16,39 +17,41 @@ int main() {
     cin >> u >> v >> w;
     edges[u].push_back({v, w});
     r_edges[v].push_back({u, w});
+    ++memo[v];
   }
   int src, dst;
   cin >> src >> dst;
 
-  queue<pair<int, int>> q;
-  q.push({src, 0});
+  queue<int> q;
+  q.push(src);
   while (!q.empty()) {
-    auto [cur, sum] = q.front();
+    auto cur = q.front();
     q.pop();
 
     for (auto [nxt, w] : edges[cur]) {
-      if (memo[nxt] >= sum + w) continue;
-      memo[nxt] = sum + w;
-      q.push({nxt, sum + w});
+      if (maxt[nxt] < maxt[cur] + w) maxt[nxt] = maxt[cur] + w;
+      if (--memo[nxt] == 0) {
+        q.push(nxt);
+      }
     }
   }
 
   int cnt = 0;
-  q.push({dst, memo[dst]});
+  q.push(dst);
   while (!q.empty()) {
-    auto [cur, sum] = q.front();
+    auto cur = q.front();
     q.pop();
 
     for (auto& [prv, w] : r_edges[cur]) {
-      if (sum == memo[prv] + w) {
+      if (maxt[cur] == maxt[prv] + w) {
         ++cnt;
-        q.push({prv, sum - w});
+        q.push(prv);
         w = 0;
       }
     }
   }
 
-  cout << memo[dst] << "\n"
+  cout << maxt[dst] << "\n"
        << cnt;
 
   return 0;
