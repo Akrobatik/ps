@@ -4,17 +4,19 @@ using namespace std;
 
 int n, s;
 int memo[49];
+bool visited[49][1001];
 
 bool Traverse(int sum, int rem, int maxx) {
   if (sum > s) return false;
   if (rem == 0) return sum == s;
   if (rem > sum + memo[rem]) return false;
+  if (visited[rem][sum]) return false;
+  visited[rem][sum] = true;
 
   maxx = min<int>(maxx, rem);
   for (int i = 1; i <= maxx; i++) {
     if (Traverse(sum + memo[i], rem - i, i)) return true;
   }
-
   return false;
 }
 
