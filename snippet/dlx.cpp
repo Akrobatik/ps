@@ -98,6 +98,12 @@ struct DLX {
     return _Search();
   }
 
+  Node* root;
+  vector<Node> column_nodes;
+  vector<vector<Node>> cover_nodes;
+  vector<int> solution;
+
+ private:
   bool _Search() {
     if (root->right == root) return true;
     Node* min_node = FindMinColumn();
@@ -112,9 +118,4 @@ struct DLX {
     UncoverColumn(min_node);
     return false;
   }
-
-  Node* root;
-  vector<Node> column_nodes;
-  vector<vector<Node>> cover_nodes;
-  vector<int> solution;
 };

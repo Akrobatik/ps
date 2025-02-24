@@ -24,10 +24,6 @@ struct SegmentTree {
     return res;
   }
 
-  int GetValue(int idx) {
-    return tree[idx + nmax];
-  }
-
   int nmax;
   vector<int> tree;
 };
