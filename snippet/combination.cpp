@@ -17,11 +17,13 @@ struct Combination {
   }
 
   static constexpr int64_t Power(int64_t n, int exp) {
-    if (exp == 1) return n;
-    int64_t nn = Power(n, exp >> 1);
-    nn = (nn * nn) % MOD;
-    if (exp & 1) nn = (nn * n) % MOD;
-    return nn;
+    int64_t res = 1;
+    while (exp) {
+      if (exp & 1) res = (res * n) % MOD;
+      n = (n * n) % MOD;
+      exp >>= 1;
+    }
+    return res;
   }
 
   int64_t fact[MAXN + 1], inv[MAXN + 1];
