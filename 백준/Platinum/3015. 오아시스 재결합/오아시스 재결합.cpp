@@ -16,7 +16,7 @@ int main() {
     cin >> now;
     auto it = lower_bound(stk.begin(), stk.end(), now, greater<>());
     sum += (stk.end() - it) + (it != stk.begin());
-    while (!stk.empty() && stk.back() < now) stk.pop_back();
+    stk.resize(upper_bound(it, stk.end(), now, greater<>()) - stk.begin());
     stk.push_back(now);
   }
   cout << sum;
