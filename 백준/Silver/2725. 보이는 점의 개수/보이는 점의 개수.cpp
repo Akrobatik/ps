@@ -2,22 +2,35 @@
 
 using namespace std;
 
-int memo[1001];
-
-int GCD(int a, int b) {
-  while (b) a %= b, swap(a, b);
-  return a;
-}
+constexpr array<int, 168> kPrimes = []() {
+  array<int, 168> arr{};
+  auto ptr = arr.data();
+  bool memo[1001] = {};
+  for (int i = 2; i <= 1000; i++) {
+    if (memo[i]) continue;
+    *ptr++ = i;
+    for (int j = i << 1; j <= 1000; j += i) memo[j] = true;
+  }
+  return arr;
+}();
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
+  int memo[1001] = {};
   memo[1] = 3;
   for (int i = 2; i <= 1000; i++) {
-    int cnt = 0;
-    for (int j = 1; j < i; j++) cnt += GCD(i, j) == 1;
-    memo[i] = memo[i - 1] + (cnt << 1);
+    int n = i, sum = i;
+    for (int j = 0; n != 1; j++) {
+      if (n % kPrimes[j] == 0) {
+        sum -= sum / kPrimes[j];
+        do {
+           n /= kPrimes[j];
+        } while(n % kPrimes[j] == 0);
+      }
+    }
+    memo[i] = memo[i - 1] + (sum << 1);
   }
 
   int t;
