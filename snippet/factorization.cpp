@@ -2,6 +2,11 @@
 
 using namespace std;
 
+// Miller-Rabin
+// https://cp-algorithms.com/algebra/primality_tests.html
+// Pollard Rho
+// https://cp-algorithms.com/algebra/factorization.html
+
 struct Factorization {
   Factorization() : cyr(kMaxCyrene + 1, true) {
     vector<int> primes;
