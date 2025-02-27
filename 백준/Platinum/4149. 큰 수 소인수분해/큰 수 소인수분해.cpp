@@ -42,7 +42,7 @@ struct Factorization {
     return vec;
   }
 
-  static constexpr int kMaxCyrene = 10000;
+  static constexpr int kMaxCyrene = 100000;
 
   vector<bool> cyr;
 
