@@ -3,7 +3,7 @@
 using namespace std;
 
 bool memo[1000001];
-int primes[1000000];
+int primes[78498];
 
 int main() {
   ios::sync_with_stdio(false);
