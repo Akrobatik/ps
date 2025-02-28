@@ -10,6 +10,7 @@ int main() {
   cin.tie(nullptr);
 
   auto pend = primes;
+  memo[0] = memo[1] = true;
   for (int64_t i = 2; i <= 1000000; i++) {
     if (memo[i]) continue;
     *pend++ = i;
@@ -23,18 +24,9 @@ int main() {
   while (t--) {
     int n;
     cin >> n;
-    int ans = 0;
-    auto b = primes, e = pend;
-    while (b < e) {
-      int sum = b[0] + e[-1];
-      if (sum == n) {
-        ++ans;
-        ++b;
-      } else if (sum > n) {
-        e = upper_bound(b, e, n - b[0]);
-      } else {
-        b = lower_bound(b, e, n - e[-1]);
-      }
+    int ans = 0, mid = n >> 1;
+    for (auto it = primes; it != pend && *it <= mid; ++it) {
+      ans += !memo[n - *it];
     }
     cout << ans << "\n";
   }
