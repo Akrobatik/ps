@@ -3,18 +3,18 @@
 using namespace std;
 
 bool memo[1000001];
+int primes[1000000];
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  vector<int> primes;
-  for (int i = 2; i <= 1000000; i++) {
-    if (!memo[i]) primes.push_back(i);
-    for (auto p : primes) {
-      if (i * p > 1000000) break;
-      memo[i * p] = true;
-      if (i % p == 0) break;
+  auto pend = primes;
+  for (int64_t i = 2; i <= 1000000; i++) {
+    if (memo[i]) continue;
+    *pend++ = i;
+    for (int64_t j = i * i; j <= 1000000ll; j += i) {
+      memo[j] = true;
     }
   }
 
@@ -24,9 +24,17 @@ int main() {
     int n;
     cin >> n;
     int ans = 0;
-    for (auto p : primes) {
-      if (p > (n >> 1)) break;
-      ans += binary_search(primes.begin(), primes.end(), n - p);
+    auto b = primes, e = pend;
+    while (b < e) {
+      int sum = b[0] + e[-1];
+      if (sum == n) {
+        ++ans;
+        ++b;
+      } else if (sum > n) {
+        e = upper_bound(b, e, n - b[0]);
+      } else {
+        b = lower_bound(b, e, n - e[-1]);
+      }
     }
     cout << ans << "\n";
   }
