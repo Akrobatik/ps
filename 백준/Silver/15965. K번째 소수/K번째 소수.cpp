@@ -10,7 +10,7 @@ int main() {
   cin.tie(nullptr);
 
   vector<int> primes;
-  for (int i = 2; i < kMax; i++) {
+  for (int i = 2; i <= kMax; i++) {
     if (!cyrene[i]) primes.push_back(i);
     for (auto p : primes) {
       if (i * p > kMax) break;
