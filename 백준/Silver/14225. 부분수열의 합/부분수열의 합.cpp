@@ -3,6 +3,7 @@
 using namespace std;
 
 bool memo[2000001];
+int arr[1 << 21];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -10,28 +11,17 @@ int main() {
 
   int n;
   cin >> n;
-  int arr[20];
-  for (int i = 0; i < n; i++) cin >> arr[i];
-  queue<int> q;
-  q.push(0);
   for (int i = 0; i < n; i++) {
-    int nq = q.size();
-    while (nq--) {
-      int x = q.front();
-      q.pop();
-      memo[x] = true;
-      q.push(x);
-      q.push(x + arr[i]);
+    int x;
+    cin >> x;
+    int s = 1 << i;
+    for (int j = 0; j < s; j++) {
+      memo[arr[s + j] = arr[j] + x] = true;
     }
-  }
-  while (!q.empty()) {
-    int x = q.front();
-    q.pop();
-    memo[x] = true;
   }
 
   int ans = 1;
-  while (memo[ans]) ++ans;
+  while (memo[ans]) ans++;
   cout << ans;
 
   return 0;
