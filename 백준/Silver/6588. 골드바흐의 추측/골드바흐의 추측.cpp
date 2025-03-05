@@ -23,7 +23,7 @@ int main() {
     bool found = false;
     for (auto p : primes) {
       if (p > n - p) break;
-      if (binary_search(primes.begin(), primes.end(), n - p)) {
+      if (!cyrene[n - p]) {
         found = true;
         cout << n << " = " << p << " + " << n - p << "\n";
         break;
