@@ -40,7 +40,7 @@ int main() {
 
   int maxx = 0;
   int zidx = lower_bound(coords, coords + n, 0) - coords;
-  for (int i = 0; i <= n; i++) {
+  for (int i = 0; i < n; i++) {
     memset(visited, 0, sizeof(visited));
     memset(memo, 0, sizeof(memo));
     maxx = max<int>(maxx, Calc(zidx, zidx, i));
