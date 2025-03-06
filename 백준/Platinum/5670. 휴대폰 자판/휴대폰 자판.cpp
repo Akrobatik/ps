@@ -2,12 +2,16 @@
 
 using namespace std;
 
+constexpr int kMax = 1e5 * 80;
+
 struct Node {
+  Node() : exist(false), cnt(0), nxt{} {}
+
   bool exist;
-  map<char, Node> nxt;
+  int cnt;
+  int nxt[26];
 };
 
-int idx;
 char s[100000][81];
 
 int main() {
@@ -15,33 +19,39 @@ int main() {
   cin.tie(nullptr);
 
   cout.precision(2);
+  vector<Node> nodes;
 
   int n;
   while (cin >> n) {
-    Node root;
+    nodes.clear(), nodes.emplace_back();
     for (int i = 0; i < n; i++) {
       cin >> s[i];
-      Node* node = &root;
+      Node* node = nodes.data();
       for (auto ptr = s[i]; *ptr; ++ptr) {
-        node = &node->nxt[*ptr];
+        int x = *ptr - 'a';
+        if (node->nxt[x] == 0) {
+          ++node->cnt;
+          node->nxt[x] = nodes.size();
+          node = &nodes.emplace_back();
+        } else {
+          node = nodes.data() + node->nxt[x];
+        }
       }
       node->exist = true;
     }
 
-    int sum = 0;
+    int sum = n;
+    auto root = nodes.data();
     for (int i = 0; i < n; i++) {
-      ++sum;
-      auto ptr = s[i];
-      Node* node = &root.nxt[*ptr++];
-      while (*ptr) {
-        sum += (node->nxt.size() != 1 || node->exist);
-        node = &node->nxt[*ptr++];
+      Node* node = root + root->nxt[s[i][0] - 'a'];
+      for (auto ptr = s[i] + 1; *ptr; ++ptr) {
+        sum += (node->cnt != 1 || node->exist);
+        int x = *ptr - 'a';
+        node = root + node->nxt[x];
       }
     }
-
-    int mid = (n + (n & 1)) >> 1;
     sum *= 100;
-    sum = sum / n + (sum % n >= mid);
+    sum = sum / n + (sum % n >= ((n + (n & 1))) >> 1);
     cout << fixed << (double)sum / 100.0 << "\n";
   }
 
