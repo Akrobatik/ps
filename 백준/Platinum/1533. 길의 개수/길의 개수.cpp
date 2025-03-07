@@ -14,9 +14,11 @@ struct Matrix {
     int n = m1.n;
     Matrix m(n);
     for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        for (int k = 0; k < n; k++) {
-          m[i][j] = (m[i][j] + m1[i][k] * m2[k][j]) % kMod;
+      auto mr = m[i];
+      for (int k = 0; k < n; k++) {
+        auto tmp = m1[i][k];
+        for (int j = 0; j < n; j++) {
+          mr[j] = (m[i][j] + tmp * m2[k][j]) % kMod;
         }
       }
     }
