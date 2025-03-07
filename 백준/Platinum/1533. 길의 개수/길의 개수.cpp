@@ -18,8 +18,13 @@ struct Matrix {
       for (int k = 0; k < n; k++) {
         auto tmp = m1[i][k];
         for (int j = 0; j < n; j++) {
-          mr[j] = (m[i][j] + tmp * m2[k][j]) % kMod;
+          mr[j] += tmp * m2[k][j];
         }
+      }
+    }
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        m[i][j] %= kMod;
       }
     }
     return m;
