@@ -9,7 +9,7 @@ int main() {
   string s;
   cin >> s;
   int n = s.size();
-  vector<int> memo(n, 0);
+  vector<int> memo(n, 0), psum(n + 2, 0);
 
   int rem = 0, cnt;
   for (int i = 1; i < n; i++) {
@@ -17,16 +17,17 @@ int main() {
     if (rem) x = min<int>(rem--, memo[++cnt]);
     while (i + x < n && s[i + x] == s[x]) ++x;
     if (rem < x - 1) rem = x - 1, cnt = 0;
+    ++psum[x + 1];
   }
   memo[0] = n;
+  ++psum[n + 1];
 
-  auto sorted = memo;
-  sort(sorted.begin(), sorted.end());
+  partial_sum(psum.begin() + 1, psum.end(), psum.begin() + 1);
+
   vector<pair<int, int>> ans;
   for (int i = n - 1; i >= 0; i--) {
     if (memo[i] + i == n) {
-      int cnt = sorted.end() - lower_bound(sorted.begin(), sorted.end(), memo[i]);
-      ans.push_back({n - i, cnt});
+      ans.push_back({n - i, n - psum[memo[i]]});
     }
   }
 
