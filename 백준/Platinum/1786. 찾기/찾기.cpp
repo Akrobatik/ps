@@ -1,67 +1,52 @@
-#pragma GCC optimize("O3")
-// #include <bits/stdc++.h>
-#include <stdio.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-char in[2000002];
-char out[7000000];
-auto bo = out + 7;
-auto eo = out + 8;
-int table[1000000];
-
-int readString(char*& out) {
-  static auto it = in;
-  while (*it < 32) ++it;
-  out = it;
-  while (*it >= 32) ++it;
-  return it - out;
-}
-
-void writeSize(int x) {
-  *bo-- = '\n';
-  if (x == 0) {
-    *bo-- = '0';
-  } else {
-    while (x) *bo-- = '0' + x % 10, x /= 10;
-  }
-  ++bo;
-}
-
-void writeIndex(int x) {
-  int n = 0;
-  char s[8];
-  while (x) s[n++] = '0' + x % 10, x /= 10;
-  while (n--) *eo++ = s[n];
-  *eo++ = ' ';
-}
-
-int main() {
-  fread(in, 1, sizeof(in), stdin);
-  char *t, *p;
-  int nt = readString(t), np = readString(p);
-
-  int idx = 0;
-  for (int i = 1; i < np; i++) {
-    while (idx && p[i] != p[idx]) idx = table[idx - 1];
-    if (p[i] == p[idx]) table[i] = ++idx;
-  }
-
-  int cnt = 0;
-  idx = 0;
-  for (int i = 0; i < nt; i++) {
-    while (idx && t[i] != p[idx]) idx = table[idx - 1];
-    if (t[i] == p[idx]) {
-      if (++idx == np) {
-        ++cnt;
-        writeIndex(i - np + 2);
-        idx = table[idx - 1];
-      }
+struct KMP {
+  void Init(string_view sv) {
+    int n = sv.size();
+    pat = string(sv.begin(), sv.end());
+    table.clear(), table.resize(n, 0);
+    int idx = 0;
+    for (int i = 1; i < n; i++) {
+      while (idx && sv[i] != sv[idx]) idx = table[idx - 1];
+      if (sv[i] == sv[idx]) table[i] = ++idx;
     }
   }
-  writeSize(cnt);
 
-  fwrite(bo, 1, eo - bo, stdout);
+  vector<int> Search(string_view sv) {
+    vector<int> res;
+    int n = sv.size(), np = table.size();
+    int idx = 0;
+    for (int i = 0; i < n; i++) {
+      while (idx && sv[i] != pat[idx]) idx = table[idx - 1];
+      if (sv[i] == pat[idx]) {
+        if (++idx == np) {
+          res.push_back(i - np + 1);
+          idx = table[idx - 1];
+        }
+      }
+    }
+    return res;
+  }
+
+  string pat;
+  vector<int> table;
+};
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  KMP kmp;
+
+  string s, p;
+  getline(cin, s);
+  getline(cin, p);
+  kmp.Init(p);
+  auto res = kmp.Search(s);
+  cout << res.size() << "\n";
+  for (auto i : res) cout << i + 1 << "\n";
 
   return 0;
 }
