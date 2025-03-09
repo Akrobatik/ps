@@ -14,6 +14,7 @@ struct ZAlgorithm {
       while (i + x < n && sv[i + x] == sv[x]) ++x;
       if (rem < x - 1) rem = x - 1, cnt = 0;
     }
+    z[0] = n;
   }
 
   vector<int> z;
