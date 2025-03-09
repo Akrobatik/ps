@@ -22,17 +22,18 @@ struct FenwickTree {
   vector<int> tree;
 };
 
+int memo[1000001];
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
   int n;
   cin >> n;
-  unordered_map<int, int> hm;
   for (int i = 1; i <= n; i++) {
     int x;
     cin >> x;
-    hm[x] = i;
+    memo[x] = i;
   }
 
   FenwickTree tree;
@@ -41,7 +42,7 @@ int main() {
   for (int i = 0; i < n; i++) {
     int x;
     cin >> x;
-    x = hm[x];
+    x = memo[x];
     cnt += i - tree.Query(x);
     tree.Update(x, 1);
   }
