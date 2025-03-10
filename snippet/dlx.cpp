@@ -83,7 +83,7 @@ struct DLX {
   Node* FindMinColumn() {
     Node* min_node = root->right;
     int minn = min_node->size;
-    for (Node* node = min_node->right; node != root; node = node->right) {
+    for (Node* node = min_node->right; minn != 1 && node != root; node = node->right) {
       if (minn > node->size) min_node = node, minn = node->size;
     }
     return min_node;
