@@ -3,7 +3,7 @@
 using namespace std;
 
 struct DLX {
-  void Init(int cols, vector<vector<int>>& covers) {
+  void Init(int cols, span<vector<int>> covers) {
     int total = cols + 1;
     for (auto& e : covers) total += e.size();
 
@@ -53,7 +53,7 @@ struct DLX {
       left[cur - n] += n;
       right[cur - 1] -= n;
     }
-    
+
     // Cover childless columns
     for (int i = 1; i <= cols; i++) {
       if (size[i]) continue;
@@ -89,7 +89,7 @@ struct DLX {
   int FindMinColumn() {
     int min_col = right[0];
     int minn = size[min_col];
-    for (int col = right[min_col]; col; col = right[col]) {
+    for (int col = right[min_col]; minn != 1 && col; col = right[col]) {
       if (minn > size[col]) min_col = col, minn = size[col];
     }
     return min_col;
