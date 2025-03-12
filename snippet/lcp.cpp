@@ -2,6 +2,8 @@
 
 using namespace std;
 
+// https://cp-algorithms.com/string/suffix-array.html
+
 struct LCP {
   void Init(string_view sv) {
     int n = sv.size();
@@ -11,7 +13,7 @@ struct LCP {
     auto Sort = [&]() {
       fill(cnts.begin(), cnts.end(), 0);
       for (auto e : p) ++cnts[e];
-      exclusive_scan(cnts.begin(), cnts.end(), cnts.begin(), 0);
+      partial_sum(cnts.begin(), cnts.end() - 1, cnts.begin() + 1);
       for (auto e : pn) sa[cnts[p[e]]++] = e;
     };
 
