@@ -5,20 +5,16 @@ using namespace std;
 constexpr int64_t kMod = 1e9 + 9;
 constexpr int64_t kBase = 31;
 
-constexpr array<int64_t, 100001> power = []() {
-  array<int64_t, 100001> table{};
-  table[0] = 1;
-  for (int i = 1; i <= 100000; i++) {
-    table[i] = (table[i - 1] * kBase) % kMod;
-  }
-  return table;
-}();
-
-int64_t h[100001];
+int64_t power[1000001], h[1000001];
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
+
+  power[0] = 1;
+  for (int i = 1; i <= 1000000; i++) {
+    power[i] = (power[i - 1] * kBase) % kMod;
+  }
 
   string s;
 
