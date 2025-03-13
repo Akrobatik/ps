@@ -34,16 +34,10 @@ struct LCP {
   };
 
  public:
-  LCP() : buf(nullptr) {}
-  ~LCP() {
-    if (buf) delete[] buf;
-  }
-
   void Init(const string_view sv) {
     int n = sv.size();
-    if (buf) delete[] buf;
-    buf = new int[n + 1];
-    sa = span<int>(buf + 1, n);
+    buf.resize(n + 1);
+    sa = span<int>(buf.data() + 1, n);
     lcp.resize(n);
     SAIS(span<const char>(sv.data(), n + 1));
     Kasai(sv);
@@ -71,7 +65,7 @@ struct LCP {
   template <typename T>
   void SAIS(span<const T> sv) {
     int n = sv.size();
-    memset(buf, 0, n * sizeof(int));
+    memset(buf.data(), 0, n * sizeof(int));
     Buckets bkts(sv);
     LTypes ltypes(sv);
     Sort(sv, ltypes, bkts);
@@ -85,7 +79,7 @@ struct LCP {
     for (int i = 1, j = 0; i < n; i++) {
       if (IsLMS(ltypes, i)) buf[sub[j++]] = -i;
     }
-    memset(buf + sub_len, 0, (n - sub_len) * sizeof(int));
+    memset(buf.data() + sub_len, 0, (n - sub_len) * sizeof(int));
     Sort(sv, ltypes, sub_len, bkts);
   }
 
@@ -125,7 +119,7 @@ struct LCP {
   template <typename T>
   bool Reduce(span<const T> sv, const LTypes& ltypes, const Buckets& bkts, int*& sub, int& sub_len) {
     int n = sv.size();
-    sub = buf + (n >> 1);
+    sub = buf.data() + (n >> 1);
     sub_len = n - (n >> 1);
 
     int rcnt = 0;
@@ -157,5 +151,5 @@ struct LCP {
   }
 
  private:
-  int* buf;
+  vector<int> buf;
 };
