@@ -2,49 +2,160 @@
 
 using namespace std;
 
-int arr[20000], lcp[20000];
-int heap[20000];
-auto hend = heap;
+struct LCP {
+ private:
+  struct Buckets : public vector<int> {
+    template <typename T>
+    Buckets(span<const T> sv) : vector<int>(*max_element(sv.begin(), sv.end()) + 1) {
+      for (auto e : sv) ++operator[](e);
+    }
 
-void MakeLCP(int n) {
-  vector<int> sa(n), p(n), pn(n), cnts(n);
+    vector<int> Incl() const {
+      vector<int> incl(size());
+      partial_sum(begin(), end(), incl.begin());
+      return incl;
+    }
 
-  auto Sort = [&]() {
-    fill(cnts.begin(), cnts.end(), 0);
-    for (auto e : p) ++cnts[e];
-    partial_sum(cnts.begin(), cnts.end(), cnts.begin());
-    for (auto e : views::reverse(pn)) sa[--cnts[p[e]]] = e;
+    vector<int> Excl() const {
+      vector<int> excl(size());
+      partial_sum(begin(), end() - 1, excl.begin() + 1);
+      return excl;
+    }
   };
 
-  // SA
-  for (int i = 0; i < n; i++) sa[i] = pn[i] = i, p[i] = arr[i];
-  Sort();
-  for (int k = 1; p[sa.back()] + 1 != n; k <<= 1) {
-    iota(pn.begin(), pn.begin() + k, n - k);
-    for (int i = 0, j = k; i < n; i++) {
-      if (sa[i] < k) continue;
-      pn[j++] = sa[i] - k;
+  struct LTypes : public vector<bool> {
+    template <typename T>
+    LTypes(span<const T> sv) : vector<bool>(sv.size()) {
+      int n = sv.size();
+      for (int i = n - 2; i >= 0; i--) {
+        operator[](i) = sv[i] > sv[i + 1] || (sv[i] == sv[i + 1] && operator[](i + 1));
+      }
     }
-    Sort();
-    int o1, o2;
-    o1 = sa[0], pn[o1] = 0;
-    for (int i = 1; i < n; i++) {
-      o2 = o1, o1 = sa[i];
-      pn[o1] = pn[o2];
-      if (o1 + k < n && o2 + k < n && p[o1] == p[o2] && p[o1 + k] == p[o2 + k]) continue;
-      ++pn[o1];
-    }
-    swap(p, pn);
+  };
+
+ public:
+  void Init(const int* sv, int n) {
+    buf.resize(n + 1);
+    sa = span<int>(buf.data() + 1, n);
+    lcp.resize(n);
+    SAIS(span<const int>(sv, n + 1));
+    Kasai(sv, n);
   }
 
-  // LCP
-  for (int i = 0, k = 0; i < n; i++, k && --k) {
-    if (p[i] == 0) continue;
-    int j = sa[p[i] - 1];
-    while (i + k < n && j + k < n && arr[i + k] == arr[j + k]) ++k;
-    lcp[p[i]] = k;
+  span<int> sa;
+  vector<int> lcp;
+
+ private:
+  void Kasai(const int* sv, int n) {
+    vector<int> ranks(n);
+    for (int i = 0; i < n; i++) ranks[sa[i]] = i + 1;
+    for (int i = 0, k = 0; i < n; i++, k && --k) {
+      if (ranks[i] == n) {
+        k = 0;
+        continue;
+      }
+      int j = sa[ranks[i]];
+      while (i + k < n && j + k < n && sv[i + k] == sv[j + k]) k++;
+      lcp[ranks[i]] = k;
+    }
   }
-}
+
+  template <typename T>
+  void SAIS(span<const T> sv) {
+    int n = sv.size();
+    memset(buf.data(), 0, n * sizeof(int));
+    Buckets bkts(sv);
+    LTypes ltypes(sv);
+    Sort(sv, ltypes, bkts);
+
+    int *sub, sub_len;
+    if (!Reduce(sv, ltypes, bkts, sub, sub_len)) {
+      SAIS(span<const int>(sub, sub_len));
+      for (int i = 0; i < sub_len; i++) sub[buf[i]] = i;
+    }
+
+    for (int i = 1, j = 0; i < n; i++) {
+      if (IsLMS(ltypes, i)) buf[sub[j++]] = -i;
+    }
+    memset(buf.data() + sub_len, 0, (n - sub_len) * sizeof(int));
+    Sort(sv, ltypes, sub_len, bkts);
+  }
+
+  template <typename T>
+  void Sort(span<const T> sv, const LTypes& ltypes, Buckets& bkts) {
+    int n = sv.size();
+    auto incl = bkts.Incl();
+    for (int i = 1; i < n; i++) {
+      if (IsLMS(ltypes, i)) buf[--incl[sv[i]]] = i;
+    }
+    SortLS(sv, ltypes, bkts);
+  }
+
+  template <typename T>
+  void Sort(span<const T> sv, const LTypes& ltypes, int lms_len, Buckets& bkts) {
+    auto incl = bkts.Incl();
+    for (int i = lms_len - 1; i >= 0; i--) buf[--incl[sv[-buf[i]]]] = -buf[i];
+    SortLS(sv, ltypes, bkts);
+  }
+
+  template <typename T>
+  void SortLS(span<const T> sv, const LTypes& ltypes, Buckets& bkts) {
+    int n = sv.size();
+    auto incl = bkts.Incl(), excl = bkts.Excl();
+
+    for (int i = 0; i < n; i++) {
+      int pos = buf[i] - 1;
+      if (pos >= 0 && ltypes[pos]) buf[excl[sv[pos]]++] = pos;
+    }
+
+    for (int i = n - 1; i > 0; i--) {
+      int pos = buf[i] - 1;
+      if (pos >= 0 && !ltypes[pos]) buf[--incl[sv[pos]]] = pos;
+    }
+  }
+
+  template <typename T>
+  bool Reduce(span<const T> sv, const LTypes& ltypes, const Buckets& bkts, int*& sub, int& sub_len) {
+    int n = sv.size();
+    sub = buf.data() + (n >> 1);
+    sub_len = n - (n >> 1);
+
+    int rcnt = 0;
+    for (int i = 0; i < n; i++) {
+      if (buf[i] && IsLMS(ltypes, buf[i])) buf[rcnt++] = buf[i];
+    }
+    memset(sub, -1, sub_len * sizeof(int));
+
+    int rank = sub[(buf[0] - 1) >> 1] = 0;
+    for (int i = 1; i < rcnt; i++) {
+      if (!IsEqual(sv, ltypes, buf[i - 1], buf[i])) ++rank;
+      sub[(buf[i] - 1) >> 1] = rank;
+    }
+
+    sub_len = remove(sub, sub + sub_len, -1) - sub;
+    return rank + 1 == sub_len;
+  }
+
+  bool IsLMS(const LTypes& ltypes, int i) {
+    return ltypes[i] < ltypes[i - 1];
+  }
+
+  template <typename T>
+  bool IsEqual(span<const T> sv, const LTypes& ltypes, int i, int j) {
+    for (;; i++, j++) {
+      if (sv[i] != sv[j] || ltypes[i] != ltypes[j]) return false;
+      if (IsLMS(ltypes, i + 1) && IsLMS(ltypes, j + 1)) return sv[i + 1] == sv[j + 1];
+    }
+  }
+
+ private:
+  vector<int> buf;
+};
+
+vector<int> lcp;
+int arr[20001];
+int heap[20000];
+auto hend = heap;
 
 void Compress(int n) {
   vector<int> orders(arr, arr + n);
@@ -52,7 +163,7 @@ void Compress(int n) {
   sort(b, e);
   e = unique(orders.begin(), orders.end());
   for (int i = 0; i < n; i++) {
-    arr[i] = lower_bound(b, e, arr[i]) - b;
+    arr[i] = (lower_bound(b, e, arr[i]) - b) + 1;
   }
 }
 
@@ -77,8 +188,11 @@ int main() {
   int n, k;
   cin >> n >> k;
   for (int i = 0; i < n; i++) cin >> arr[i];
+  arr[n] = 0;
   Compress(n);
-  MakeLCP(n);
+  LCP solver;
+  solver.Init(arr, n);
+  swap(lcp, solver.lcp);
 
   for (int i = 0; i < k - 1; i++) {
     Push(i);
