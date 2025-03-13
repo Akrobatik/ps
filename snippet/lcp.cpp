@@ -11,10 +11,10 @@ struct LCP {
     vector<int> p(n), pn(n), cnts(max<int>(n, 256));
 
     auto Sort = [&]() {
-      fill(cnts.begin(), cnts.end(), 0);
+      memset(cnts.data(), 0, cnts.size() * sizeof(int));
       for (auto e : p) ++cnts[e];
-      partial_sum(cnts.begin(), cnts.end() - 1, cnts.begin() + 1);
-      for (auto e : pn) sa[cnts[p[e]]++] = e;
+      partial_sum(cnts.begin(), cnts.end(), cnts.begin());
+      for (auto e : views::reverse(pn)) sa[--cnts[p[e]]] = e;
     };
 
     // SA
