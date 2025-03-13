@@ -19,7 +19,6 @@ struct LCP {
     vector<int> Excl() const {
       vector<int> excl(size());
       partial_sum(begin(), end() - 1, excl.begin() + 1);
-      excl[0] = 0;
       return excl;
     }
   };
@@ -72,7 +71,7 @@ struct LCP {
   template <typename T>
   void SAIS(span<const T> sv) {
     int n = sv.size();
-    fill_n(buf, n, 0);
+    memset(buf, 0, n * sizeof(int));
     Buckets bkts(sv);
     LTypes ltypes(sv);
     Sort(sv, ltypes, bkts);
@@ -86,7 +85,7 @@ struct LCP {
     for (int i = 1, j = 0; i < n; i++) {
       if (IsLMS(ltypes, i)) buf[sub[j++]] = -i;
     }
-    fill_n(buf + sub_len, n - sub_len, 0);
+    memset(buf + sub_len, 0, (n - sub_len) * sizeof(int));
     Sort(sv, ltypes, sub_len, bkts);
   }
 
@@ -133,7 +132,7 @@ struct LCP {
     for (int i = 0; i < n; i++) {
       if (buf[i] && IsLMS(ltypes, buf[i])) buf[rcnt++] = buf[i];
     }
-    fill_n(sub, sub_len, -1);
+    memset(sub, -1, sub_len * sizeof(int));
 
     int rank = sub[(buf[0] - 1) >> 1] = 0;
     for (int i = 1; i < rcnt; i++) {
