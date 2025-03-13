@@ -3,18 +3,11 @@
 using namespace std;
 
 constexpr int64_t kMod = 1e9 + 9;
-constexpr int64_t kBase = 31;
-
-int64_t power[1000001], h[1000001];
+constexpr int64_t kBase = 131;
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
-
-  power[0] = 1;
-  for (int i = 1; i <= 1000000; i++) {
-    power[i] = (power[i - 1] * kBase) % kMod;
-  }
 
   string s;
 
@@ -22,21 +15,23 @@ int main() {
   cin >> t;
   while (t--) {
     cin >> s;
-    int n = s.size();
-    h[1] = s[0] - 'a' + 1;
-    for (int i = 1; i < n; i++) {
-      h[i + 1] = (h[i] + power[i] * (s[i] - 'a' + 1)) % kMod;
-    }
-
-    int b = 0, half = n >> 1, ans = 0;
+    int ans = 0;
+    int n = s.size(), half = n >> 1;
+    int l = 0, r = n, last = 0;
+    int64_t h1 = 0, h2 = 0, power = 1;
     for (int i = 0; i < half; i++) {
-      if ((h[i + 1] - h[b] + kMod) % kMod * power[n - b - i - 1] % kMod ==
-          (h[n - b] - h[n - i - 1] + kMod) % kMod) {
+      h1 = (h1 + s[l++] * power) % kMod;
+      h2 = (h2 * kBase + s[--r]) % kMod;
+      if (h1 == h2) {
         ans += 2;
-        b = i + 1;
+        h1 = h2 = 0;
+        power = 1;
+        last = l;
+      } else {
+        power = (power * kBase) % kMod;
       }
     }
-    cout << ans + (b != half || (n & 1)) << "\n";
+    cout << ans + (last != l || (n & 1)) << "\n";
   }
 
   return 0;
