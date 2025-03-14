@@ -158,6 +158,9 @@ struct LCP {
 };
 
 int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
   int n;
   string s, tmp;
   s.reserve(200001), tmp.reserve(100000);
