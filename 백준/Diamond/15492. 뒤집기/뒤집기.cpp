@@ -2,13 +2,14 @@
 
 using namespace std;
 
+int arr[8000000];
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
   int n;
   cin >> n;
-  vector<int> arr(n * 2);
   int n2 = n << 1;
   for (int i = 1; i <= n; i++) cin >> arr[n - i], arr[n2 - i] = arr[n - i];
 
@@ -23,10 +24,7 @@ int main() {
   }
 
   if (i == n) {
-    for (int i = pos; i < n - 1; i++) {
-      arr[n + i] = arr[i + 1];
-    }
-
+    copy(arr + pos, arr + n - 1, arr + n);
     i = pos;
     while (i < n) {
       pos = i;
