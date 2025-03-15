@@ -25,11 +25,12 @@ int main() {
 
   if (i == n) {
     copy(arr + pos, arr + n - 1, arr + n);
+    int n3 = n2 - pos;
     i = pos;
     while (i < n) {
       pos = i;
       int k = i, j = i + 1;
-      while (j < n2 - 1 && arr[j] > arr[k]) {
+      while (j < n3 && arr[j] > arr[k]) {
         if (arr[j++] != arr[k++]) k = i;
       }
       i += (j - i) / (j - k) * (j - k);
