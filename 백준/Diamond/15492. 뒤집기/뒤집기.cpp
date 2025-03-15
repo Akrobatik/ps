@@ -11,8 +11,6 @@ int main() {
   vector<int> arr(n * 2);
   int n2 = n << 1;
   for (int i = 1; i <= n; i++) cin >> arr[n - i], arr[n2 - i] = arr[n - i];
-  // for (auto e : arr) cerr << e << " ";
-  // cerr << "\n";
 
   int pos, i = 1;
   while (i < n) {
@@ -25,11 +23,11 @@ int main() {
   }
 
   if (i == n) {
-    for (int i = 0; i < n - 1; i++) {
+    for (int i = pos; i < n - 1; i++) {
       arr[n + i] = arr[i + 1];
     }
 
-    i = 1;
+    i = pos;
     while (i < n) {
       pos = i;
       int k = i, j = i + 1;
