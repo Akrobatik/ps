@@ -1,15 +1,4 @@
-#pragma GCC optimize("O3")
-// #include <bits/stdc++.h>
-#include <malloc.h>
-#include <memory.h>
-#include <stdio.h>
-#include <sys/stat.h>
-
-#include <algorithm>
-#include <numeric>
-#include <span>
-#include <string_view>
-#include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -165,19 +154,16 @@ struct LCP {
   vector<int> buf;
 };
 
-int main(void) {
-  struct stat st;
-  fstat(0, &st);
-  char* buf = (char*)malloc(st.st_size + 8);
-  fread(buf, 1, st.st_size, stdin);
-  buf[st.st_size] = '\0';
-  auto in = buf, ine = buf + st.st_size - 1, out = buf;
-  while (*in <= 32) ++in;
-  while (*ine <= 32) --ine;
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
 
-  int n = ine - in + 1;
+  string s;
+  cin >> s;
+  int n = s.size();
+
   LCP solver;
-  solver.Init(string_view(in, n));
+  solver.Init(s);
   auto& sa = solver.sa;
   auto& lcp = solver.lcp;
 
@@ -203,15 +189,7 @@ int main(void) {
     }
   }
 
-  if (b == 0) {
-    out[0] = '-';
-    out[1] = '1';
-    fwrite(out, 1, 2, stdout);
-  } else {
-    int len = 0;
-    while (b) out[8 - ++len] = '0' + b % 10, b /= 10;
-    fwrite(out - len + 8, 1, len, stdout);
-  }
+  cout << (b ? b : -1);
 
   return 0;
 }
