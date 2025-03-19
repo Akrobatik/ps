@@ -85,7 +85,7 @@ int main() {
     return CmpSeg((s1 + r + 1) % n, (s2 + r + 1) % n, n - r - 1) < 0;
   };
 
-  sort(rots.begin(), rots.end(), Cmp);
+  nth_element(rots.begin(), rots.begin() + 1, rots.end(), Cmp);
 
   cout << rots[0] + 1;
 
