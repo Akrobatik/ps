@@ -27,7 +27,7 @@ int main() {
   int64_t k;
   cin >> k;
 
-  int64_t lo = 0, hi = 1644934082;
+  int64_t lo = k - 1, hi = 1644934082;
   while (lo + 1 < hi) {
     int64_t mid = (lo + hi) >> 1;
     if (Count(mid) < k) {
