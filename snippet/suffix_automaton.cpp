@@ -5,7 +5,7 @@ using namespace std;
 // Suffix Automation
 // https://cp-algorithms.com/string/suffix-automaton.html
 
-struct SuffixAutomation {
+struct SuffixAutomaton {
   struct State {
     State() : len(0), link(-1), nxt{} {}
     State(int _len, array<int, 26> _nxt) : len(_len), link(-1), nxt(_nxt) {}
