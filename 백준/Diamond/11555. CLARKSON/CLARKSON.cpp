@@ -190,18 +190,20 @@ int main() {
     return 0;
   }
 
+  vector<int> cand;
+
   int lo = 0, hi = memo[0] + 1;
   while (lo + 1 < hi) {
     int mid = (lo + hi) >> 1;
+    cand.clear();
 
-    set<int, greater<>> st;
     int e = memo[0];
-    st.insert(0);
+    cand.push_back(0);
     for (int i = mid; i < n && i <= e && e < n; i++) {
       if (memo[i] < mid) continue;
-      auto it = st.lower_bound(i - mid);
-      if (it != st.end() && i <= *it + memo[*it]) {
-        st.insert(i);
+      auto rit = lower_bound(cand.rbegin(), cand.rend(), i - mid, greater<>());
+      if (rit != cand.rend() && i <= *rit + memo[*rit]) {
+        cand.push_back(i);
         e = max<int>(e, i + memo[i]);
       }
     }
