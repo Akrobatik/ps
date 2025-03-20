@@ -161,33 +161,58 @@ int main() {
   string s1, s2;
   cin >> s1 >> s2;
   int n = s1.size(), nt = n + s2.size() + 1;
-  s1 += '\x7F' + s2;
+  s1 += "\x20" + s2;
 
   LCP solver;
   solver.Init(s1);
   auto& sa = solver.sa;
   auto& lcp = solver.lcp;
 
-  vector<int> lens(n), memo(n);
+  vector<int> memo(n);
+  int x;
   for (int i = 1; i < nt; i++) {
-    if ((sa[i - 1] < n) + (sa[i] < n) != 1) continue;
-    int l = min<int>(sa[i - 1], sa[i]);
-    lens[l] = max<int>(lens[l], lcp[i]);
-    for (int j = 0; j < lcp[i]; j++) {
-      memo[l + j] = max<int>(memo[l + j], lcp[i]);
+    if (sa[i] < n) {
+      x = sa[i - 1] < n ? min<int>(x, lcp[i]) : lcp[i];
+      memo[sa[i]] = x;
+    }
+  }
+  for (int i = nt - 1; i >= 0; i--) {
+    if (sa[i] < n) {
+      memo[sa[i]] = max<int>(memo[sa[i]], x);
+      x = min<int>(x, lcp[i]);
+    } else {
+      x = lcp[i];
     }
   }
 
-  for (int i = 1; i < nt; i++) {
-    if ((sa[i - 1] < n) + (sa[i] < n) != 2) continue;
-    int len = min<int>(lens[sa[i - 1]], lcp[i]);
-    for (int j = 0; j < len; j++) {
-      memo[sa[i] + j] = max<int>(memo[sa[i] + j], len);
-    }
+  if (memo[0] == n) {
+    cout << n;
+    return 0;
   }
 
-  int ans = *min_element(memo.begin(), memo.end());
-  cout << (ans ? ans : -1);
+  int lo = 0, hi = memo[0] + 1;
+  while (lo + 1 < hi) {
+    int mid = (lo + hi) >> 1;
+
+    set<int, greater<>> st;
+    int e = memo[0];
+    st.insert(0);
+    for (int i = mid; i < n && i <= e && e < n; i++) {
+      if (memo[i] < mid) continue;
+      auto it = st.lower_bound(i - mid);
+      if (it != st.end() && i <= *it + memo[*it]) {
+        st.insert(i);
+        e = max<int>(e, i + memo[i]);
+      }
+    }
+
+    if (e == n) {
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+  }
+  cout << (lo ? lo : -1);
 
   return 0;
 }
