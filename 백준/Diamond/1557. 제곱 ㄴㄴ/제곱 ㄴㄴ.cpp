@@ -6,8 +6,8 @@ constexpr int kMax = 40558;
 int mu[kMax + 1];
 
 int64_t Count(int64_t n) {
-  int64_t cnt = 0;
-  for (int64_t i = 1; i * i <= n; i++) {
+  int64_t cnt = n;
+  for (int64_t i = 2; i * i <= n; i++) {
     cnt += mu[i] * (n / (i * i));
   }
   return cnt;
@@ -17,8 +17,9 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
+  memset(mu, -1, sizeof(mu));
   mu[1] = 1;
-  for (int i = 1; i <= kMax; i++) {
+  for (int i = 2; i <= kMax; i++) {
     for (int j = (i << 1); j <= kMax; j += i) {
       mu[j] -= mu[i];
     }
