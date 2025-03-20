@@ -14,7 +14,7 @@ struct SuffixAutomaton {
     array<int, 26> nxt;
   };
 
-  SuffixAutomation() : last(0), ndiffs(0) {
+  SuffixAutomaton() : last(0), ndiffs(0) {
     states.emplace_back();
   }
 
