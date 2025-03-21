@@ -2,55 +2,65 @@
 
 using namespace std;
 
-constexpr int kMax = 1 << 17;
+struct MergeSortTree {
+  void Init(const vector<int>& arr) {
+    int n = arr.size();
+    nmax = has_single_bit((uint32_t)n) ? n : (1 << (32 - countl_zero((uint32_t)n)));
+    tree.clear(), tree.resize(nmax << 1);
 
-vector<int> tree[kMax << 1];
-int caps[kMax << 1];
+    for (int i = 0; i < n; i++) {
+      tree[i + nmax].push_back(arr[i]);
+    }
 
-int Query(int idx, int k) {
-  auto& t = tree[idx];
-  return t.end() - upper_bound(t.begin(), t.end(), k);
-}
-
-int Query(int l, int r, int k) {
-  int res = 0;
-  for (l += kMax, r += kMax + 1; l < r; l >>= 1, r >>= 1) {
-    if (l & 1) res += Query(l++, k);
-    if (r & 1) res += Query(--r, k);
+    int sz = nmax >> 1;
+    while (sz) {
+      for (int i = 0; i < sz; i++) {
+        int idx = sz + i;
+        auto& l = tree[idx << 1];
+        auto& r = tree[(idx << 1) + 1];
+        tree[idx].resize(l.size() + r.size());
+        merge(l.begin(), l.end(), r.begin(), r.end(), tree[idx].begin());
+      }
+      sz >>= 1;
+    }
   }
-  return res;
-}
+
+  int Query(int l, int r, int k) {
+    int res = 0;
+    for (l += nmax, r += nmax + 1; l < r; l >>= 1, r >>= 1) {
+      if (l & 1) res += Query(l++, k);
+      if (r & 1) res += Query(--r, k);
+    }
+    return res;
+  }
+
+  int Query(int idx, int k) {
+    auto& t = tree[idx];
+    return t.end() - upper_bound(t.begin(), t.end(), k);
+  }
+
+  int nmax;
+  vector<vector<int>> tree;
+};
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  caps[1] = kMax;
-  tree[1].reserve(kMax);
-  for (int i = 2; i < (kMax << 1); i++) {
-    caps[i] = caps[i >> 1] >> 1;
-    tree[i].reserve(caps[i]);
-  }
-
   int n;
   cin >> n;
-  for (int i = 0; i < n; i++) {
-    int x;
-    cin >> x;
-    int idx = kMax + i;
-    while (idx) tree[idx].push_back(x), idx >>= 1;
-  }
+  vector<int> arr(n);
+  for (auto& e : arr) cin >> e;
 
-  for (int i = 1; i < kMax; i++) {
-    sort(tree[i].begin(), tree[i].end());
-  }
+  MergeSortTree mst;
+  mst.Init(arr);
 
   int m;
   cin >> m;
   while (m--) {
     int i, j, k;
     cin >> i >> j >> k;
-    cout << Query(i - 1, j - 1, k) << "\n";
+    cout << mst.Query(i - 1, j - 1, k) << "\n";
   }
 
   return 0;
