@@ -28,8 +28,11 @@ int main() {
 
     auto rit = ans.rbegin();
     while (rit != ans.rend() && *rit == ans.back()) ++rit;
-    ans.insert(rit.base(), arr.begin(), arr.end());
-    break;
+    it = rit.base();
+    for (auto e : ranges::subrange(ans.begin(), it)) cout << e << " ";
+    for (auto e : arr) cout << e << " ";
+    for (auto e : ranges::subrange(it, ans.end())) cout << e << " ";
+    return 0;
   }
   for (auto e : ans) cout << e << " ";
 
