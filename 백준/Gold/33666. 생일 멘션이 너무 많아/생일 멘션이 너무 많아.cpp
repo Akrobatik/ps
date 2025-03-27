@@ -8,18 +8,14 @@ int main() {
 
   int n, m;
   cin >> n >> m;
+  int64_t cnt = 0, sum = 0;
   vector<int> arr(n);
-  for (auto& e : arr) cin >> e;
-  sort(arr.begin(), arr.end());
-
-  int cnt = 0;
-  int64_t sum = 0;
-  for (auto e : arr) {
-    if (e == 1) continue;
-    ++cnt, sum += e;
+  for (auto& e : arr) {
+    cin >> e;
+    if (e != 1) ++cnt, sum += e;
   }
 
-  auto avg = cnt ? sum / cnt : 0;
+  int64_t avg = cnt ? sum / cnt : 0;
   for (auto& e : arr) {
     if (e > avg) e = 1;
     if (e <= m) continue;
@@ -28,10 +24,14 @@ int main() {
   }
   sort(arr.begin(), arr.end());
 
-  for (int i = 1; i <= m; i++) {
-    auto it = lower_bound(arr.begin(), arr.end(), i);
-    cout << arr.end() - it << " ";
+  vector<int> ans(m);
+  int l = 0;
+  for (int i = 0; i < n; i++) {
+    int r = arr[i];
+    while (l < r) ans[l++] = n - i;
   }
+
+  for (auto e : ans) cout << e << " ";
 
   return 0;
 }
