@@ -14,9 +14,8 @@ int64_t Count(span<int> brr, span<int> crr, int bit) {
 
 int64_t Excl(span<int> arr, int bit) {
   int64_t cnt = 0;
-  bit >>= 1;
   for (auto e : arr) {
-    if (e & bit) ++cnt;
+    if ((e << 1) >= bit) ++cnt;
   }
   return cnt;
 }
@@ -31,7 +30,7 @@ int main() {
   for (auto& e : arr) cin >> e;
 
   int ans = 0;
-  for (int bit = 1; bit < (1 << 30); bit <<= 1) {
+  for (int64_t bit = 1; bit <= (1 << 30); bit <<= 1) {
     int idx = 0;
     while (idx < n && (arr[idx] & bit)) ++idx;
     for (int i = idx + 1; i < n; i++) {
