@@ -89,12 +89,11 @@ int main() {
       xx /= 10;
     }
 
-    l -= p, r -= p;
-
-    bool flip = false;
     s.clear();
+    l -= p, r -= p;
+    bool flip = false, b1 = Check(x / bx);
     while (s.size() < r) {
-      bool b1 = Check(x / bx), b2 = Check(x % 10);
+      bool b2 = Check(x % 10);
       if (b1 && b2) {
         s.append("JJAMPPONG");
       } else if (b1 || b2) {
