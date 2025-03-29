@@ -89,7 +89,7 @@ struct Factorization {
   }
 };
 
-constexpr int kMax = 1e5;
+constexpr int kMax = 5e4;
 constexpr int64_t kMod = 998244353;
 
 int64_t phi[kMax + 1];
