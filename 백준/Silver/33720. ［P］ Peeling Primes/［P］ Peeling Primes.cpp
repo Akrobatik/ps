@@ -8,9 +8,13 @@ int main() {
 
   int64_t n;
   cin >> n;
-  int64_t d = 2, rt = (int64_t)sqrtl((long double)n);
-  while (d <= rt && n % d != 0) ++d;
-  cout << (d > rt ? 1 : ((n - d) >> 1) + 1);
+  if (n & 1) {
+    int64_t d = 3, rt = (int64_t)sqrtl((long double)n);
+    while (d <= rt && n % d != 0) d += 2;
+    cout << (d > rt ? 1 : ((n - d) >> 1) + 1);
+  } else {
+    cout << (n >> 1);
+  }
 
   return 0;
 }
