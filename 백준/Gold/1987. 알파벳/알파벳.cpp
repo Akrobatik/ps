@@ -2,39 +2,36 @@
 
 using namespace std;
 
-int rows, cols;
-char digits[20][21];
-char visited[26];
-int ans;
+constexpr pair<int, int> kDelta[] = {
+    {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
-void Traverse(int depth, int row, int col) {
-  ans = max<int>(ans, depth + 1);
-  if (ans == 26) return;
-  visited[depth] = digits[row][col];
+int ans, r, c;
+char m[20][20];
 
-  auto b = begin(visited);
-  auto e = b + depth + 1;
-  if (row > 0 && find(b, e, digits[row - 1][col]) == e)
-    Traverse(depth + 1, row - 1, col);
-  if (row < rows - 1 && find(b, e, digits[row + 1][col]) == e)
-    Traverse(depth + 1, row + 1, col);
-  if (col > 0 && find(b, e, digits[row][col - 1]) == e)
-    Traverse(depth + 1, row, col - 1);
-  if (col < cols - 1 && find(b, e, digits[row][col + 1]) == e)
-    Traverse(depth + 1, row, col + 1);
+void Traverse(int y, int x, int mask, int cnt) {
+  ans = max<int>(ans, cnt + 1);
+  mask |= (1 << (m[y][x] ^ 0x40));
+
+  for (auto [dy, dx] : kDelta) {
+    int yy = y + dy, xx = x + dx;
+    if (0 <= yy && yy < r && 0 <= xx && xx < c && !(mask & (1 << (m[yy][xx] ^ 0x40)))) {
+      Traverse(yy, xx, mask, cnt + 1);
+    }
+  }
 }
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  cin >> rows >> cols;
-  for (int i = 0; i < rows; i++) {
-    cin >> digits[i];
+  cin >> r >> c;
+  for (int i = 0; i < r; i++) {
+    for (int j = 0; j < c; j++) {
+      cin >> m[i][j];
+    }
   }
-
-  Traverse(0, 0, 0);
-  cout << ans << endl;
+  Traverse(0, 0, 0, 0);
+  cout << ans;
 
   return 0;
 }
