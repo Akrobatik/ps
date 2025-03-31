@@ -19,14 +19,21 @@ int main() {
     cin >> s;
     bitset<10> bits;
     for (auto c : s) bits.flip(c ^ 0x30);
-    cands[bits.to_ulong()].push_back({s.size(), i});
+    int x = bits.to_ulong(), len = s.size();
+    if (cands[x].size() < 2) {
+      cands[x].push_back({len, i});
+    } else {
+      for (auto& [l, idx] : cands[x]) {
+        if (l > len) {
+          l = len, idx = i;
+          break;
+        }
+      }
+    }
   }
 
   for (auto& e : memo) e = INT_MAX;
   for (int x = 0; x < 1024; x++) {
-    sort(cands[x].begin(), cands[x].end());
-    if (cands[x].size() > 2) cands[x].resize(2);
-
     for (auto [len, idx] : cands[x]) {
       memcpy(mcopy, memo, sizeof(mcopy));
       for (int i = 1; i < 1024; i++) {
