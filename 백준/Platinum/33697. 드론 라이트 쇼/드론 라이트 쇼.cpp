@@ -7,21 +7,21 @@ vector<int> ue[100001], de[100001];
 int memo[100001];
 
 void Up(int cur, int color) {
-  if (uv[cur]) return;
   uv[cur] = true;
   if (memo[cur] == 0) memo[cur] = color;
 
   for (auto nxt : ue[cur]) {
+    if (uv[nxt]) continue;
     Up(nxt, color);
   }
 }
 
 void Down(int cur, int color) {
-  if (dv[cur]) return;
   dv[cur] = true;
   if (memo[cur] == 0) memo[cur] = color;
 
   for (auto nxt : de[cur]) {
+    if (dv[nxt]) continue;
     Down(nxt, color);
   }
 }
@@ -49,9 +49,9 @@ int main() {
 
   for (auto [a, b, c] : queries) {
     if (b == 1) {
-      Up(a, c);
+      if (!uv[a]) Up(a, c);
     } else {
-      Down(a, c);
+      if (!dv[a]) Down(a, c);
     }
   }
 
