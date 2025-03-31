@@ -2,38 +2,48 @@
 
 using namespace std;
 
+vector<pair<int, int>> cands[1024];
+
 int memo[1024], mcopy[1024];
 vector<int> elems[1024];
+int cnts[1024];
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  for (auto& e : memo) e = INT_MAX;
-
   int n;
   cin >> n;
-  for (int j = 1; j <= n; j++) {
+  for (int i = 1; i <= n; i++) {
     string s;
     cin >> s;
     bitset<10> bits;
     for (auto c : s) bits.flip(c ^ 0x30);
-    int len = s.size(), x = bits.to_ulong();
-    memcpy(mcopy, memo, sizeof(mcopy));
-    for (int i = 1; i < 1024; i++) {
-      if (mcopy[i] == INT_MAX) continue;
-      int nxt = i ^ x;
-      if (memo[nxt] > mcopy[i] + len) {
-        memo[nxt] = mcopy[i] + len;
-        elems[nxt].resize(elems[i].size() + 1);
-        copy(elems[i].begin(), elems[i].end(), elems[nxt].begin());
-        elems[nxt].back() = j;
+    cands[bits.to_ulong()].push_back({s.size(), i});
+  }
+
+  for (auto& e : memo) e = INT_MAX;
+  for (int x = 0; x < 1024; x++) {
+    sort(cands[x].begin(), cands[x].end());
+    if (cands[x].size() > 2) cands[x].resize(2);
+
+    for (auto [len, idx] : cands[x]) {
+      memcpy(mcopy, memo, sizeof(mcopy));
+      for (int i = 1; i < 1024; i++) {
+        if (mcopy[i] == INT_MAX) continue;
+        int nxt = i ^ x;
+        if (memo[nxt] > mcopy[i] + len) {
+          memo[nxt] = mcopy[i] + len;
+          elems[nxt].resize(elems[i].size() + 1);
+          copy(elems[i].begin(), elems[i].end(), elems[nxt].begin());
+          elems[nxt].back() = idx;
+        }
       }
-    }
-    if (memo[x] > len) {
-      memo[x] = len;
-      elems[x].clear();
-      elems[x].push_back(j);
+      if (memo[x] > len) {
+        memo[x] = len;
+        elems[x].clear();
+        elems[x].push_back(idx);
+      }
     }
   }
 
