@@ -11,15 +11,7 @@ void Up(int cur, int color) {
   uv[cur] = true;
   if (memo[cur] == 0) memo[cur] = color;
 
-  int cnt = 0;
   for (auto nxt : ue[cur]) {
-    cnt += ue[nxt].size();
-  }
-  vector<int> ne;
-  ne.reserve(cnt);
-
-  for (auto nxt : ue[cur]) {
-    ne.insert(ne.end(), ue[nxt].begin(), ue[nxt].end());
     Up(nxt, color);
   }
 }
@@ -29,15 +21,7 @@ void Down(int cur, int color) {
   dv[cur] = true;
   if (memo[cur] == 0) memo[cur] = color;
 
-  int cnt = 0;
   for (auto nxt : de[cur]) {
-    cnt += de[nxt].size();
-  }
-  vector<int> ne;
-  ne.reserve(cnt);
-
-  for (auto nxt : de[cur]) {
-    ne.insert(ne.end(), de[nxt].begin(), de[nxt].end());
     Down(nxt, color);
   }
 }
