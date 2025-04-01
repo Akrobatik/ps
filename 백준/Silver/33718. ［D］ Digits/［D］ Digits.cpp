@@ -41,7 +41,8 @@ bool Traverse(array<int64_t, 6> arr, int n) {
   if (n == 1) return false;
 
   for (int i = n - 2; i >= 0; i--) {
-    if (arr[i] < arr[i + 1]) swap(arr[i], arr[i + 1]);
+    if (arr[i] >= arr[i + 1]) break;
+    swap(arr[i], arr[i + 1]);
   }
 
   for (int i = 0; i < n - 1; i++) {
