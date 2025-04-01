@@ -1,11 +1,10 @@
-#pragma GCC optimize("O3")
 #include <bits/stdc++.h>
 
 using namespace std;
 
 vector<int> ans;
 bool visited[1000001];
-int memo[1000001];
+int8_t memo[1000001];
 vector<pair<int, int>> edges[1000001];
 
 int Traverse(int cur) {
@@ -16,9 +15,9 @@ int Traverse(int cur) {
     if (visited[nxt]) continue;
     cnt += Traverse(nxt);
     x ^= memo[nxt];
-    if (memo[nxt] & 1) ans.push_back(idx);
+    if (memo[nxt]) ans.push_back(idx);
   }
-  memo[cur] = x;
+  memo[cur] = x & 1;
   return cnt + 1;
 }
 
