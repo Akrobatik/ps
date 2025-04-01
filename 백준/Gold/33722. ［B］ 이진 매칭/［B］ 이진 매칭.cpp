@@ -1,3 +1,4 @@
+#pragma GCC optimize("O3")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -15,7 +16,7 @@ int Traverse(int cur) {
     if (visited[nxt]) continue;
     cnt += Traverse(nxt);
     x ^= memo[nxt];
-    if (memo[nxt]) ans.push_back(idx);
+    if (memo[nxt] & 1) ans.push_back(idx);
   }
   memo[cur] = x;
   return cnt + 1;
