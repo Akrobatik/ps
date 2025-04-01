@@ -30,6 +30,19 @@ int64_t t;
 int an;
 tuple<int64_t, int64_t, int64_t, char> ans[5];
 
+void Sort(array<int64_t, 6>& arr, int n) {
+  bool ok = true;
+  for (int i = 0; ok && i < n - 1; i++) {
+    ok = false;
+    for (int j = 0; j < n - i; j++) {
+      if (arr[j] < arr[j + 1]) {
+        swap(arr[j], arr[j + 1]);
+        ok = true;
+      }
+    }
+  }
+}
+
 bool Traverse(array<int64_t, 6> arr, int n) {
   for (int i = 0; i < n; i++) {
     if (arr[i] == t) {
@@ -40,8 +53,8 @@ bool Traverse(array<int64_t, 6> arr, int n) {
 
   if (n == 1) return false;
 
-  sort(arr.begin(), arr.begin() + n, greater<>());
-  for (int i = 0; i < n; i++) {
+  Sort(arr, n);
+  for (int i = 0; i < n - 1; i++) {
     for (int j = i + 1; j < n; j++) {
       array<int64_t, 6> nxt{};
       auto it = nxt.begin();
