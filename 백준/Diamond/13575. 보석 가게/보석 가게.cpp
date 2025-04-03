@@ -22,6 +22,23 @@ struct FFT {
     return w;
   }
 
+  vector<int64_t> Sqr(const vector<int64_t>& u) {
+    int nuv = u.size() << 1;
+    int n = 1;
+    while (n < nuv) n <<= 1;
+
+    vector<complex<double>> uc(u.begin(), u.end());
+    uc.resize(n);
+
+    Conv(uc, false);
+    for (int i = 0; i < n; i++) uc[i] *= uc[i];
+    Conv(uc, true);
+
+    vector<int64_t> w(n);
+    for (int i = 0; i < n; i++) w[i] = round(uc[i].real());
+    return w;
+  }
+
  private:
   const double kPI = acos(-1);
 
@@ -63,6 +80,12 @@ vector<int64_t> Mul(const vector<int64_t>& u, const vector<int64_t>& v) {
   return res;
 }
 
+vector<int64_t> Sqr(const vector<int64_t>& u) {
+  auto res = fft.Sqr(u);
+  for (auto& e : res) e = (e != 0);
+  return res;
+}
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -80,7 +103,7 @@ int main() {
   --k;
   while (k) {
     if (k & 1) ans = Mul(ans, arr);
-    arr = Mul(arr, arr);
+    arr = Sqr(arr);
     k >>= 1;
   }
 
