@@ -4,15 +4,14 @@ using namespace std;
 
 struct NTT {
   vector<int64_t> Mul(vector<int64_t> u, vector<int64_t> v, int64_t mod) {
-    int nmods = sizeof(kModData) / sizeof(kModData[0]);
-    vector<vector<int64_t>> convs(nmods);
+    vector<vector<int64_t>> convs(kNMods);
     for (int i = 0; i < convs.size(); i++) {
       convs[i] = Mul(u, v, kModData[i]);
     }
 
-    vector<vector<int64_t>> crt_data(nmods, vector<int64_t>(nmods));
-    for (int i = 0; i < nmods; i++) {
-      for (int j = 0; j < nmods; j++) {
+    vector<vector<int64_t>> crt_data(kNMods, vector<int64_t>(kNMods));
+    for (int i = 0; i < kNMods; i++) {
+      for (int j = 0; j < kNMods; j++) {
         if (i == j) {
           crt_data[i][j] = kModData[i].first;
         } else {
@@ -22,9 +21,9 @@ struct NTT {
     }
 
     int n = convs[0].size();
-    vector<int64_t> res(n), crt_convs(nmods);
+    vector<int64_t> res(n), crt_convs(kNMods);
     for (int i = 0; i < n; i++) {
-      for (int j = 0; j < nmods; j++) crt_convs[j] = convs[j][i];
+      for (int j = 0; j < kNMods; j++) crt_convs[j] = convs[j][i];
       res[i] = CRT(crt_convs, crt_data, mod);
     }
     return res;
@@ -32,15 +31,16 @@ struct NTT {
 
  private:
   static constexpr pair<int64_t, int64_t> kModData[] = {
-      {469762049, 3},
-      {998244353, 3},
-      {1004535809, 3}};
+      {7340033, 3},
+      {415236097, 5},
+      {463470593, 3}};
+
+  static constexpr int kNMods = sizeof(kModData) / sizeof(kModData[0]);
 
   int64_t CRT(const vector<int64_t>& convs, const vector<vector<int64_t>>& crt_data, int64_t mod) {
     int64_t res = 0, mul = 1;
-    int nmods = convs.size();
-    vector<int64_t> x(nmods);
-    for (int i = 0; i < nmods; i++) {
+    array<int64_t, kNMods> x{};
+    for (int i = 0; i < kNMods; i++) {
       x[i] = convs[i];
       for (int j = 0; j < i; j++) {
         x[i] = (x[i] - x[j]) * crt_data[j][i] % crt_data[i][i];
