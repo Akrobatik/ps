@@ -9,7 +9,7 @@ struct NTT {
       convs[i] = Mul(u, v, kModData[i]);
     }
 
-    vector<vector<int64_t>> crt_data(kNMods, vector<int64_t>(kNMods));
+    array<array<int64_t, kNMods>, kNMods> crt_data;
     for (int i = 0; i < kNMods; i++) {
       for (int j = 0; j < kNMods; j++) {
         if (i == j) {
@@ -37,7 +37,7 @@ struct NTT {
 
   static constexpr int kNMods = sizeof(kModData) / sizeof(kModData[0]);
 
-  int64_t CRT(const vector<int64_t>& convs, const vector<vector<int64_t>>& crt_data, int64_t mod) {
+  int64_t CRT(const vector<int64_t>& convs, const array<array<int64_t, kNMods>, kNMods>& crt_data, int64_t mod) {
     int64_t res = 0, mul = 1;
     array<int64_t, kNMods> x{};
     for (int i = 0; i < kNMods; i++) {
