@@ -32,7 +32,6 @@ int main() {
   if (x == -1) return 0;
   cout << r << " " << l << endl;
   cin >> x;
-  assert(x == -1);
 
   return 0;
 }
