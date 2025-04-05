@@ -1,3 +1,8 @@
+// Title : 나머지
+// Link  : https://www.acmicpc.net/problem/3052 
+// Time  : 0 ms
+// Memory: 2020 KB
+
 #include <bits/stdc++.h>
 
 using namespace std;
