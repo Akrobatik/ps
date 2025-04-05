@@ -25,8 +25,6 @@ constexpr tuple<int, int, int, int, int> kDelta[3][4] = {
     },
 };
 
-// pair<int, int> pair<int, int> t
-
 char board[150][150];
 bool _visited[2][3][150][150];
 
@@ -49,11 +47,13 @@ int main() {
     return 0 <= y && y < n && 0 <= x && x < m && board[y][x] != '0';
   };
 
+  int ans = 0;
   queue<tuple<int, int, int>> q;
   _visited[0][0][sy][sx] = true;
   q.push({sy, sx, 0});
   for (int i = 0; !q.empty() && i < k; i++) {
     int nq = q.size();
+    bool ok = (i & 1) != (k & 1);
     auto visited = _visited[(i & 1) ^ 1];
     while (nq--) {
       auto [y, x, t] = q.front();
@@ -64,18 +64,10 @@ int main() {
         int y2 = y + dy2, x2 = x + dx2;
         if (Check(y1, x1) && ((dy2 == kInvalid && dx2 == kInvalid) || Check(y2, x2)) && !visited[dt][y1][x1]) {
           visited[dt][y1][x1] = true;
+          ans += (dt == 0 && ok && (y1 != sy || x1 != sx));
           q.push({y1, x1, dt});
         }
       }
-    }
-  }
-
-  int ans = 0;
-  auto visited = _visited[k & 1][0];
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < m; j++) {
-      if (i == sy && j == sx) continue;
-      ans += visited[i][j];
     }
   }
   cout << ans;
