@@ -1,45 +1,50 @@
 // Title : 바이러스
-// Link  : https://www.acmicpc.net/problem/2606
+// Link  : https://www.acmicpc.net/problem/2606 
 // Time  : 0 ms
-// Memory: 2020 KB
+// Memory: 2024 KB
 
-#include <bits/stdc++.h>
+// 질문글 확인용
+// https://www.acmicpc.net/board/view/158476
 
+#include <iostream>
+#include <vector>
 using namespace std;
 
-int memo[101];
+int node;
+int line;
 
-int Find(int id) {
-  while (id != memo[id]) {
-    int parent = memo[id];
-    id = memo[id] = memo[parent];
-  }
-  return id;
-}
-
-void Union(int a, int b) {
-  a = Find(a), b = Find(b);
-  if (a == b) return;
-  if (a > b) swap(a, b);
-  memo[b] = a;
+vector<vector<int>> graph;
+vector<bool> visited;
+int cnt = 0;
+void DFS(int v) {
+	if (visited[v]) {
+		return;
+	}
+	visited[v] = true;
+	cnt++;
+	for (int i : graph[v]) {
+		DFS(i);
+	}
 }
 
 int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
 
-  int n, m;
-  cin >> n >> m;
-  iota(memo, memo + n + 1, 0);
-  while (m--) {
-    int u, v;
-    cin >> u >> v;
-    Union(u, v);
-  }
+	cin >> node;
+	cin >> line;
 
-  int ans = 0;
-  for (int i = 2; i <= n; i++) ans += (Find(i) == 1);
-  cout << ans;
 
-  return 0;
+	graph.resize(node + 1);
+	visited = vector<bool>(node + 1, false);
+
+	for (int i = 0; i < line; i++) {
+		int s, e;
+		cin >> s >> e;
+		graph[s].push_back(e);
+		graph[e].push_back(s);
+	}
+	DFS(1);
+	cout << cnt - 1;
 }
