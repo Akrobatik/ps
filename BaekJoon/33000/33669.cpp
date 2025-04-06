@@ -1,5 +1,5 @@
-// Title : 짬뽕 369
-// Link  : https://www.acmicpc.net/problem/33669
+// Title : 짬뽕 369
+// Link  : https://www.acmicpc.net/problem/33669 
 // Time  : 8 ms
 // Memory: 2212 KB
 
