@@ -1,31 +1,21 @@
-// Title : 4교시： 국어 （Easy）
-// Link  : https://www.acmicpc.net/problem/33634
-// Time  : 0 ms
-// Memory: 2164 KB
+// Title : 4교시: 국어 (Easy)
+// Link  : https://www.acmicpc.net/problem/33634 
+// Time  : 492 ms
+// Memory: 644920 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-constexpr int kMask = (1 << 9) - 1;
-
-int MakeKey(int a, int b, int c) {
-  return (a << 18) | (b << 9) | c;
-}
-
-tuple<int, int, int> SplitKey(int key) {
-  int a = (key >> 18) & kMask;
-  int b = (key >> 9) & kMask;
-  int c = key & kMask;
-  return {a, b, c};
-}
+int memo[401][401][401];
+int nxt[1001][100001];
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int nt, t;
-  cin >> nt >> t;
+  int nt, te;
+  cin >> nt >> te;
   vector<int> trr(nt);
   for (auto& e : trr) cin >> e;
 
@@ -36,70 +26,62 @@ int main() {
   for (auto& e : brr) cin >> e;
   for (auto& e : crr) cin >> e;
 
-  vector<int> axr(na + 1), bxr(nb + 1), cxr(nc + 1);
-  partial_sum(arr.begin(), arr.end(), axr.begin() + 1);
-  partial_sum(brr.begin(), brr.end(), bxr.begin() + 1);
-  partial_sum(crr.begin(), crr.end(), cxr.begin() + 1);
+  for (int i = 1; i <= 1000; i++) {
+    int r = te;
+    for (auto l : views::reverse(trr)) {
+      for (int j = r; j > l; j--) nxt[i][j] = j;
+      r = min<int>(r, l - i);
+    }
+    r = 0;
+    for (int j = te; j >= 0; j--) {
+      if (nxt[i][j]) {
+        r = j;
+      } else {
+        nxt[i][j] = r;
+      }
+    }
+  }
 
-  vector<pair<int, int>> cands;
-  vector<vector<pair<int, int>>> perms;
+  int ans;
+  int nabc = na + nb + nc;
+  fill_n((int*)memo, 401 * 401 * 401, INT_MAX);
+  memo[0][0][0] = 0;
+  for (ans = 0; ans < nabc; ans++) {
+    bool none = true;
+    for (int a = 0; a <= na && a <= ans; a++) {
+      for (int b = 0; b <= nb && a + b <= ans; b++) {
+        int c = ans - a - b;
+        if (c > nc) continue;
 
-  unordered_map<int, int> cur;
-  cur[MakeKey(0, 0, 0)] = 0;
+        int cur = memo[a][b][c];
+        if (cur == INT_MAX) continue;
 
-  for (int i = 1; i < nt; i++) {
-    int trem = trr[i] - trr[i - 1] - 1;
-    if (trem == 0) continue;
-    unordered_map<int, int> nxt;
-
-    for (auto [key, cnt] : cur) {
-      auto [a, b, c] = SplitKey(key);
-      cands.clear();
-      if (a < na) cands.push_back({0, a});
-      if (b < nb) cands.push_back({1, b});
-      if (c < nc) cands.push_back({2, c});
-
-      perms.clear();
-      do {
-        perms.push_back(cands);
-      } while (next_permutation(cands.begin(), cands.end()));
-
-      for (auto& perm : perms) {
-        int used = 0, added = 0;
-        int aa = a, bb = b, cc = c;
-        for (auto [id, start] : perm) {
-          auto& sxr = id == 0 ? axr : (id == 1 ? bxr : cxr);
-          int limit = id == 0 ? na : (id == 1 ? nb : nc);
-          int maxx = start;
-          while (maxx < limit && used + sxr[maxx + 1] - sxr[start] <= trem) ++maxx;
-
-          used += sxr[maxx] - sxr[start];
-          added += maxx - start;
-          if (id == 0) {
-            aa = maxx;
-          } else if (id == 1) {
-            bb = maxx;
-          } else {
-            cc = maxx;
+        if (a < na) {
+          int axt = nxt[arr[a]][cur];
+          if (axt) {
+            none = false;
+            memo[a + 1][b][c] = min<int>(memo[a + 1][b][c], axt + arr[a]);
           }
         }
 
-        int nkey = MakeKey(aa, bb, cc);
-        int total = cnt + added;
-        if (auto it = nxt.find(nkey); it != nxt.end()) {
-          it->second = max<int>(it->second, total);
-        } else {
-          nxt[nkey] = total;
+        if (b < nb) {
+          int bxt = nxt[brr[b]][cur];
+          if (bxt) {
+            none = false;
+            memo[a][b + 1][c] = min<int>(memo[a][b + 1][c], bxt + brr[b]);
+          }
+        }
+
+        if (c < nc) {
+          int cxt = nxt[crr[c]][cur];
+          if (cxt) {
+            none = false;
+            memo[a][b][c + 1] = min<int>(memo[a][b][c + 1], cxt + crr[c]);
+          }
         }
       }
     }
-
-    cur.swap(nxt);
-  }
-
-  int ans = 0;
-  for (auto [key, cnt] : cur) {
-    ans = max<int>(ans, cnt);
+    if (none) break;
   }
   cout << ans;
 
