@@ -3,13 +3,13 @@
 using namespace std;
 
 struct HopcroftKarp {
-  void Init(int n) {
-    nmax = n;
-    used.clear(), used.resize(n);
-    left.clear(), left.resize(n, -1);
-    right.clear(), right.resize(n, -1);
-    dist.clear(), dist.resize(n);
-    edges.clear(), edges.resize(n);
+  void Init(int _nl, int _nr) {
+    nl = _nl, nr = _nr;
+    used.clear(), used.resize(nl);
+    left.clear(), left.resize(nl, -1);
+    right.clear(), right.resize(nr, -1);
+    dist.clear(), dist.resize(nl);
+    edges.clear(), edges.resize(nl);
   }
 
   void AddEdge(int u, int v) {
@@ -21,7 +21,7 @@ struct HopcroftKarp {
     for (;;) {
       BFS();
       int add = 0;
-      for (int i = 0; i < nmax; i++) {
+      for (int i = 0; i < nl; i++) {
         add += (!used[i] && DFS(i));
       }
 
@@ -36,7 +36,7 @@ struct HopcroftKarp {
 
   void BFS() {
     queue<int> q;
-    for (int i = 0; i < nmax; i++) {
+    for (int i = 0; i < nl; i++) {
       if (used[i]) {
         dist[i] = kInf;
       } else {
@@ -72,7 +72,7 @@ struct HopcroftKarp {
     return false;
   }
 
-  int nmax;
+  int nl, nr;
   vector<bool> used;
   vector<int> left, right, dist;
   vector<vector<int>> edges;
