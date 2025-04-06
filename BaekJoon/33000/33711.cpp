@@ -1,6 +1,6 @@
 // Title : 내 이름 나무
 // Link  : https://www.acmicpc.net/problem/33711 
-// Time  : 412 ms
+// Time  : 416 ms
 // Memory: 5696 KB
 
 #include <bits/stdc++.h>
@@ -50,7 +50,7 @@ int main() {
       q.push(x);
     }
 
-    for (int j = 1; !q.empty() && j <= k; j++) {
+    for (int j = 1; !q.empty() && j <= ((k + 1) >> 1); j++) {
       int nq = q.size();
       while (nq--) {
         int cur = q.front();
