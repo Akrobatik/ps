@@ -70,6 +70,7 @@ struct HopcroftKarp {
         return true;
       }
     }
+    dist[l] = kInf;
     return false;
   }
 
