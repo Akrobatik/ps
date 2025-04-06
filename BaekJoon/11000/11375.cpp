@@ -1,7 +1,7 @@
 // Title : 열혈강호
 // Link  : https://www.acmicpc.net/problem/11375 
-// Time  : 124 ms
-// Memory: 6120 KB
+// Time  : 68 ms
+// Memory: 5988 KB
 
 #include <bits/stdc++.h>
 
@@ -14,6 +14,10 @@ struct HopcroftKarp {
     right.clear(), right.resize(nr + 1);
     dist.clear(), dist.resize(nl + 1);
     edges.clear(), edges.resize(nl + 1);
+  }
+
+  void ReserveEdge(int u, int sz) {
+    edges[u].reserve(sz);
   }
 
   void AddEdge(int u, int v) {
@@ -75,6 +79,7 @@ struct HopcroftKarp {
         return true;
       }
     }
+    dist[l] = kInf;
     return false;
   }
 
@@ -95,6 +100,7 @@ int main() {
   for (int i = 1; i <= n; i++) {
     int nn;
     cin >> nn;
+    solver.ReserveEdge(i, nn);
     while (nn--) {
       int x;
       cin >> x;
