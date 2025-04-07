@@ -1,7 +1,7 @@
 // Title : 소스 더하기
 // Link  : https://www.acmicpc.net/problem/33684 
 // Time  : 20 ms
-// Memory: 2804 KB
+// Memory: 2412 KB
 
 #include <bits/stdc++.h>
 
@@ -11,9 +11,9 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int64_t n, k;
+  int n, k;
   cin >> n >> k;
-  vector<int64_t> arr(n);
+  vector<int> arr(n);
   for (auto& e : arr) cin >> e;
   sort(arr.begin(), arr.end());
 
