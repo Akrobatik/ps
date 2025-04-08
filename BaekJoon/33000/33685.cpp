@@ -1,7 +1,9 @@
 // Title : 불의 군주 라그나로스 1
 // Link  : https://www.acmicpc.net/problem/33685 
-// Time  : 2612 ms
+// Time  : 2780 ms
 // Memory: 56656 KB
+
+#pragma GCC optimize("O3")
 
 #include <bits/stdc++.h>
 
