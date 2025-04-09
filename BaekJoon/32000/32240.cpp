@@ -1,7 +1,7 @@
 // Title : 비로소 서로소
 // Link  : https://www.acmicpc.net/problem/32240 
-// Time  : 2744 ms
-// Memory: 807984 KB
+// Time  : 2792 ms
+// Memory: 795136 KB
 
 #pragma GCC optimize("O3")
 
@@ -42,6 +42,7 @@ int main() {
   cin.tie(nullptr);
 
   vector<int> primes;
+  primes.reserve(3001134);
   phi[1] = 1;
   for (int i = 2; i <= kMax; ++i) {
     if (phi[i] == 0) {
