@@ -1,7 +1,7 @@
 // Title : 수열과 쿼리 21
 // Link  : https://www.acmicpc.net/problem/16975 
-// Time  : 100 ms
-// Memory: 6132 KB
+// Time  : 84 ms
+// Memory: 6128 KB
 
 #include <bits/stdc++.h>
 
@@ -67,7 +67,8 @@ int main() {
   for (int i = 0; i < n; i++) {
     int x;
     cin >> x;
-    tree.Update(i, i, x);
+    int node = i + tree.nmax;
+    while (node) tree.tree[node] += x, node >>= 1;
   }
 
   int m;
