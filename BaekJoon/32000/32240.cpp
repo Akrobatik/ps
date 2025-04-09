@@ -1,6 +1,6 @@
 // Title : 비로소 서로소
 // Link  : https://www.acmicpc.net/problem/32240 
-// Time  : 3128 ms
+// Time  : 3300 ms
 // Memory: 326944 KB
 
 #pragma GCC optimize("O3")
@@ -31,8 +31,7 @@ int64_t PrefixSum(int64_t n) {
     j = n / x;
     int64_t y = (j - i + 1) % kMod;
     int64_t z = (i + j) % kMod;
-    res -= ((PrefixSum(x) * y % kMod) * z % kMod) * kInv2 % kMod;
-    if (res < 0) res += kMod;
+    res = (res + kMod - ((PrefixSum(x) * y % kMod) * z % kMod) * kInv2 % kMod) % kMod;
   }
   return memo[n] = res;
 }
