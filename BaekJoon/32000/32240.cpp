@@ -1,13 +1,16 @@
 // Title : 비로소 서로소
 // Link  : https://www.acmicpc.net/problem/32240 
-// Time  : 2792 ms
-// Memory: 795136 KB
+// Time  : 2844 ms
+// Memory: 795316 KB
 
 #pragma GCC optimize("O3")
 
 #include <bits/stdc++.h>
 
+#include <ext/pb_ds/assoc_container.hpp>
+
 using namespace std;
+using namespace __gnu_pbds;
 
 constexpr int kMax = 5e7;
 constexpr int64_t kMod = 1e9 + 7;
@@ -15,7 +18,7 @@ constexpr int64_t kInv2 = 500000004;
 constexpr int64_t kInv6 = 166666668;
 
 int64_t phi[kMax + 1], psum[kMax + 1];
-unordered_map<int64_t, int64_t> memo;
+gp_hash_table<int64_t, int64_t> memo;
 
 int64_t PrefixSum(int64_t n) {
   if (n <= kMax) return psum[n];
