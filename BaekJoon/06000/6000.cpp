@@ -20,7 +20,8 @@ int main() {
   partial_sum(arr, arr + n + 1, arr);
 
   for (int i = 1; i <= n; i++) {
-    for (int j = 1; j <= ((i + 1) >> 1); j++) {
+    int limit = (i + 1) >> 1;
+    for (int j = 1; j <= limit; j++) {
       memo[i][j] = memo[i][j - 1];
       for (auto step : {j * 2 - 1, j * 2}) {
         if (step <= i) {
@@ -28,7 +29,7 @@ int main() {
         }
       }
     }
-    for (int j = ((i + 1) >> 1) + 1; j <= n; j++) {
+    for (int j = limit + 1; j <= n; j++) {
       memo[i][j] = memo[i][j - 1];
     }
   }
