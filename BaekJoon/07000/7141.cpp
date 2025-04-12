@@ -11,15 +11,13 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  cout << "100\n0\n";
+  cout << "100\n";
+  cout << "0\n";
   for (int i = 1; i < 100; i++) {
-    int cnt = 10 + (i < 40);
+    int cnt = 10 + (i < 50);
     cout << cnt;
-    for (int j = 1; j <= 10; j++) {
-      cout << " " << (i + 99) % 100 << " 1";
-    }
-    if (cnt == 11) {
-      cout << " " << (i + 1) % 100 << " -1";
+    for (int j = 0; j < cnt; j++) {
+      cout << " " << i - 1 << " 1";
     }
     cout << "\n";
   }
