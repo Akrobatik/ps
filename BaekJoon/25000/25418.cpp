@@ -1,13 +1,11 @@
 // Title : 정수 a를 k로 만들기
 // Link  : https://www.acmicpc.net/problem/25418 
 // Time  : 0 ms
-// Memory: 2996 KB
+// Memory: 2020 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
-
-bool visited[1000001];
 
 int main() {
   ios::sync_with_stdio(false);
