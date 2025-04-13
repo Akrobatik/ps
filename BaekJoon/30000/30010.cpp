@@ -7,23 +7,6 @@
 
 using namespace std;
 
-bool Test(int N, vector<int> A) {
-  for (int i = N - 1; i > 0; i--) {
-    for (int j = i - 1; j >= 0; j--) {
-      if (A[j] > A[j + 1]) {
-        int tmp = A[j];
-        A[j] = A[j + 1];
-        A[j + 1] = tmp;
-      }
-    }
-  }
-
-  for (int i = 1; i < N; i++) {
-    if (A[i - 1] > A[i]) return false;
-  }
-  return true;
-}
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
