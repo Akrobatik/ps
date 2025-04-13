@@ -1,7 +1,7 @@
 // Title : 정수 a를 k로 만들기
 // Link  : https://www.acmicpc.net/problem/25418 
-// Time  : 8 ms
-// Memory: 3524 KB
+// Time  : 0 ms
+// Memory: 2996 KB
 
 #include <bits/stdc++.h>
 
@@ -16,28 +16,16 @@ int main() {
   int a, k;
   cin >> a >> k;
 
-  queue<int> q;
-  visited[a] = true;
-  q.push(a);
-  for (int i = 0;; i++) {
-    int nq = q.size();
-    while (nq--) {
-      int cur = q.front();
-      q.pop();
-
-      if (cur == k) {
-        cout << i;
-        return 0;
-      }
-
-      for (auto nxt : {cur + 1, cur << 1}) {
-        if (nxt <= k && !visited[nxt]) {
-          visited[nxt] = true;
-          q.push(nxt);
-        }
-      }
+  int cnt = 0;
+  while (a != k) {
+    ++cnt;
+    if (!(k & 1) && a <= (k >> 1)) {
+      k >>= 1;
+    } else {
+      --k;
     }
   }
+  cout << cnt;
 
   return 0;
 }
