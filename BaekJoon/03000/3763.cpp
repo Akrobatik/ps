@@ -1,16 +1,19 @@
 // Title : 스도쿠
-// Link  : https://www.acmicpc.net/problem/3763
-// Time  : 388 ms
-// Memory: 2420 KB
+// Link  : https://www.acmicpc.net/problem/3763 
+// Time  : 132 ms
+// Memory: 2388 KB
+
+#pragma comment(linker, "/STACK:167772160")
+#pragma GCC optimize("O3")
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
 struct DLX {
-  void Init(int cols, vector<pair<int, vector<int>>>& covers) {
+  void Init(int cols, span<vector<int>> covers) {
     int total = cols + 1;
-    for (auto& e : covers) total += e.second.size();
+    for (auto& e : covers) total += e.size();
 
     id.clear(), id.resize(total);
     size.clear(), size.resize(cols + 1);
@@ -37,10 +40,12 @@ struct DLX {
 
     // Covers
     int cur = cols + 1;
-    for (auto& [rid, cids] : covers) {
-      int nc = cids.size();
-      if (!nc) continue;
-      for (int _cid : cids) {
+    int rows = covers.size();
+    for (int rid = 0; rid < rows; rid++) {
+      int n = covers[rid].size();
+      if (!n) continue;
+
+      for (int _cid : covers[rid]) {
         int cid = _cid + 1;
         if (down[cid] == cid) down[cid] = cur;
         ++size[cid];
@@ -53,8 +58,15 @@ struct DLX {
         right[cur] = cur + 1;
         ++cur;
       }
-      left[cur - nc] += nc;
-      right[cur - 1] -= nc;
+      left[cur - n] += n;
+      right[cur - 1] -= n;
+    }
+
+    // Cover childless columns
+    for (int i = 1; i <= cols; i++) {
+      if (size[i]) continue;
+      right[left[i]] = right[i];
+      left[right[i]] = left[i];
     }
   }
 
@@ -83,32 +95,34 @@ struct DLX {
   }
 
   int FindMinColumn() {
-    int min_col = right[0];
+    int min_col = left[0];
     int minn = size[min_col];
-    for (int col = right[min_col]; col; col = right[col]) {
+    for (int col = left[min_col]; minn != 1 && col; col = left[col]) {
       if (minn > size[col]) min_col = col, minn = size[col];
     }
     return min_col;
   }
 
   bool Search() {
-    int cols = size.size() - 1;
-    for (int i = 1; i <= cols; i++) {
-      if (size[i]) continue;
-      right[left[i]] = right[i];
-      left[right[i]] = left[i];
-    }
-    return _Search();
-  }
-
-  bool _Search() {
     if (!right[0]) return true;
     int col = FindMinColumn();
     CoverColumn(col);
+
+    vector<pair<int, int>> cands;
+    cands.reserve(size[col]);
     for (int row = down[col]; row != col; row = down[row]) {
+      int score = 0;
+      for (int node = right[row]; node != row; node = right[node]) {
+        score += size[head[node]];
+      }
+      cands.push_back({score, row});
+    }
+    sort(cands.begin(), cands.end());
+
+    for (auto [_, row] : cands) {
       solution.push_back(id[row]);
       for (int node = right[row]; node != row; node = right[node]) CoverColumn(head[node]);
-      if (_Search()) return true;
+      if (Search()) return true;
       for (int node = left[row]; node != row; node = left[node]) UncoverColumn(head[node]);
       solution.pop_back();
     }
@@ -127,14 +141,14 @@ constexpr int kSqr = kSize * kSize;
 constexpr int kCols = 4 * kSize * kSize;
 constexpr int kRows = kSize * kSize * kSize;
 
+int board[kSize][kSize];
+bitset<kSize> sub_masks[kSize];
+bitset<kSize> row_masks[kSize];
+bitset<kSize> col_masks[kSize];
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
-
-  int board[kSize][kSize];
-  int sub_masks[kSize] = {};
-  int row_masks[kSize] = {};
-  int col_masks[kSize] = {};
   for (int i = 0; i < kSize; i++) {
     for (int j = 0; j < kSize; j++) {
       char c;
@@ -151,22 +165,19 @@ int main() {
   }
 
   auto check = [&](int s, int y, int x, int v) {
-    int m = 1 << v;
     return board[y][x] == 0 &&
-           ((sub_masks[s] & m) == 0) &&
-           ((row_masks[y] & m) == 0) &&
-           ((col_masks[x] & m) == 0);
+           !sub_masks[s].test(v) &&
+           !row_masks[y].test(v) &&
+           !col_masks[x].test(v);
   };
 
-  vector<pair<int, vector<int>>> covers;
-  covers.reserve(kRows);
+  vector<vector<int>> covers(kRows);
 
   int y = 0, x = 0, v = 0;
   for (int i = 0; i < kRows; i++) {
     int s = y - y % kSqrt + x / kSqrt;
     if (check(s, y, x, v)) {
-      auto& [rid, cids] = covers.emplace_back();
-      rid = i;
+      auto& cids = covers[i];
       cids.resize(4);
       cids[0] = y * kSize + x;
       cids[1] = s * kSize + v + kSqr;
