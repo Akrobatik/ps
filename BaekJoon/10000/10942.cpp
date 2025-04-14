@@ -1,11 +1,6 @@
 // Title : 팰린드롬?
-// Link  : https://www.acmicpc.net/problem/10942 
-// Time  : 20 ms
-// Memory: 1740 KB
-
-// Title : 팰린드롬？
 // Link  : https://www.acmicpc.net/problem/10942
-// Time  : 16 ms
+// Time  : 20 ms
 // Memory: 1740 KB
 
 #pragma GCC optimize("O3")
