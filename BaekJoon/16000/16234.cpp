@@ -1,7 +1,7 @@
 // Title : 인구 이동
 // Link  : https://www.acmicpc.net/problem/16234 
-// Time  : 480 ms
-// Memory: 2380 KB
+// Time  : 68 ms
+// Memory: 2172 KB
 
 #include <bits/stdc++.h>
 
@@ -14,7 +14,21 @@ int board[50][50];
 bool visited[50][50];
 vector<vector<pair<int, int>>> groups;
 
+bool Check(int y, int x, int n, int l, int r) {
+  int pops = board[y][x];
+  for (auto [dy, dx] : kDelta) {
+    int yy = y + dy, xx = x + dx;
+    if (0 <= yy && yy < n && 0 <= xx && xx < n && !visited[yy][xx]) {
+      int delta = abs(pops - board[yy][xx]);
+      if (l <= delta && delta <= r) return true;
+    }
+  }
+  return false;
+}
+
 void Traverse(int sy, int sx, int n, int l, int r) {
+  if (!Check(sy, sx, n, l, r)) return;
+
   auto& group = groups.emplace_back();
 
   queue<pair<int, int>> q;
@@ -62,7 +76,7 @@ int main() {
       }
     }
 
-    if (groups.size() == n * n) {
+    if (groups.empty()) {
       cout << i;
       break;
     }
