@@ -20,9 +20,12 @@ int main() {
   sort(arr.begin(), arr.end());
 
   for (auto [l, r] : arr) {
-    memo[r] = max<int>(memo[r], *max_element(memo, memo + r) + 1);
+    memo[r] = max<int>(memo[r], memo[r - 1] + 1);
+    for (int i = r + 1; i <= 500; i++) {
+      memo[i] = max<int>(memo[i], memo[r]);
+    }
   }
-  cout << n - *max_element(memo, memo + 501);
+  cout << n - memo[500];
 
   return 0;
 }
