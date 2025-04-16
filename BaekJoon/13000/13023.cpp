@@ -1,46 +1,27 @@
 // Title : ABCDE
 // Link  : https://www.acmicpc.net/problem/13023 
-// Time  : 248 ms
-// Memory: 280144 KB
+// Time  : 20 ms
+// Memory: 2200 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
+bool visited[2000];
 vector<int> edges[2000];
 
-bool Check(int x, int sz, const array<int, 5>& arr) {
-  for (int i = 0; i <= sz; i++) {
-    if (x == arr[i]) return false;
+void Traverse(int cur, int depth) {
+  if (depth == 4) {
+    cout << "1";
+    exit(0);
   }
-  return true;
-}
 
-void Check(int id) {
-  queue<array<int, 5>> q;
-  q.push({id});
-
-  for (int i = 0; !q.empty(); i++) {
-    if (i == 4) {
-      cout << "1";
-      exit(0);
-    }
-
-    int nq = q.size();
-    while (nq--) {
-      auto arr = q.front();
-      q.pop();
-
-      int cur = arr[i];
-      for (auto nxt : edges[cur]) {
-        if (Check(nxt, i, arr)) {
-          auto brr = arr;
-          brr[i + 1] = nxt;
-          q.push(brr);
-        }
-      }
-    }
+  visited[cur] = true;
+  for (auto nxt : edges[cur]) {
+    if (visited[nxt]) continue;
+    Traverse(nxt, depth + 1);
   }
+  visited[cur] = false;
 }
 
 int main() {
@@ -57,9 +38,8 @@ int main() {
   }
 
   for (int i = 0; i < n; i++) {
-    Check(i);
+    Traverse(i, 0);
   }
-
   cout << "0";
 
   return 0;
