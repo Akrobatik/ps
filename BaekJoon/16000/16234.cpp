@@ -1,6 +1,6 @@
 // Title : 인구 이동
 // Link  : https://www.acmicpc.net/problem/16234 
-// Time  : 68 ms
+// Time  : 60 ms
 // Memory: 2172 KB
 
 #include <bits/stdc++.h>
@@ -27,12 +27,12 @@ bool Check(int y, int x, int n, int l, int r) {
 }
 
 void Traverse(int sy, int sx, int n, int l, int r) {
+  visited[sy][sx] = true;
   if (!Check(sy, sx, n, l, r)) return;
 
   auto& group = groups.emplace_back();
 
   queue<pair<int, int>> q;
-  visited[sy][sx] = true;
   q.push({sy, sx});
   while (!q.empty()) {
     auto [y, x] = q.front();
