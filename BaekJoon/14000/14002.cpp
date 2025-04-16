@@ -3,11 +3,6 @@
 // Time  : 0 ms
 // Memory: 2028 KB
 
-// Title : 가장 긴 증가하는 부분 수열 5
-// Link  : https://www.acmicpc.net/problem/14003
-// Time  : 196 ms
-// Memory: 21552 KB
-
 #include <bits/stdc++.h>
 
 using namespace std;
