@@ -1,15 +1,13 @@
 // Title : 거의 소수
 // Link  : https://www.acmicpc.net/problem/1456 
-// Time  : 124 ms
-// Memory: 18060 KB
+// Time  : 80 ms
+// Memory: 18072 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-constexpr int kMax = 1e7;
-
-bool seive[kMax + 1];
+bool seive[(int)(1e7 + 1)];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -19,10 +17,11 @@ int main() {
   cin >> a >> b;
 
   vector<int> primes;
-  for (int64_t i = 2; i * i <= b; i++) {
+  int limit = sqrt(b);
+  for (int i = 2; i <= limit; i++) {
     if (!seive[i]) primes.push_back(i);
     for (auto p : primes) {
-      if (i * p > kMax) break;
+      if (i * p > limit) break;
       seive[i * p] = true;
       if (i % p == 0) break;
     }
@@ -30,8 +29,8 @@ int main() {
 
   int64_t sum = 0;
   for (auto p : primes) {
-    __int128_t x = (__int128_t)p * p;
-    while (x <= b) sum += (x >= a), x *= p;
+    int64_t x = p;
+    while (x <= b / p) x *= p, sum += (x >= a);
   }
   cout << sum;
 
