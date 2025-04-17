@@ -1,7 +1,7 @@
 // Title : 이항 계수 5
 // Link  : https://www.acmicpc.net/problem/11439 
-// Time  : 76 ms
-// Memory: 19000 KB
+// Time  : 40 ms
+// Memory: 12536 KB
 
 #include <bits/stdc++.h>
 
@@ -9,22 +9,22 @@ using namespace std;
 
 bool seive[4000001];
 
-vector<int64_t> Count(int64_t n, const vector<int64_t>& primes) {
-  vector<int64_t> res;
+vector<int> Count(int n, const vector<int>& primes) {
+  vector<int> res;
   res.reserve(primes.size());
   for (auto p : primes) {
-    int64_t x = n, cnt = 0;
+    int x = n, cnt = 0;
     while (x) x /= p, cnt += x;
     res.push_back(cnt);
   }
   return res;
 }
 
-vector<int64_t> Factorize(int64_t n, const vector<int64_t>& primes) {
-  vector<int64_t> res;
+vector<int> Factorize(int n, const vector<int>& primes) {
+  vector<int> res;
   res.reserve(primes.size());
   for (auto p : primes) {
-    int64_t cnt = 0;
+    int cnt = 0;
     while (n % p == 0) n /= p, ++cnt;
     res.push_back(cnt);
   }
@@ -38,9 +38,9 @@ int main() {
   int n, k, m;
   cin >> n >> k >> m;
 
-  vector<int64_t> primes;
-  int64_t limit = max<int64_t>(n, m);
-  for (int64_t i = 2; i <= limit; i++) {
+  vector<int> primes;
+  int limit = max<int>(n, m);
+  for (int i = 2; i <= limit; i++) {
     if (!seive[i]) primes.push_back(i);
     for (auto p : primes) {
       if (i * p > limit) break;
@@ -58,12 +58,12 @@ int main() {
     nc[i] -= kc[i] + nkc[i];
   }
 
-  int64_t mp = 1;
-  for (int64_t i = 0; i < primes.size(); i++) {
+  int mp = 1;
+  for (int i = 0; i < primes.size(); i++) {
     if (mc[i] == 0) continue;
-    int64_t cut = min<int64_t>(nc[i], mc[i]);
+    int cut = min<int>(nc[i], mc[i]);
     nc[i] -= cut, mc[i] -= cut;
-    for (int64_t j = 0; j < mc[i]; j++) {
+    for (int j = 0; j < mc[i]; j++) {
       mp *= primes[i];
     }
   }
@@ -73,11 +73,11 @@ int main() {
     return 0;
   }
 
-  int64_t res = 1;
-  for (int64_t i = 0; i < primes.size(); i++) {
+  int res = 1;
+  for (int i = 0; i < primes.size(); i++) {
     if (nc[i] == 0) continue;
-    for (int64_t j = 0; j < nc[i]; j++) {
-      res = res * primes[i] % mp;
+    for (int j = 0; j < nc[i]; j++) {
+      res = (int64_t)res * primes[i] % mp;
     }
   }
   cout << res * (m / mp);
