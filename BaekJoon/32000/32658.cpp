@@ -1,6 +1,6 @@
 // Title : 오장원전
 // Link  : https://www.acmicpc.net/problem/32658 
-// Time  : 216 ms
+// Time  : 208 ms
 // Memory: 25540 KB
 
 #include <bits/stdc++.h>
@@ -26,7 +26,7 @@ int64_t GetMin(int x, int k) {
   }
 
   int64_t minn = INT64_MAX;
-  for (int i = l; i <= r; i++) {
+  for (int i = l; i < r; i++) {
     minn = min<int64_t>(minn, Calc(x, k, i));
   }
   return minn;
