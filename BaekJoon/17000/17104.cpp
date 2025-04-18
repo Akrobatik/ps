@@ -1,7 +1,7 @@
 // Title : 골드바흐 파티션 2
 // Link  : https://www.acmicpc.net/problem/17104 
-// Time  : 308 ms
-// Memory: 55012 KB
+// Time  : 292 ms
+// Memory: 54684 KB
 
 #include <bits/stdc++.h>
 
@@ -67,6 +67,7 @@ int main() {
   vector<int> arr(kMax + 1, 1);
 
   vector<int> primes;
+  primes.reserve(78498);
   arr[0] = arr[1] = 0;
   for (int i = 2; i <= kMax; i++) {
     if (arr[i]) primes.push_back(i);
