@@ -1,6 +1,6 @@
 // Title : 하노이 탑
 // Link  : https://www.acmicpc.net/problem/1914 
-// Time  : 116 ms
+// Time  : 112 ms
 // Memory: 2024 KB
 
 #include <bits/stdc++.h>
@@ -231,7 +231,7 @@ int main() {
   int n;
   cin >> n;
   BigInt x(1);
-  for (int i = 0; i < n; i++) x *= 2;
+  for (int i = 0; i < n; i++) x += x;
   cout << (x - 1) << "\n";
   if (n <= 20) Print(n, 1, 2, 3);
 
