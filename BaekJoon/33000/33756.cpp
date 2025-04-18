@@ -1,23 +1,21 @@
 // Title : 88888
 // Link  : https://www.acmicpc.net/problem/33756 
-// Time  : 48 ms
+// Time  : 28 ms
 // Memory: 2020 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-int Count(int64_t x) {
-  int res = 0;
+bool Check(int64_t x) {
+  if (x % 8) return false;
 
-  int64_t mask = 111111111111111111l;
-  while (mask) {
-    int cnt = x / mask;
-    res += cnt;
-    x -= mask * cnt;
-    mask /= 10;
+  string s = to_string(x >> 3);
+  if (s[0] == '9') return false;
+  for (int i = 1; i < s.size(); i++) {
+    if (s[i] == '9' || s[i - 1] > s[i]) return false;
   }
-  return res;
+  return true;
 }
 
 int main() {
@@ -29,7 +27,7 @@ int main() {
   while (t--) {
     int64_t x;
     cin >> x;
-    cout << (x % 8 == 0 && Count(x >> 3) <= 8 ? "Yes\n" : "No\n");
+    cout << (Check(x) ? "Yes\n" : "No\n");
   }
 
   return 0;
