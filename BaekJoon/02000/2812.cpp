@@ -1,7 +1,7 @@
 // Title : 크게 만들기
 // Link  : https://www.acmicpc.net/problem/2812 
 // Time  : 4 ms
-// Memory: 2952 KB
+// Memory: 3148 KB
 
 #include <bits/stdc++.h>
 
@@ -15,14 +15,13 @@ int main() {
   string s;
   cin >> n >> k >> s;
 
-  int ds = n - k;
   string dst;
-  dst.reserve(ds + 1);
+  dst.reserve(n);
   for (auto c : s) {
     while (k && !dst.empty() && dst.back() < c) --k, dst.pop_back();
     dst.push_back(c);
   }
-  dst.resize(ds);
+  while (k--) dst.pop_back();
   cout << dst;
 
   return 0;
