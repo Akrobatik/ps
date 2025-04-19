@@ -1,6 +1,6 @@
 // Title : 백설공주와 난쟁이
 // Link  : https://www.acmicpc.net/problem/2912 
-// Time  : 676 ms
+// Time  : 660 ms
 // Memory: 5872 KB
 
 #include <bits/stdc++.h>
@@ -43,7 +43,6 @@ int main() {
     for (int i = 1; i <= c; i++) {
       if (cnts[i] == maxx) return i;
     }
-    assert(0);
   };
 
   int m, sqr = sqrt((double)n);
@@ -51,17 +50,17 @@ int main() {
   vector<tup> queries(m);
   vector<int> ans(m);
   for (int i = 0; i < m; i++) {
-    auto& [l, r, ls, q] = queries[i];
+    auto& [l, r, s, q] = queries[i];
     cin >> l >> r;
     --l, --r;
-    ls = l / sqr;
+    s = l / sqr;
     q = i;
   }
 
   sort(queries.begin(), queries.end(), [](const tup& lhs, const tup& rhs) {
-    auto [ll, lr, lls, lq] = lhs;
-    auto [rl, rr, rls, rq] = rhs;
-    return lls < rls || (lls == rls && lr < rr);
+    auto [ll, lr, ls, lq] = lhs;
+    auto [rl, rr, rs, rq] = rhs;
+    return ls < rs || (ls == rs && lr > rr);
   });
 
   auto [l, r, _, q] = queries[0];
