@@ -27,13 +27,13 @@ pair<int, int> Merge(const pair<int, int>& lhs, const pair<int, int>& rhs) {
   return {mx, mc};
 }
 
-pair<int, int> Query(int l, int r) {
+int Query(int l, int r) {
   pair<int, int> res{};
   for (l += kMax, r += kMax + 1; l < r; l >>= 1, r >>= 1) {
     if (l & 1) res = Merge(res, tree[l++]);
     if (r & 1) res = Merge(res, tree[--r]);
   }
-  return res;
+  return res.first;
 }
 
 int main() {
@@ -54,7 +54,7 @@ int main() {
     return upper_bound(memo[x].begin(), memo[x].end(), r) - lower_bound(memo[x].begin(), memo[x].end(), l);
   };
 
-  int idx = kMax;
+  int idx = (kMax + n + 2) >> 1;
   while (--idx) tree[idx] = Merge(tree[idx << 1], tree[(idx << 1) + 1]);
 
   int m;
@@ -62,7 +62,7 @@ int main() {
   while (m--) {
     int l, r;
     cin >> l >> r;
-    auto [x, _] = Query(l - 1, r - 1);
+    int x = Query(l - 1, r - 1);
     if (x && ((r - l + 1) >> 1) < Count(l - 1, r - 1, x)) {
       cout << "yes " << x << "\n";
     } else {
