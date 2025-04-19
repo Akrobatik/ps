@@ -1,13 +1,40 @@
 // Title : 백설공주와 난쟁이
 // Link  : https://www.acmicpc.net/problem/2912 
-// Time  : 660 ms
-// Memory: 5872 KB
+// Time  : 40 ms
+// Memory: 12784 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-using tup = tuple<int, int, int, int>;
+constexpr int kMax = 1 << 19;
+
+pair<int, int> tree[kMax << 1];
+
+pair<int, int> Merge(const pair<int, int>& lhs, const pair<int, int>& rhs) {
+  int mx, mc;
+  auto [lx, lc] = lhs;
+  auto [rx, rc] = rhs;
+  if (lx == rx) {
+    mx = lx, mc = lc + rc;
+  } else if (lc > rc) {
+    mx = lx, mc = lc - rc;
+  } else if (lc < rc) {
+    mx = rx, mc = rc - lc;
+  } else {
+    mx = mc = 0;
+  }
+  return {mx, mc};
+}
+
+pair<int, int> Query(int l, int r) {
+  pair<int, int> res{};
+  for (l += kMax, r += kMax + 1; l < r; l >>= 1, r >>= 1) {
+    if (l & 1) res = Merge(res, tree[l++]);
+    if (r & 1) res = Merge(res, tree[--r]);
+  }
+  return res;
+}
 
 int main() {
   ios::sync_with_stdio(false);
@@ -15,72 +42,29 @@ int main() {
 
   int n, c;
   cin >> n >> c;
-  vector<int> arr(n);
-  for (auto& e : arr) cin >> e;
+  vector<vector<int>> memo(c + 1);
+  for (int i = 0; i < n; i++) {
+    int x;
+    cin >> x;
+    tree[i + kMax] = {x, 1};
+    memo[x].push_back(i);
+  }
 
-  int maxx = 0, type = 0;
-  vector<int> cnts(c + 1), _memo((n << 1) + 1);
-  auto memo = _memo.data() + n;
-  cnts[0] = n;
-
-  auto Add = [&](int i) {
-    int x = ++cnts[arr[i]];
-    --memo[x - 1];
-    ++memo[x];
-    if (maxx < x) maxx = x, type = arr[i];
+  auto Count = [&](int l, int r, int x) {
+    return upper_bound(memo[x].begin(), memo[x].end(), r) - lower_bound(memo[x].begin(), memo[x].end(), l);
   };
 
-  auto Sub = [&](int i) {
-    int x = --cnts[arr[i]];
-    if (--memo[x + 1] == 0 && x + 1 == maxx) --maxx, type = 0;
-    ++memo[x];
-  };
+  int idx = kMax;
+  while (--idx) tree[idx] = Merge(tree[idx << 1], tree[(idx << 1) + 1]);
 
-  auto Find = [&](int l, int r) {
-    int n = r - l + 1;
-    if ((n >> 1) >= maxx) return 0;
-    if (type) return type;
-    for (int i = 1; i <= c; i++) {
-      if (cnts[i] == maxx) return i;
-    }
-  };
-
-  int m, sqr = sqrt((double)n);
+  int m;
   cin >> m;
-  vector<tup> queries(m);
-  vector<int> ans(m);
-  for (int i = 0; i < m; i++) {
-    auto& [l, r, s, q] = queries[i];
+  while (m--) {
+    int l, r;
     cin >> l >> r;
-    --l, --r;
-    s = l / sqr;
-    q = i;
-  }
-
-  sort(queries.begin(), queries.end(), [](const tup& lhs, const tup& rhs) {
-    auto [ll, lr, ls, lq] = lhs;
-    auto [rl, rr, rs, rq] = rhs;
-    return ls < rs || (ls == rs && lr > rr);
-  });
-
-  auto [l, r, _, q] = queries[0];
-  for (int i = l; i <= r; i++) {
-    Add(i);
-  }
-  ans[q] = Find(l, r);
-
-  for (int i = 1; i < m; i++) {
-    auto [ll, rr, _, qq] = queries[i];
-    while (ll > l) Sub(l++);
-    while (rr < r) Sub(r--);
-    while (ll < l) Add(--l);
-    while (rr > r) Add(++r);
-    ans[qq] = Find(l, r);
-  }
-
-  for (auto e : ans) {
-    if (e) {
-      cout << "yes " << e << "\n";
+    auto [x, _] = Query(l - 1, r - 1);
+    if (x && ((r - l + 1) >> 1) < Count(l - 1, r - 1, x)) {
+      cout << "yes " << x << "\n";
     } else {
       cout << "no\n";
     }
