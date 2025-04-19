@@ -1,7 +1,7 @@
 // Title : 아파트 임대
 // Link  : https://www.acmicpc.net/problem/5615 
-// Time  : 444 ms
-// Memory: 9520 KB
+// Time  : 324 ms
+// Memory: 3044 KB
 
 #include <bits/stdc++.h>
 
@@ -47,7 +47,7 @@ struct Factorization {
     return vec;
   }
 
-  static constexpr int kMaxCyrene = 10000000;
+  static constexpr int kMaxCyrene = 1000000;
 
   vector<bool> cyr;
 
