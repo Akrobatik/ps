@@ -1,7 +1,7 @@
 // Title : Key
 // Link  : https://www.acmicpc.net/problem/7501 
-// Time  : 8 ms
-// Memory: 2592 KB
+// Time  : 0 ms
+// Memory: 2156 KB
 
 #include <bits/stdc++.h>
 
@@ -47,7 +47,7 @@ struct Factorization {
     return vec;
   }
 
-  static constexpr int kMaxCyrene = 500000;
+  static constexpr int kMaxCyrene = 10000;
 
   vector<bool> cyr;
 
