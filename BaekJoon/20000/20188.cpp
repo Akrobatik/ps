@@ -1,7 +1,7 @@
 // Title : 등산 마니아
 // Link  : https://www.acmicpc.net/problem/20188 
-// Time  : 168 ms
-// Memory: 37052 KB
+// Time  : 192 ms
+// Memory: 37048 KB
 
 #include <bits/stdc++.h>
 
@@ -9,7 +9,6 @@ using namespace std;
 
 int64_t ans;
 vector<int> edges[300001];
-int abc;
 
 int Traverse(int cur, int par, int n) {
   int cnt = 1;
