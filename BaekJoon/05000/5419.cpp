@@ -1,7 +1,7 @@
 // Title : 북서풍
 // Link  : https://www.acmicpc.net/problem/5419 
-// Time  : 476 ms
-// Memory: 4352 KB
+// Time  : 360 ms
+// Memory: 4052 KB
 
 #include <bits/stdc++.h>
 
@@ -33,17 +33,14 @@ struct SegmentTree {
 
 void Compress(vector<pair<int, int>>& coords) {
   int n = coords.size();
-  vector<int> my(n), mx(n);
+  vector<int> my(n);
   for (int i = 0; i < n; i++) {
-    tie(my[i], mx[i]) = coords[i];
+    my[i] = coords[i].first;
   }
   sort(my.begin(), my.end());
-  sort(mx.begin(), mx.end());
   auto ye = unique(my.begin(), my.end());
-  auto xe = unique(mx.begin(), mx.end());
   for (auto& [y, x] : coords) {
     y = lower_bound(my.begin(), ye, y) - my.begin();
-    x = lower_bound(mx.begin(), xe, x) - mx.begin();
   }
 }
 
