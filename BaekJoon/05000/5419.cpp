@@ -1,7 +1,7 @@
 // Title : 북서풍
 // Link  : https://www.acmicpc.net/problem/5419 
-// Time  : 360 ms
-// Memory: 4052 KB
+// Time  : 288 ms
+// Memory: 3640 KB
 
 #include <bits/stdc++.h>
 
@@ -31,19 +31,6 @@ struct SegmentTree {
   vector<int> tree;
 };
 
-void Compress(vector<pair<int, int>>& coords) {
-  int n = coords.size();
-  vector<int> my(n);
-  for (int i = 0; i < n; i++) {
-    my[i] = coords[i].first;
-  }
-  sort(my.begin(), my.end());
-  auto ye = unique(my.begin(), my.end());
-  for (auto& [y, x] : coords) {
-    y = lower_bound(my.begin(), ye, y) - my.begin();
-  }
-}
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -59,7 +46,16 @@ int main() {
     tree.Init(n);
     coords.resize(n);
     for (auto& [y, x] : coords) cin >> x >> y;
-    Compress(coords);
+
+    sort(coords.begin(), coords.end(), [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
+      return lhs.first < rhs.first;
+    });
+
+    int nth = 0, prv = coords[0].first;
+    for (auto& [y, x] : coords) {
+      if (prv != y) prv = y, ++nth;
+      y = nth;
+    }
 
     sort(coords.begin(), coords.end(), [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
       auto [ly, lx] = lhs;
