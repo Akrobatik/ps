@@ -1,6 +1,6 @@
 // Title : Professor KCM
 // Link  : https://www.acmicpc.net/problem/13206 
-// Time  : 228 ms
+// Time  : 220 ms
 // Memory: 2180 KB
 
 #include <bits/stdc++.h>
@@ -43,7 +43,9 @@ int main() {
 
     int ans = 1;
     for (auto [p, cnt] : facts) {
-      while (cnt--) ans = (int64_t)ans * p % kMod;
+      int x = 1;
+      while (cnt--) x *= p;
+      ans = (int64_t)ans * x % kMod;
     }
     cout << ans << "\n";
   }
