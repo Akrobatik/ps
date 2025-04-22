@@ -1,7 +1,7 @@
 // Title : Подрыв ветряка
 // Link  : https://www.acmicpc.net/problem/28618 
-// Time  : 332 ms
-// Memory: 3480 KB
+// Time  : 28 ms
+// Memory: 2648 KB
 
 #include <bits/stdc++.h>
 
@@ -9,9 +9,10 @@ using namespace std;
 
 using tup = tuple<int, int, int>;
 
-constexpr int kPad = 2e4 + 1;
+constexpr int kPad = 2e4;
 
-pair<int, int> links[50002];
+bool _memo[2][50001];
+pair<int, int> links[50001];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -19,6 +20,7 @@ int main() {
 
   int n, s;
   cin >> n >> s;
+
   vector<tup> arr, brr;
   for (int i = 1; i <= n; i++) {
     int a, b;
@@ -30,36 +32,47 @@ int main() {
     }
   }
 
-  set<int, greater<int>> memo;
-  memo.insert(s);
-  sort(brr.begin(), brr.end());
-  for (auto [a, b, i] : brr) {
-    set<int> nxt;
-    for (auto x : memo) {
-      if (x < a) break;
-      if (memo.contains(x + b)) continue;
-      if (nxt.insert(x + b).second) links[x + b + kPad] = {x + kPad, i};
-    }
-    memo.insert(nxt.begin(), nxt.end());
-  }
-
   sort(arr.begin(), arr.end(), [](const tup& lhs, const tup& rhs) {
     auto [la, lb, li] = lhs;
     auto [ra, rb, ri] = rhs;
     return la + lb > ra + rb;
   });
-  for (auto [a, b, i] : arr) {
-    set<int> nxt;
-    for (auto x : memo) {
-      if (x < a) break;
-      if (memo.contains(x + b)) continue;
-      if (nxt.insert(x + b).second) links[x + b + kPad] = {x + kPad, i};
+
+  sort(brr.begin(), brr.end(), [](const tup& lhs, const tup& rhs) {
+    return get<0>(lhs) < get<0>(rhs);
+  });
+
+  auto memo = _memo[0], mnxt = _memo[1];
+  memo[s + kPad] = true;
+
+  auto Update = [&](int x, int b, int i) {
+    if (!mnxt[x + b]) links[x + b] = {x, i};
+    mnxt[x + b] = true;
+  };
+
+  for (auto [a, b, i] : brr) {
+    memcpy(mnxt, memo, 50001);
+    for (int x = a + kPad; x <= 50000; x++) {
+      if (!memo[x]) continue;
+      Update(x, b, i);
     }
-    memo.insert(nxt.begin(), nxt.end());
+    swap(memo, mnxt);
   }
-  
+
+  for (auto [a, b, i] : arr) {
+    memcpy(mnxt, memo, 50001);
+    for (int x = a + kPad; x <= 50000; x++) {
+      if (!memo[x]) continue;
+      Update(x, b, i);
+    }
+    swap(memo, mnxt);
+  }
+
+  int id = 0;
+  while (!memo[id]) ++id;
+  int minn = id - kPad;
+
   vector<int> ans;
-  int minn = *memo.rbegin(), id = minn + kPad;
   for (;;) {
     auto [nxt, idx] = links[id];
     if (idx == 0) break;
