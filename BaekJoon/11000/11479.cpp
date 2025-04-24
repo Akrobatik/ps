@@ -1,9 +1,24 @@
-// Title : 서로 다른 부분 문자열의 개수 2
-// Link  : https://www.acmicpc.net/problem/11479
-// Time  : 112 ms
-// Memory: 15732 KB
+// Title : 서로 다른 부분 문자열의 개수 2
+// Link  : https://www.acmicpc.net/problem/11479 
+// Time  : 108 ms
+// Memory: 14740 KB
 
-#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+
+#include <immintrin.h>
+#include <malloc.h>
+#include <memory.h>
+#include <stdio.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <algorithm>
+#include <cstdint>
+#include <numeric>
+#include <span>
+#include <string_view>
+#include <vector>
 
 using namespace std;
 
@@ -166,20 +181,25 @@ struct LCP {
 };
 
 int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+  struct stat st;
+  fstat(0, &st);
+  char* in = (char*)mmap(0, st.st_size, PROT_READ, MAP_SHARED, 0, 0);
 
-  string s;
-  cin >> s;
-  int n = s.size();
+  auto b = in, e = in + st.st_size - 1;
+  while (!('a' <= *b && *b <= 'z')) ++b;
+  while (!('a' <= *e && *e <= 'z')) --e;
+
   LCP solver;
-  solver.Init(s);
+  solver.Init(string_view(b, e + 1));
   auto& lcp = solver.lcp;
-  int64_t ans = ((int64_t)n * (n + 1)) / 2;
-  for (int i = 1; i < n; i++) {
-    ans -= lcp[i];
-  }
-  cout << ans;
+
+  int n = e - b + 1;
+  int64_t x = (int64_t)n * (n + 1) / 2;
+  for (int i = 1; i < n; i++) x -= lcp[i];
+  n = 0;
+  char buf[16];
+  while (x || !n) buf[16 - ++n] = '0' + x % 10, x /= 10;
+  fwrite(buf + 16 - n, 1, n, stdout);
 
   return 0;
 }
