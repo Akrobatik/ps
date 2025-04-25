@@ -50,6 +50,8 @@ void Solve() {
   } else {
     cout << "Poor KCM\n";
   }
+
+  for (int i = 0; i < n; i++) edges[i].clear();
 }
 
 int main() {
