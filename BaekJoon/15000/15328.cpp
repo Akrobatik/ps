@@ -1,7 +1,7 @@
 // Title : 산타의 선물
 // Link  : https://www.acmicpc.net/problem/15328 
-// Time  : 544 ms
-// Memory: 2028 KB
+// Time  : 224 ms
+// Memory: 2044 KB
 
 #include <bits/stdc++.h>
 
@@ -9,8 +9,8 @@ using namespace std;
 
 constexpr long double kEpsilon = 1e-18;
 
-__float128 Sqrt(__float128 n) {
-  __float128 lo = 0, hi = n;
+__float128 Sqrt(int n) {
+  __float128 lo = sqrt((long double)n - 1e-8), hi = sqrt((long double)n + 1e-8);
   while (lo + kEpsilon < hi) {
     __float128 mid = (lo + hi) / 2;
     if (mid * mid <= n) {
@@ -39,7 +39,8 @@ int main() {
       int dx, dy, dz;
       cin >> dx >> dy >> dz;
       int xx = sx - dx, yy = sy - dy, zz = sz - dz;
-      sum += Sqrt(xx * xx + yy * yy + zz * zz);
+      int sqr = xx * xx + yy * yy + zz * zz;
+      if (sqr) sum += Sqrt(sqr);
       sx = dx, sy = dy, sz = dz;
     }
 
