@@ -1,14 +1,14 @@
 // Title : 트리의 색깔과 쿼리
 // Link  : https://www.acmicpc.net/problem/17469 
-// Time  : 380 ms
-// Memory: 39168 KB
+// Time  : 316 ms
+// Memory: 25016 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
 int arr[100001], memo[100001];
-unordered_set<int> colors[100001];
+set<int> colors[100001];
 
 int Find(int id) {
   while (id != memo[id]) {
