@@ -10,10 +10,11 @@ using namespace std;
 constexpr long double kEpsilon = 1e-18;
 
 __float128 Sqrt(int n) {
+  __float128 dn = n;
   __float128 lo = sqrt((long double)n - 1e-9), hi = sqrt((long double)n + 1e-9);
   while (lo + kEpsilon < hi) {
     __float128 mid = (lo + hi) / 2;
-    if (mid * mid <= n) {
+    if (mid * mid <= dn) {
       lo = mid;
     } else {
       hi = mid;
