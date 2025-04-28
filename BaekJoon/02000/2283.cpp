@@ -1,6 +1,6 @@
 // Title : 구간 자르기
 // Link  : https://www.acmicpc.net/problem/2283 
-// Time  : 32 ms
+// Time  : 12 ms
 // Memory: 6064 KB
 
 #include <bits/stdc++.h>
@@ -31,13 +31,14 @@ int main() {
     memo[i] = memo[i - 1] + pq.size();
   }
 
-  auto me = memo + kMax + 1;
-  for (int i = 0; i < kMax; i++) {
-    auto it = lower_bound(memo + i + 1, me, k + memo[i]);
-    if (it != me && *it == k + memo[i]) {
-      cout << i << " " << it - memo;
+  int l = 0, r = 0;
+  while (l != kMax) {
+    while (r < kMax && memo[r] - memo[l] < k) ++r;
+    if (memo[min<int>(r, kMax)] - memo[l] == k) {
+      cout << l << " " << r;
       return 0;
     }
+    ++l;
   }
   cout << "0 0";
 
