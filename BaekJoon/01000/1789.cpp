@@ -1,7 +1,7 @@
 // Title : 수들의 합
 // Link  : https://www.acmicpc.net/problem/1789 
 // Time  : 0 ms
-// Memory: 2020 KB
+// Memory: 2032 KB
 
 #include <bits/stdc++.h>
 
@@ -13,16 +13,10 @@ int main() {
 
   int64_t s;
   cin >> s;
-  int64_t lo = 1, hi = INT_MAX;
-  while (lo + 1 < hi) {
-    int64_t mid = (lo + hi) >> 1;
-    if (mid * (mid + 1) / 2 <= s) {
-      lo = mid;
-    } else {
-      hi = mid;
-    }
-  }
-  cout << lo;
+  s <<= 1;
+  int64_t x = sqrt((long double)s);
+  if (x * (x + 1) > s) --x;
+  cout << x;
 
   return 0;
 }
