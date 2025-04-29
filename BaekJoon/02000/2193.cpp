@@ -7,16 +7,27 @@
 
 using namespace std;
 
+int64_t Comb(int n, int r) {
+  __int128_t res = 1;
+  for (int i = 0; i < r; i++) {
+    res = res * (n - i) / (i + 1);
+  }
+  return res;
+}
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
   int n;
   cin >> n;
-
-  int64_t memo[91] = {0, 1, 1};
-  for (int i = 3; i <= n; i++) memo[i] = memo[i - 1] + memo[i - 2];
-  cout << memo[n];
+  int64_t sum = 0;
+  int limit = (n + 1) >> 1;
+  for (int i = 1; i <= limit; i++) {
+    int r = n - (i << 1) + 1;
+    sum += Comb(i + r - 1, r);
+  }
+  cout << sum;
 
   return 0;
 }
