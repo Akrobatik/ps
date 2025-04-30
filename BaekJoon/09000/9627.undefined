@@ -1,7 +1,7 @@
 // Title : 문장
 // Link  : https://www.acmicpc.net/problem/9627 
 // Time  : 0 ms
-// Memory: 2172 KB
+// Memory: 2460 KB
 
 #include <bits/stdc++.h>
 
@@ -83,14 +83,16 @@ int main() {
     string s;
     cin >> s;
     if (s == "$") {
-      oss << "%s ";
+      oss << "{} ";
     } else {
       sum += s.size();
       oss << s << " ";
     }
   }
 
-  printf(oss.str().c_str(), Calc(sum).c_str());
+  string fmt = oss.str();
+  string args = Calc(sum);
+  vformat_to(ostream_iterator<char>{cout}, fmt, make_format_args(args));
 
   return 0;
 }
