@@ -1,11 +1,59 @@
 // Title : mapa
 // Link  : https://www.acmicpc.net/problem/3225 
-// Time  : 36 ms
-// Memory: 2808 KB
+// Time  : 48 ms
+// Memory: 4104 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
+
+constexpr int kThreshold = 4;
+
+int GetDistance(const pair<int, int>& a, const pair<int, int>& b) {
+  auto [ay, ax] = a;
+  auto [by, bx] = b;
+  return max<int>(abs(ay - by), abs(ax - bx));
+}
+
+int GetMin(span<pair<int, int>> coords) {
+  if (coords.size() <= kThreshold) {
+    int minn = INT_MAX;
+    for (int i = 0; i < coords.size(); i++) {
+      for (int j = i + 1; j < coords.size(); j++) {
+        minn = min<int>(minn, GetDistance(coords[i], coords[j]));
+      }
+    }
+    return minn;
+  }
+
+  int mid = coords.size() >> 1;
+  int mx = coords[mid].second;
+  auto l = coords.subspan(0, mid);
+  auto r = coords.subspan(mid);
+  int minn = min<int>(GetMin(l), GetMin(r));
+
+  vector<pair<int, int>> tmp(coords.size());
+  merge(l.begin(), l.end(), r.begin(), r.end(), tmp.begin(), [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
+    return lhs.first < rhs.first;
+  });
+  copy(tmp.begin(), tmp.end(), coords.begin());
+
+  tmp.clear();
+  for (auto [y, x] : coords) {
+    if (abs(x - mx) < minn) tmp.push_back({y, x});
+  }
+
+  sort(tmp.begin(), tmp.end(), [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
+    return lhs.first < rhs.first;
+  });
+
+  for (int i = 0; i < tmp.size(); i++) {
+    for (int j = i + 1; j < tmp.size() && abs(tmp[i].first - tmp[j].first) < minn; j++) {
+      minn = min<int>(minn, GetDistance(tmp[i], tmp[j]));
+    }
+  }
+  return minn;
+}
 
 int main() {
   ios::sync_with_stdio(false);
@@ -13,34 +61,14 @@ int main() {
 
   int n;
   cin >> n;
-  int miny = INT_MAX, minx;
   vector<pair<int, int>> coords(n);
-  for (auto& [y, x] : coords) {
-    cin >> x >> y;
-    y *= 3;
-  }
+  for (auto& [y, x] : coords) cin >> x >> y, y *= 3;
 
-  const pair<int, int> kSign[] = {
-      {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+  sort(coords.begin(), coords.end(), [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
+    return lhs.second < rhs.second;
+  });
 
-  int ans = INT_MAX;
-  for (auto [sy, sx] : kSign) {
-    sort(coords.begin(), coords.end(), [&](const pair<int, int>& lhs, const pair<int, int>& rhs) {
-      auto [ay, ax] = lhs;
-      auto [by, bx] = rhs;
-      return ay * sy + ax * sx < by * sy + bx * sx;
-    });
-
-    int cur = INT_MAX;
-    for (int i = 1; i < n; i++) {
-      auto [y1, x1] = coords[i - 1];
-      auto [y2, x2] = coords[i];
-      ans = min<int>(ans, max<int>(abs(y1 - y2), abs(x1 - x2)));
-    }
-  }
-
-  int quot = ans / 3, rem = ans % 3;
-  cout << quot << (rem == 0 ? ".00" : (rem == 1 ? ".33" : ".67"));
+  cout << setprecision(2) << fixed << ((double)GetMin(coords) / 3.0);
 
   return 0;
 }
