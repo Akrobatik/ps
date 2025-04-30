@@ -1,6 +1,6 @@
 // Title : mapa
 // Link  : https://www.acmicpc.net/problem/3225 
-// Time  : 48 ms
+// Time  : 40 ms
 // Memory: 4104 KB
 
 #include <bits/stdc++.h>
@@ -17,6 +17,10 @@ int GetDistance(const pair<int, int>& a, const pair<int, int>& b) {
 
 int GetMin(span<pair<int, int>> coords) {
   if (coords.size() <= kThreshold) {
+    sort(coords.begin(), coords.end(), [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
+      return lhs.first < rhs.first;
+    });
+
     int minn = INT_MAX;
     for (int i = 0; i < coords.size(); i++) {
       for (int j = i + 1; j < coords.size(); j++) {
@@ -42,10 +46,6 @@ int GetMin(span<pair<int, int>> coords) {
   for (auto [y, x] : coords) {
     if (abs(x - mx) < minn) tmp.push_back({y, x});
   }
-
-  sort(tmp.begin(), tmp.end(), [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
-    return lhs.first < rhs.first;
-  });
 
   for (int i = 0; i < tmp.size(); i++) {
     for (int j = i + 1; j < tmp.size() && abs(tmp[i].first - tmp[j].first) < minn; j++) {
