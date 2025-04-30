@@ -26,7 +26,7 @@ const string kStr[] = {
     "fifteen",
     "sixteen",
     "seventeen",
-    "eigthteen",
+    "eighteen",
     "nineteen",
 };
 
