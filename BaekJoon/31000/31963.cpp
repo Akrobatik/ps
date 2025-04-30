@@ -11,7 +11,7 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  vector<int64_t> brr(60);
+  vector<int64_t> brr(62);
   for (int i = 0; i < brr.size(); i++) brr[i] = 1ll << i;
 
   int n;
