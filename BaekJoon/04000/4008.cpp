@@ -1,7 +1,7 @@
 // Title : 특공대
 // Link  : https://www.acmicpc.net/problem/4008 
-// Time  : 96 ms
-// Memory: 38452 KB
+// Time  : 84 ms
+// Memory: 26724 KB
 
 #include <bits/stdc++.h>
 
@@ -51,34 +51,26 @@ int main() {
 
   int n, a, b, c;
   cin >> n >> a >> b >> c;
-  vector<int64_t> memo(n + 1);
-  vector<int> fwd(n + 1);
-  for (int i = 1; i <= n; i++) {
-    cin >> fwd[i];
-    fwd[i] += fwd[i - 1];
-  }
-
-  auto F = [&](int i) {
-    int64_t x = fwd[i];
-    return x * (x * a + b) + c;
-  };
-
-  auto G = [&](int i) {
-    return -2ll * a * fwd[i];
-  };
-
-  auto Y = [&](int i) {
-    int64_t x = fwd[i];
-    return x * (a * x - b) + memo[i];
-  };
+  int64_t ga = -2ll * a;
 
   CHT cht;
   cht.Init();
-  for (int i = 1; i <= n; i++) {
-    cht.AddLine(G(i - 1), Y(i - 1));
-    memo[i] = max<int64_t>(cht.Query(fwd[i]), 0) + F(i);
+
+  auto F = [&]() {
+
+  };
+
+  int64_t ans = 0, sum = 0, nxt;
+  for (int i = 0; i < n; i++) {
+    cin >> nxt;
+    nxt += sum;
+    int64_t g = ga * sum;
+    int64_t y = sum * (a * sum - b) + ans;
+    cht.AddLine(g, y);
+    ans = max<int64_t>(cht.Query(nxt), 0) + nxt * (a *nxt + b) + c;
+    sum = nxt;
   }
-  cout << memo[n];
+  cout << ans;
 
   return 0;
 }
