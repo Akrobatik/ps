@@ -56,10 +56,6 @@ int main() {
   CHT cht;
   cht.Init();
 
-  auto F = [&]() {
-
-  };
-
   int64_t ans = 0, sum = 0, nxt;
   for (int i = 0; i < n; i++) {
     cin >> nxt;
