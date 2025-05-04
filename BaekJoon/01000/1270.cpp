@@ -1,6 +1,6 @@
 // Title : 전쟁 - 땅따먹기
 // Link  : https://www.acmicpc.net/problem/1270 
-// Time  : 3320 ms
+// Time  : 3180 ms
 // Memory: 2808 KB
 
 #include <bits/stdc++.h>
@@ -22,23 +22,17 @@ int main() {
     for (auto& e : arr) cin >> e;
     sort(arr.begin(), arr.end());
 
-    int64_t ans = INT64_MAX;
-    int idx = 0, half = n >> 1, limit = n - half;
-    while (idx < limit) {
-      int nxt = idx;
-      while (nxt < n && arr[idx] == arr[nxt]) ++nxt;
-      if (nxt - idx > half) {
-        ans = arr[idx];
+    bool ok = false;
+    int half = n >> 1, limit = n - half;
+    for (int i = 0; i < limit; i++) {
+      if (arr[i] == arr[i + half]) {
+        cout << arr[i] << "\n";
+        ok = true;
         break;
       }
-      idx = nxt;
     }
 
-    if (ans != INT64_MAX) {
-      cout << ans << "\n";
-    } else {
-      cout << "SYJKGW\n";
-    }
+    if (!ok) cout << "SYJKGW\n";
   }
 
   return 0;
