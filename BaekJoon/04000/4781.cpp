@@ -28,7 +28,7 @@ int main() {
     sort(arr.begin(), arr.end());
 
     int memo[10001] = {};
-    for (int i = 1; i <= m; i++) {
+    for (int i = arr[0].first; i <= m; i++) {
       memo[i] = memo[i - 1];
       for (auto [p, c] : arr) {
         if (i < p) break;
