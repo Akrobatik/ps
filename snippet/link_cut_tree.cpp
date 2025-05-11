@@ -18,6 +18,9 @@ struct LCT {
 
   // set node value for DP
   void Set(int x) {
+    Access(&nodes[x]);
+    //
+    Pull(&nodes[x]);
   }
 
   void Link(int u, int v) {
