@@ -16,7 +16,6 @@ struct LCT {
     MakeRoot(&nodes[x]);
   }
 
-  // set node value for DP
   void Set(int x) {
     Access(&nodes[x]);
     //
@@ -60,7 +59,6 @@ struct LCT {
     return !x->p || (x->p->l != x && x->p->r != x);
   }
 
-  // lazy propagation
   void Pull(Node* x) {
   }
 
