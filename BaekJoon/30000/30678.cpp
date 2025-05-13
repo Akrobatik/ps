@@ -14,30 +14,22 @@ constexpr const char* kStr =
     " *** "
     " * * ";
 
-constexpr array<pair<int, int>, 12> kArr = []() {
-  array<pair<int, int>, 12> arr{};
-  auto it = arr.begin();
-  for (int i = 0; i < 25; i++) {
-    if (kStr[i] != '*') continue;
-    int y = i / 5, x = i % 5;
-    *it++ = {y, x};
-  }
-  return arr;
-}();
-
 vector<string> board;
 
 void Traverse(int y, int x, int n) {
   if (n == 5) {
-    for (auto [dy, dx] : kArr) {
-      board[y + dy][x + dx] = '*';
+    for (int i = 0; i < 25; i++) {
+      int yy = y + i / 5, xx = x + i % 5;
+      board[yy][xx] = kStr[i];
     }
     return;
   }
 
   n /= 5;
-  for (auto [dy, dx] : kArr) {
-    Traverse(y + dy * n, x + dx * n, n);
+  for (int i = 0; i < 25; i++) {
+    if (kStr[i] != '*') continue;
+    int yy = y + (i / 5) * n, xx = x + (i % 5) * n;
+    Traverse(yy, xx, n);
   }
 }
 
