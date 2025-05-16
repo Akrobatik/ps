@@ -1,7 +1,7 @@
 // Title : 돌멩이 배치
 // Link  : https://www.acmicpc.net/problem/33842 
-// Time  : 28 ms
-// Memory: 2180 KB
+// Time  : 24 ms
+// Memory: 3188 KB
 
 #include <bits/stdc++.h>
 
@@ -11,20 +11,20 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  vector<bool> arr;
+  vector<int> arr;
 
   int t;
   cin >> t;
   while (t--) {
     int n, k, l, r, d;
     cin >> n >> k >> l >> r;
-    arr.assign(n, false);
+    arr.assign(n, 0);
 
     int s = ((int64_t)n * l + k - 1) / k;
     int x = 0;
     for (int i = 0; i < n; i++) {
       x += s;
-      if (x >= n) x -= n, arr[i] = true;
+      if (x >= n) x -= n, arr[i] = 1;
     }
 
     int sum = 0;
