@@ -1,6 +1,6 @@
 // Title : 징검다리의 징검다리
 // Link  : https://www.acmicpc.net/problem/33934 
-// Time  : 20 ms
+// Time  : 16 ms
 // Memory: 2804 KB
 
 #include <bits/stdc++.h>
@@ -19,19 +19,12 @@ int main() {
   cin >> k;
 
   if (st > en) swap(st, en);
-
   int minn = en - st + 1, maxx = 0;
-  for (int i = st; i >= 0; i--) {
-    maxx += arr[i];
-    if (arr[i] == 1) break;
-  }
-  for (int i = en; i < n; i++) {
-    maxx += arr[i];
-    if (arr[i] == 1) break;
-  }
-  for (int i = st + 1; i < en; i++) {
-    maxx += arr[i];
-  }
+
+  while (st && arr[st] != 1) --st;
+  while (en + 1 < n && arr[en] != 1) ++en;
+  for (int i = st; i <= en; i++) maxx += arr[i];
+
   cout << (minn <= k && k <= maxx);
 
   return 0;
