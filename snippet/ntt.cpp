@@ -3,7 +3,7 @@
 using namespace std;
 
 struct NTT {
-  vector<int64_t> Mul(vector<int64_t> u, vector<int64_t> v, int64_t mod) {
+  vector<int64_t> Mul(const vector<int64_t>& u, const vector<int64_t>& v, int64_t mod) {
     vector<vector<int64_t>> convs(kNMods);
     for (int i = 0; i < convs.size(); i++) {
       convs[i] = Mul(u, v, kModData[i]);
