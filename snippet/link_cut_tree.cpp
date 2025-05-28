@@ -50,7 +50,8 @@ struct LCT {
     return p ? p - nodes.data() : 0;
   }
 
-  int GetLCA(int u, int v) {
+  int GetLCA(int u, int v, int r = 0) {
+    if (r) MakeRoot(r);
     return GetLCA(&nodes[u], &nodes[v]) - nodes.data();
   }
 
