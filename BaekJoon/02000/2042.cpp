@@ -1,5 +1,5 @@
-// Title : 구간 합 구하기
-// Link  : https://www.acmicpc.net/problem/2042
+// Title : 구간 합 구하기
+// Link  : https://www.acmicpc.net/problem/2042 
 // Time  : 200 ms
 // Memory: 17652 KB
 
