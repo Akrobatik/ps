@@ -1,6 +1,6 @@
 // Title : 대충 만들어진 인내의 숲
 // Link  : https://www.acmicpc.net/problem/34007 
-// Time  : 192 ms
+// Time  : 168 ms
 // Memory: 16276 KB
 
 #include <bits/stdc++.h>
@@ -50,16 +50,11 @@ void Solve() {
 
   tree.Init(n);
   lr.resize(n);
+  int l = 0, r = 0;
   for (int i = 0; i < n; i++) {
-    int l = lower_bound(coords.begin(), coords.end(), coords[i].first - a, [](const pair<int, int>& lhs, int rhs) {
-      return lhs.first < rhs;
-    }) - coords.begin();
-
-    int r = coords.rend() - lower_bound(coords.rbegin(), coords.rend(), coords[i].first + a, [](const pair<int, int>& lhs, int rhs) {
-      return lhs.first > rhs;
-    });
-
-    lr[i] = {l, r - 1};
+    while (coords[i].first - coords[l].first > a) ++l;
+    while (r + 1 != n && coords[r + 1].first - coords[i].first <= a) ++r; 
+    lr[i] = {l, r};
     tree.Update(i, {coords[i].second, i});
   }
 
@@ -75,6 +70,7 @@ void Solve() {
   for (int i = 0; i < n; i++) {
     if (coords[i].second > b) continue;
     Push(i);
+    tree.Update(i, {kInf, -1});
   }
 
   bool ok = false;
