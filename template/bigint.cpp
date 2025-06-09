@@ -207,6 +207,13 @@ struct BigInt {
     return os;
   }
 
+  friend istream& operator>>(istream& is, BigInt& num) {
+    string s;
+    is >> s;
+    num = BigInt(s);
+    return is;
+  }
+
   mutable bool sign;
   mutable vector<int8_t> digits;
 };
