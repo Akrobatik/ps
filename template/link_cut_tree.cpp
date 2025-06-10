@@ -121,6 +121,7 @@ struct LCT {
   void MakeRoot(Node* x) {
     Access(x);
     x->rev ^= 1;
+    Push(x);
   }
 
   void Link(Node* u, Node* v) {
