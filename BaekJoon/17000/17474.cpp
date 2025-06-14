@@ -1,6 +1,6 @@
 // Title : 수열과 쿼리 26
 // Link  : https://www.acmicpc.net/problem/17474 
-// Time  : 1764 ms
+// Time  : 1572 ms
 // Memory: 51172 KB
 
 #pragma GCC optimize("O3")
@@ -46,6 +46,7 @@ void Apply(int v, int node) {
 }
 
 void Push(int node, int b, int e) {
+  if (b == e) return;
   Apply(tree[node].max1, node << 1);
   Apply(tree[node].max1, (node << 1) + 1);
 }
@@ -56,6 +57,7 @@ void Update(int l, int r, int v, int node, int b, int e) {
     Apply(v, node);
     return;
   }
+  if (b == e) return;
   int mid = (b + e) >> 1;
   Push(node, b, e);
   Update(l, r, v, node << 1, b, mid);
