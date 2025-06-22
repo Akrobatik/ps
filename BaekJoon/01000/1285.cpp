@@ -1,19 +1,19 @@
 // Title : 동전 뒤집기
 // Link  : https://www.acmicpc.net/problem/1285 
-// Time  : 48 ms
-// Memory: 18416 KB
+// Time  : 40 ms
+// Memory: 10224 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-void FWHT(vector<int64_t>& arr) {
+void FWHT(vector<int>& arr) {
   int n = arr.size();
   for (int len = 1; len < n; len <<= 1) {
     for (int i = 0; i < n; i += (len << 1)) {
       for (int j = 0; j < len; j++) {
-        int64_t u = arr[i + j];
-        int64_t v = arr[i + j + len];
+        int u = arr[i + j];
+        int v = arr[i + j + len];
         arr[i + j] = u + v;
         arr[i + j + len] = u - v;
       }
@@ -31,7 +31,7 @@ int main() {
   for (auto& s : board) cin >> s;
 
   int sz = 1 << n;
-  vector<int64_t> arr(sz), brr(sz);
+  vector<int> arr(sz), brr(sz);
   for (int j = 0; j < n; j++) {
     int x = 0;
     for (int i = 0; i < n; i++) {
