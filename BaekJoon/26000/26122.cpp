@@ -1,7 +1,7 @@
 // Title : 가장 긴 막대 자석
 // Link  : https://www.acmicpc.net/problem/26122 
-// Time  : 4 ms
-// Memory: 5992 KB
+// Time  : 0 ms
+// Memory: 2912 KB
 
 #include <bits/stdc++.h>
 
@@ -14,18 +14,13 @@ int main() {
   int n;
   string s;
   cin >> n >> s;
-  vector<int> arr;
-  int idx = 0;
+  int idx = 0, old = 0, maxx = 0;
   while (idx < n) {
     int nxt = idx;
     while (nxt < n && s[idx] == s[nxt]) ++nxt;
-    arr.push_back(nxt - idx);
-    idx = nxt;
-  }
-
-  int maxx = 0;
-  for (int i = 1; i < arr.size(); i++) {
-    maxx = max<int>(maxx, min<int>(arr[i - 1], arr[i]));
+    int cur = nxt - idx;
+    maxx = max<int>(maxx, min<int>(old, cur));
+    idx = nxt, old = cur;
   }
   cout << (maxx << 1);
 
