@@ -1,6 +1,6 @@
 // Title : Milk Visits
 // Link  : https://www.acmicpc.net/problem/18267 
-// Time  : 316 ms
+// Time  : 280 ms
 // Memory: 8476 KB
 
 #include <bits/stdc++.h>
@@ -75,12 +75,10 @@ struct LCT {
     x->sum[0] = x->val[0];
     x->sum[1] = x->val[1];
     if (x->l) {
-      Push(x->l);
       x->sum[0] = max<int>(x->sum[0], x->l->sum[0]);
       x->sum[1] = max<int>(x->sum[1], x->l->sum[1]);
     }
     if (x->r) {
-      Push(x->r);
       x->sum[0] = max<int>(x->sum[0], x->r->sum[0]);
       x->sum[1] = max<int>(x->sum[1], x->r->sum[1]);
     }
