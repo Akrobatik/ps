@@ -1,8 +1,9 @@
 // Title : Connect
 // Link  : https://www.acmicpc.net/problem/24282 
-// Time  : 456 ms
-// Memory: 15668 KB
+// Time  : 416 ms
+// Memory: 15672 KB
 
+#pragma GCC optimize("O3")
 #include <bits/stdc++.h>
 
 using namespace std;
