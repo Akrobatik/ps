@@ -1,7 +1,7 @@
 // Title : Connect
 // Link  : https://www.acmicpc.net/problem/24282 
-// Time  : 532 ms
-// Memory: 15736 KB
+// Time  : 456 ms
+// Memory: 15668 KB
 
 #include <bits/stdc++.h>
 
@@ -209,6 +209,26 @@ struct LCT {
   vector<Node*> stk;
 };
 
+template <typename Pred>
+struct PQ {
+  void Push(int v) { pq.push(v); }
+  void Erase(int v) { eq.push(v); }
+  bool Pop(int& out) {
+    while (!pq.empty() && !eq.empty() && pq.top() == eq.top()) pq.pop(), eq.pop();
+    if (pq.empty()) return false;
+    out = pq.top();
+    pq.pop();
+    return true;
+  }
+
+  int Top() {
+    while (!pq.empty() && !eq.empty() && pq.top() == eq.top()) pq.pop(), eq.pop();
+    return pq.top();
+  }
+
+  priority_queue<int, vector<int>, Pred> pq, eq;
+};
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -223,7 +243,8 @@ int main() {
     lct.Set(i + n, i);
   }
 
-  set<int> edges;
+  PQ<greater<int>> pq;
+
   int64_t sum = 0;
   int cnt = 1;
   for (int i = 1; i <= m; i++) {
@@ -233,7 +254,7 @@ int main() {
     if (!lct.IsConnected(u, v)) {
       lct.Link(u, id);
       lct.Link(id, v);
-      edges.insert(i);
+      pq.Push(i);
       ++cnt;
     } else {
       int minn = lct.QueryMin(u, v);
@@ -242,15 +263,15 @@ int main() {
         auto [mu, mv] = arr[minn - 1];
         lct.Cut(mu, mid);
         lct.Cut(mid, mv);
-        edges.erase(minn);
+        pq.Erase(minn);
 
         lct.Link(u, id);
         lct.Link(id, v);
-        edges.insert(i);
+        pq.Push(i);
       }
     }
 
-    if (cnt == n) sum += *edges.begin();
+    if (cnt == n) sum += pq.Top();
   }
   cout << sum;
 
