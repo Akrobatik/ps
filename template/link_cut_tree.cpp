@@ -131,16 +131,21 @@ struct LCT {
 
   void Cut(Node* x) {
     Access(x);
-    x->l->p = nullptr;
-    x->l = nullptr;
-    Pull(x);
+    if (x->l) {
+      x->l->p = nullptr;
+      x->l = nullptr;
+      Pull(x);
+    }
   }
 
   void Cut(Node* u, Node* v) {
     MakeRoot(u);
     Access(v);
-    if (v->l == u) v->l = u->p = nullptr;
-    Pull(v);
+    if (v->l == u) {
+      v->l->p = nullptr;
+      v->l = nullptr;
+      Pull(v);
+    }
   }
 
   Node* GetRoot(Node* x) {
