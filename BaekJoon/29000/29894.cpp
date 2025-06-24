@@ -1,13 +1,13 @@
 // Title : 별자리
 // Link  : https://www.acmicpc.net/problem/29894 
-// Time  : 156 ms
-// Memory: 10176 KB
+// Time  : 132 ms
+// Memory: 8672 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-vector<int> edges[100001];
+using tup = tuple<int, int, int>;
 
 int main() {
   ios::sync_with_stdio(false);
@@ -15,43 +15,81 @@ int main() {
 
   int n, m;
   cin >> n >> m;
-  while (m--) {
-    int u, v, w;
-    cin >> u >> v >> w;
-    edges[u].push_back(v);
-    edges[v].push_back(u);
-  }
 
-  int cnt[2] = {};
-  vector<bool> visited(n + 1);
-  for (int i = 1; i <= n; i++) {
-    if (visited[i]) continue;
+  vector<tup> edges(m);
+  for (auto& [w, u, v] : edges) cin >> u >> v >> w;
+  sort(edges.begin(), edges.end(), greater<tup>());
 
-    queue<int> q;
-    int minn = INT_MAX, maxx = 0;
+  int sum[2] = {};
+  vector<int> memo(n + 1), deg(n + 1), minn(n + 1), maxx(n + 1);
+  vector<array<int, 4>> cnt(n + 1, {1, 0, 0, 0});
+  iota(memo.begin(), memo.end(), 0);
 
-    auto Push = [&](int x) {
-      if (visited[x]) return;
-      visited[x] = true;
-      minn = min<int>(minn, edges[x].size());
-      maxx = max<int>(maxx, edges[x].size());
-      q.push(x);
-    };
-
-    Push(i);
-    while (!q.empty()) {
-      auto cur = q.front();
-      q.pop();
-
-      for (auto nxt : edges[cur]) {
-        Push(nxt);
-      }
+  auto Find = [&](int id) {
+    while (id != memo[id]) {
+      int par = memo[id];
+      id = memo[id] = memo[par];
     }
+    return id;
+  };
 
-    if (maxx <= 2) ++cnt[minn - 1];
+  auto Dec = [&](int i) {
+    if (1 <= minn[i] && maxx[i] <= 2) --sum[minn[i] - 1];
+  };
+
+  auto Inc = [&](int i) {
+    if (1 <= minn[i] && maxx[i] <= 2) ++sum[minn[i] - 1];
+  };
+
+  auto Update = [&](int x, int p) {
+    int o = deg[x];
+    if (o <= 2) {
+      --cnt[p][o];
+      ++cnt[p][o + 1];
+
+      int mn = INT_MAX, mx = 0;
+      for (int i = 0; i < 4; i++) {
+        if (cnt[p][i] == 0) continue;
+        mn = min<int>(mn, i);
+        mx = i;
+      }
+      minn[p] = mn, maxx[p] = mx;
+    }
+    ++deg[x];
+  };
+
+  auto Union = [&](int a, int b) {
+    int pa = Find(a), pb = Find(b);
+    if (pa == pb) {
+      Dec(pa);
+      Update(a, pa);
+      Update(b, pb);
+      Inc(pa);
+    } else {
+      Dec(pa);
+      Dec(pb);
+      memo[pb] = pa;
+      for (int i = 0; i < 4; i++) {
+        cnt[pa][i] += cnt[pb][i];
+      }
+      Update(a, pa);
+      Update(b, pa);
+      Inc(pa);
+    }
+  };
+
+  int mn = INT_MAX, mw;
+  int idx = 0;
+  while (idx < m) {
+    int w = get<0>(edges[idx]);
+    while (idx < m && get<0>(edges[idx]) == w) {
+      auto [_, u, v] = edges[idx++];
+      Union(u, v);
+    }
+    int d = abs(sum[0] - sum[1]);
+    if (mn >= d) mn = d, mw = w;
   }
-
-  cout << "1 " << abs(cnt[0] - cnt[1]);
+  cout << mw << " " << mn;
 
   return 0;
 }
