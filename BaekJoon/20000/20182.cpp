@@ -1,7 +1,7 @@
 // Title : 골목 대장 호석 - 효율성 1
 // Link  : https://www.acmicpc.net/problem/20182 
-// Time  : 1060 ms
-// Memory: 23668 KB
+// Time  : 452 ms
+// Memory: 23672 KB
 
 #include <bits/stdc++.h>
 
@@ -52,7 +52,7 @@ int main() {
     return false;
   };
 
-  int lo = 0, hi = 1e9 + 1;
+  int lo = 0, hi = 20 + 1;
   while (lo + 1 < hi) {
     int mid = (lo + hi) >> 1;
     if (!Check(mid)) {
@@ -62,7 +62,7 @@ int main() {
     }
   }
 
-  cout << (hi == 1e9 + 1 ? -1 : hi);
+  cout << (hi == 20 + 1 ? -1 : hi);
 
   return 0;
 }
