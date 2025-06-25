@@ -31,6 +31,17 @@ struct ModInt32 {
     return Pow(MOD - 2);
   }
 
+  constexpr ModInt32& operator++() {
+    if (++val == MOD) val = 0;
+    return *this;
+  }
+
+  constexpr ModInt32 operator++(int) {
+    ModInt32 tmp(*this);
+    operator++();
+    return tmp;
+  }
+
   constexpr ModInt32& operator+=(const ModInt32& other) {
     CT x = (CT)val + other.val;
     if (x >= MOD) val -= MOD;
@@ -55,12 +66,6 @@ struct ModInt32 {
     return *this;
   }
 
-  constexpr ModInt32 operator+() const {
-    ModInt32 res;
-    res.val = val;
-    return res;
-  }
-
   constexpr ModInt32 operator-() const {
     ModInt32 res;
     if (val) res.val = MOD - val;
@@ -81,6 +86,10 @@ struct ModInt32 {
 
   constexpr ModInt32 operator/(const ModInt32& rhs) const {
     return ModInt32(*this) /= rhs;
+  }
+
+  constexpr bool operator!() const {
+    return val == 0;
   }
 
   friend istream& operator>>(istream& is, ModInt32& num) {
@@ -123,6 +132,17 @@ struct ModInt64 {
 
   constexpr ModInt64 Inv() const {
     return Pow(MOD - 2);
+  }
+
+  constexpr ModInt64& operator++() {
+    if (++val == MOD) val = 0;
+    return *this;
+  }
+
+  constexpr ModInt64 operator++(int) {
+    ModInt64 tmp(*this);
+    operator++();
+    return tmp;
   }
 
   constexpr ModInt64& operator+=(const ModInt64& other) {
@@ -169,6 +189,10 @@ struct ModInt64 {
 
   constexpr ModInt64 operator/(const ModInt64& rhs) const {
     return ModInt64(*this) /= rhs;
+  }
+
+  constexpr bool operator!() const {
+    return val == 0;
   }
 
   friend istream& operator>>(istream& is, ModInt64& num) {
