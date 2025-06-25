@@ -94,6 +94,7 @@ struct ModInt32 {
 
   friend istream& operator>>(istream& is, ModInt32& num) {
     is >> num.val;
+    if ((num.val %= MOD) < 0) num.val += MOD;
     return is;
   }
 
@@ -197,6 +198,7 @@ struct ModInt64 {
 
   friend istream& operator>>(istream& is, ModInt64& num) {
     is >> num.val;
+    if ((num.val %= MOD) < 0) num.val += MOD;
     return is;
   }
 
