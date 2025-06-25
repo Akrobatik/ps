@@ -1,8 +1,9 @@
 // Title : Pyramid
 // Link  : https://www.acmicpc.net/problem/15204 
-// Time  : 1052 ms
-// Memory: 2280 KB
+// Time  : 792 ms
+// Memory: 2540 KB
 
+#pragma GCC optimize("O3")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -22,23 +23,26 @@ int main() {
   for (auto& e : arr) cin >> e;
 
   int limit = 1 << n;
-  vector<int64_t> brr(limit);
+  vector<pair<int64_t, int>> brr(limit);
   for (int i = 1; i < limit; i++) {
     int lsb = i & (-i);
     int rem = i - lsb;
+    int sign = ((popcount((uint32_t)i) & 1) << 1) - 1;
     if (rem == 0) {
-      brr[i] = arr[countr_zero((uint32_t)lsb)];
+      brr[i] = {arr[countr_zero((uint32_t)lsb)], sign};
     } else {
-      brr[i] = brr[rem] * (brr[lsb] / GCD(brr[rem], brr[lsb]));
+      brr[i] = {brr[rem].first * (brr[lsb].first / GCD(brr[rem].first, brr[lsb].first)), sign};
     }
   }
+
+  sort(brr.begin(), brr.end());
 
   auto Count = [&](int64_t x) {
     int64_t sum = 0;
     int limit = 1 << n;
     for (int i = 1; i < limit; i++) {
-      int s = ((popcount(((uint32_t)i)) & 1) << 1) - 1;
-      sum += (x / brr[i]) * s;
+      if (brr[i].first > x) break;
+      sum += (x / brr[i].first) * brr[i].second;
     }
     return sum;
   };
