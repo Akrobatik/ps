@@ -1,6 +1,6 @@
 // Title : Pyramid
 // Link  : https://www.acmicpc.net/problem/15204 
-// Time  : 792 ms
+// Time  : 760 ms
 // Memory: 2540 KB
 
 #pragma GCC optimize("O3")
@@ -21,6 +21,7 @@ int main() {
   cin >> n >> m;
   vector<int64_t> arr(n);
   for (auto& e : arr) cin >> e;
+  int64_t minn = *min_element(arr.begin(), arr.end());
 
   int limit = 1 << n;
   vector<pair<int64_t, int>> brr(limit);
@@ -51,7 +52,7 @@ int main() {
     int64_t x;
     cin >> x;
 
-    int64_t lo = 1, hi = 1e18;
+    int64_t lo = x, hi = (x < (int64_t)1e18 / minn ? x * minn : (int64_t)1e18);
     while (lo + 1 < hi) {
       int64_t mid = (lo + hi) >> 1;
       if (Count(mid) < x) {
