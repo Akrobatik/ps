@@ -55,6 +55,12 @@ struct ModInt32 {
     return *this;
   }
 
+  constexpr ModInt32 operator+() const {
+    ModInt32 res;
+    res.val = val;
+    return res;
+  }
+
   constexpr ModInt32 operator-() const {
     ModInt32 res;
     if (val) res.val = MOD - val;
