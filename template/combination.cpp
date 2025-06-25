@@ -15,7 +15,7 @@ struct Combination {
     return ((int64_t)fact[n] * inv[r] % MOD) * inv[n - r] % MOD;
   }
 
-  static constexpr int Power(int n, int exp) {
+  static constexpr int Power(int64_t n, int exp) {
     int64_t res = 1;
     while (exp) {
       if (exp & 1) res = (res * n) % MOD;
