@@ -1,45 +1,62 @@
 // Title : Tree Cutting
 // Link  : https://www.acmicpc.net/problem/7045 
 // Time  : 0 ms
-// Memory: 2660 KB
+// Memory: 2588 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-vector<int> edges[10001];
-bool ok[10001];
-int n, half;
-
-int Traverse(int cur, int par) {
-  int sum = 1;
-  auto& o = ok[cur];
-  o = true;
-  for (auto nxt : edges[cur]) {
-    if (nxt == par) continue;
-    int cnt = Traverse(nxt, cur);
-    sum += cnt;
-    if (cnt > half) o = false;
-  }
-  int rem = n - sum;
-  if (rem > half) o = false;
-  return sum;
-}
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
+  vector<int16_t> edges[10001];
+  int16_t deg[10001] = {};
+  int16_t sum[10001] = {};
+  int16_t maxx[10001] = {};
+  bitset<10001> ok;
+
+  int n;
   cin >> n;
-  half = n >> 1;
   for (int i = 1; i < n; i++) {
     int u, v;
     cin >> u >> v;
     edges[u].push_back(v);
     edges[v].push_back(u);
+    ++deg[u], ++deg[v];
   }
 
-  Traverse(1, 0);
+  for (int i = 1; i <= n; i++) {
+    sum[i] = 1;
+  }
+  for (int i = 1; i <= n; i++) {
+    maxx[i] = 1;
+  }
+
+  queue<int> q;
+  for (int i = 1; i <= n; i++) {
+    if (--deg[i]) continue;
+    q.push(i);
+  }
+
+  int half = n >> 1;
+  while (!q.empty()) {
+    int cur = q.front();
+    q.pop();
+
+    maxx[cur] = max<int16_t>(maxx[cur], n - sum[cur]);
+    if (maxx[cur] <= half) ok.set(cur);
+
+    for (auto nxt : edges[cur]) {
+      if (deg[nxt] == 0) continue;
+      sum[nxt] += sum[cur];
+      maxx[nxt] = max<int16_t>(maxx[nxt], sum[cur]);
+      if (--deg[nxt] == 0) {
+        q.push(nxt);
+      }
+    }
+  }
 
   int cnt = 0;
   for (int i = 1; i <= n; i++) {
