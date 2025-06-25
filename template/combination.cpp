@@ -11,7 +11,7 @@ struct Combination {
     for (int i = MAXN; i > 0; i--) inv[i - 1] = (int64_t)inv[i] * i % MOD;
   }
 
-  int operator()(int n, int r) const {
+  constexpr int operator()(int n, int r) const {
     return ((int64_t)fact[n] * inv[r] % MOD) * inv[n - r] % MOD;
   }
 
