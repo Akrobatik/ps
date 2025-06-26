@@ -1,7 +1,7 @@
 // Title : Labyrinth
 // Link  : https://www.acmicpc.net/problem/3482 
-// Time  : 164 ms
-// Memory: 3432 KB
+// Time  : 60 ms
+// Memory: 8072 KB
 
 #include <bits/stdc++.h>
 
@@ -11,20 +11,31 @@ constexpr pair<int, int> kDelta[] = {
     {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
 vector<string> board;
+int ans;
+
+int Traverse(int y, int x) {
+  int maxx[2] = {};
+
+  board[y][x] = '#';
+  for (auto [dy, dx] : kDelta) {
+    int yy = y + dy, xx = x + dx;
+    if (board[yy][xx] != '.') continue;
+    int cur = Traverse(yy, xx);
+    if (maxx[0] <= cur) {
+      maxx[1] = maxx[0];
+      maxx[0] = cur;
+    } else if (maxx[1] < cur) {
+      maxx[1] = cur;
+    }
+  }
+  ans = max<int>(ans, maxx[0] + maxx[1]);
+
+  return maxx[0] + 1;
+}
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
-
-  vector<string> board;
-  vector<vector<bool>> visited;
-  queue<pair<int, int>> q;
-
-  auto Push = [&](int y, int x) {
-    if (board[y][x] != '.' || visited[y][x]) return;
-    visited[y][x] = true;
-    q.push({y, x});
-  };
 
   int t;
   cin >> t;
@@ -44,30 +55,10 @@ int main() {
       if (ry != -1 && rx != -1) break;
     }
 
-    auto BFS = [&](int sy, int sx) -> tuple<int, int, int> {
-      visited.assign(n, vector<bool>(m));
+    ans = 0;
+    if (ry != -1 && rx != -1) Traverse(ry, rx);
 
-      int ad, ay, ax;
-      Push(sy, sx);
-      for (int i = 0; !q.empty(); i++) {
-        int nq = q.size();
-        while (nq--) {
-          auto [y, x] = q.front();
-          q.pop();
-
-          ay = y, ax = x;
-          for (auto [dy, dx] : kDelta) {
-            Push(y + dy, x + dx);
-          }
-        }
-        ad = i;
-      }
-
-      return {ad, ay, ax};
-    };
-
-    auto [ad, ay, ax] = BFS(ry, rx);
-    cout << "Maximum rope length is " << get<0>(BFS(ay, ax)) << ".\n";
+    cout << "Maximum rope length is " << ans << ".\n";
   }
 
   return 0;
