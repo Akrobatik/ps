@@ -1,7 +1,7 @@
 // Title : 우혁이와 엘리베이터
 // Link  : https://www.acmicpc.net/problem/34038 
 // Time  : 24 ms
-// Memory: 4224 KB
+// Memory: 4228 KB
 
 #include <bits/stdc++.h>
 
@@ -24,24 +24,18 @@ int main() {
     tmp.resize(c);
     for (auto& elem : tmp) cin >> elem;
     sort(tmp.begin(), tmp.end());
-    for (int i = 0; i < c; i++) {
-      int mv = tmp[i];
-      if (i != 0) {
-        int lv = tmp[i - 1];
-        g[mv][lv] = g[lv][mv] = min<int>(g[mv][lv], t);
-      }
-      if (i + 1 != c) {
-        int rv = tmp[i + 1];
-        g[mv][rv] = g[rv][mv] = min<int>(g[mv][rv], t);
-      }
+    for (int i = 1; i < c; i++) {
+      int lv = tmp[i - 1], rv = tmp[i];
+      g[lv][rv] = min<int>(g[lv][rv], t);
     }
   }
 
   vector<vector<pair<int, int>>> edges(n + 1);
   for (int i = 1; i <= n; i++) {
-    for (int j = 1; j <= n; j++) {
+    for (int j = i + 1; j <= n; j++) {
       if (g[i][j] == INT_MAX) continue;
       edges[i].push_back({j, g[i][j]});
+      edges[j].push_back({i, g[i][j]});
     }
   }
 
