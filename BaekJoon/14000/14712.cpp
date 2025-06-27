@@ -1,6 +1,6 @@
 // Title : 넴모넴모 (Easy)
 // Link  : https://www.acmicpc.net/problem/14712 
-// Time  : 180 ms
+// Time  : 108 ms
 // Memory: 2020 KB
 
 #include <bits/stdc++.h>
@@ -37,7 +37,13 @@ int main() {
 
   n, m;
   cin >> n >> m;
+  if (n > m) swap(n, m);
+
   limit = n * m;
+  if (n == 1) {
+    cout << (1 << limit);
+    return 0;
+  }
 
   for (int i = 0; i < limit; i++) {
     int y = i / m, x = i % m;
