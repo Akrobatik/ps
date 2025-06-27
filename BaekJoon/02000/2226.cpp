@@ -1,6 +1,6 @@
 // Title : 이진수
 // Link  : https://www.acmicpc.net/problem/2226 
-// Time  : 52 ms
+// Time  : 0 ms
 // Memory: 2024 KB
 
 #include <bits/stdc++.h>
@@ -231,8 +231,8 @@ int main() {
   cin >> n;
 
   BigInt x = 0;
-  for (int i = 1; i < n; i++) {
-    x = x * 2 + (((i & 1) << 1) - 1);
+  for (int i = 1, j = 1; i < n; i++, j *= -1) {
+    x = x + x + j;
   }
   cout << x;
 
