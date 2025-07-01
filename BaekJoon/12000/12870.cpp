@@ -1,6 +1,6 @@
 // Title : 뮤탈리스크 2
 // Link  : https://www.acmicpc.net/problem/12870 
-// Time  : 48 ms
+// Time  : 28 ms
 // Memory: 7016 KB
 
 #include <bits/stdc++.h>
@@ -61,8 +61,14 @@ int main() {
     for (int j = 0; j <= 7; j++) {
       for (int k = 0; k <= 20; k++) {
         int l = x - j * 9 - k * 3;
-        cands[i].push_back({j, k, max<int>(l, 0)});
+        if (l <= 0) {
+          cands[i].push_back({j, k, 0});
+          break;
+        } else {
+          cands[i].push_back({j, k, l});
+        }
       }
+      if (j * 9 >= x) break;
     }
   }
 
