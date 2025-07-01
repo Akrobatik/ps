@@ -22,8 +22,12 @@ int main() {
     cin >> x >> y;
     int minn = min<int>(x, y);
     auto it = lower_bound(fib.begin(), fib.end(), minn, greater<int>());
-    x = *it, y = *++it;
-    cout << x << " " << y << "\n";
+    int l = it[1], m = it[0], r = it[-1];
+    if (r <= x && m <= y) {
+      cout << r << " " << m << "\n";
+    } else {
+      cout << m << " " << l << "\n";
+    }
   }
 
   return 0;
