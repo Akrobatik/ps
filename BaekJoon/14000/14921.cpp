@@ -16,13 +16,19 @@ int main() {
   vector<int> arr(n);
   for (auto& e : arr) cin >> e;
 
-  int minn = INT_MAX;
-  for (int i = 0; i < n - 1; i++) {
-    auto it = lower_bound(arr.begin() + i + 1, arr.end(), -arr[i]);
-    if (it != arr.end() && abs(minn) > abs(arr[i] + *it)) minn = arr[i] + *it;
-    if (--it != arr.begin() + i && abs(minn) > abs(arr[i] + *it)) minn = arr[i] + *it;
+  int minn = INT_MAX, ans;
+  int l = 0, r = n - 1;
+  while (l < r) {
+    while (l < r - 1 && arr[l] + arr[r - 1] >= 0) --r;
+    int cur = abs(arr[l] + arr[r]);
+    if (minn > cur) minn = cur, ans = arr[l] + arr[r];
+    if (l != --r) {
+      cur = abs(arr[l] + arr[r]);
+      if (minn > cur) minn = cur, ans = arr[l] + arr[r];
+    }
+    ++l, ++r;
   }
-  cout << minn;
+  cout << ans;
 
   return 0;
 }
