@@ -17,16 +17,18 @@ int main() {
   for (auto& e : arr) cin >> e;
 
   int minn = INT_MAX, ans;
+
+  auto Update = [&](int l, int r) {
+    int cur = arr[l] + arr[r];
+    int abv = abs(cur);
+    if (minn > abv) minn = abv, ans = cur;
+  };
+
   int l = 0, r = n - 1;
   while (l < r) {
-    while (l < r - 1 && arr[l] + arr[r - 1] >= 0) --r;
-    int cur = abs(arr[l] + arr[r]);
-    if (minn > cur) minn = cur, ans = arr[l] + arr[r];
-    if (l != --r) {
-      cur = abs(arr[l] + arr[r]);
-      if (minn > cur) minn = cur, ans = arr[l] + arr[r];
-    }
-    ++l, ++r;
+    while (l < r - 1 && arr[l] + arr[r] >= 0) --r;
+    if (r + 1 != n) Update(l, r + 1);
+    Update(l++, r);
   }
   cout << ans;
 
