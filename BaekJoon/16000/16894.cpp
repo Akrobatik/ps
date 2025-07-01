@@ -1,7 +1,7 @@
 // Title : 약수 게임
 // Link  : https://www.acmicpc.net/problem/16894 
 // Time  : 0 ms
-// Memory: 2160 KB
+// Memory: 2028 KB
 
 #include <bits/stdc++.h>
 
@@ -52,7 +52,7 @@ struct Factorization {
     return vec;
   }
 
-  static constexpr int kMaxCyrene = 100000;
+  static constexpr int kMaxCyrene = 1000;
 
   vector<bool> cyr;
 
