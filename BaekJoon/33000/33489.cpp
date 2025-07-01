@@ -20,16 +20,10 @@ int main() {
   while (t--) {
     int x, y;
     cin >> x >> y;
-    if (x > y) {
-      auto it = lower_bound(fib.begin(), fib.end(), y, greater<int>());
-      y = *it;
-      x = min<int>(x, *--it);
-    } else {
-      auto it = lower_bound(fib.begin(), fib.end(), x, greater<int>());
-      x = *it;
-      y = min<int>(y, *--it);
-    }
-    cout << max<int>(x, 1) << " " << max<int>(y, 1) << "\n";
+    int minn = min<int>(x, y);
+    auto it = lower_bound(fib.begin(), fib.end(), minn, greater<int>());
+    x = *it, y = *++it;
+    cout << x << " " << y << "\n";
   }
 
   return 0;
