@@ -44,14 +44,14 @@ struct ModInt32 {
 
   constexpr ModInt32& operator+=(const ModInt32& other) {
     CT x = (CT)val + other.val;
-    if (x >= MOD) val -= MOD;
+    if (x >= MOD) x -= MOD;
     val = x;
     return *this;
   }
 
   constexpr ModInt32& operator-=(const ModInt32& other) {
     CT x = (CT)val + (MOD - other.val);
-    if (x >= MOD) val -= MOD;
+    if (x >= MOD) x -= MOD;
     val = x;
     return *this;
   }
@@ -148,14 +148,14 @@ struct ModInt64 {
 
   constexpr ModInt64& operator+=(const ModInt64& other) {
     CT x = (CT)val + other.val;
-    if (x >= MOD) val -= MOD;
+    if (x >= MOD) x -= MOD;
     val = x;
     return *this;
   }
 
   constexpr ModInt64& operator-=(const ModInt64& other) {
     CT x = (CT)val + (MOD - other.val);
-    if (x >= MOD) val -= MOD;
+    if (x >= MOD) x -= MOD;
     val = x;
     return *this;
   }
