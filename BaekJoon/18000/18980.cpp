@@ -1,7 +1,7 @@
 // Title : Distinct Values
 // Link  : https://www.acmicpc.net/problem/18980 
-// Time  : 232 ms
-// Memory: 4428 KB
+// Time  : 220 ms
+// Memory: 4448 KB
 
 #include <bits/stdc++.h>
 
@@ -53,12 +53,17 @@ int main() {
     cin >> n >> m;
     arr.assign(n, 1);
     lr.resize(m);
-    for (auto& [l, r] : lr) cin >> l >> r, --l, --r;
+    int maxx = 1;
+    for (auto& [l, r] : lr) {
+      cin >> l >> r;
+      --l, --r;
+      maxx = max<int>(maxx, r - l + 2);
+    }
     sort(lr.begin(), lr.end());
 
-    nmax = has_single_bit((uint32_t)n + 1) ? n + 1 : (1 << (32 - countl_zero((uint32_t)n + 1)));
+    nmax = has_single_bit((uint32_t)maxx) ? maxx : (1 << (32 - countl_zero((uint32_t)maxx)));
     tree.assign(nmax << 1, 0);
-    for (int i = 1; i <= n; i++) {
+    for (int i = 1; i < maxx; i++) {
       tree[i + nmax] = 1;
     }
     for (int i = nmax - 1; i > 0; i--) {
