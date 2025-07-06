@@ -244,7 +244,7 @@ int main() {
       cout << "is not an integer with less than 100 digits.\n";
       continue;
     }
-    
+
     if (a == b) {
       cout << "1\n";
       continue;
@@ -260,6 +260,12 @@ int main() {
       x += m;
       m *= p;
     }
+
+    if (x.digits.size() >= 100) {
+      cout << "is not an integer with less than 100 digits.\n";
+      continue;
+    }
+
     cout << x << "\n";
   }
 
