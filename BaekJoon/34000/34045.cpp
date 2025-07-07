@@ -1,6 +1,6 @@
 // Title : 축생도
 // Link  : https://www.acmicpc.net/problem/34045 
-// Time  : 68 ms
+// Time  : 64 ms
 // Memory: 5692 KB
 
 #include <bits/stdc++.h>
@@ -28,12 +28,15 @@ int main() {
   vector<bool> used(n + 1);
   for (int i = 1; i <= n; i++) {
     if (arr[i] == brr[i] || i == brr[i]) continue;
-    int nxt = arr[i];
-    if (arr[nxt] == brr[nxt] || nxt != brr[nxt] || used[nxt]) {
-      cout << "NO";
-      return 0;
+    int cur = arr[i], dst = brr[i];
+    while (cur != dst) {
+      if (arr[cur] == brr[cur] || cur != brr[cur] || used[cur]) {
+        cout << "NO";
+        return 0;
+      }
+      used[cur] = true;
+      cur = arr[cur];
     }
-    used[nxt] = true;
   }
   cout << "YES";
 
