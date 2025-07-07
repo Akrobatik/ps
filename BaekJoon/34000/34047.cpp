@@ -16,7 +16,7 @@ int GetX(int n, int m) {
 
   bool ok = true;
   int x = n - 2, y = 2;
-  for (int i = 1; ok && i * i <= kMax; i++) {
+  for (int i = 1; ok && i * i <= kMax * 2; i++) {
     int nv = (n / i) * i;
     int nl = nv + i - n, nr = n - nv;
     int xv = (x / i) * i;
