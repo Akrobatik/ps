@@ -1,7 +1,7 @@
 // Title : 축생도
 // Link  : https://www.acmicpc.net/problem/34045 
-// Time  : 64 ms
-// Memory: 5536 KB
+// Time  : 68 ms
+// Memory: 5692 KB
 
 #include <bits/stdc++.h>
 
@@ -24,15 +24,18 @@ int main() {
     }
   }
 
-  int c1 = 0, c2 = 0;
+  vector<int> cands;
+  vector<bool> used(n + 1);
   for (int i = 1; i <= n; i++) {
-    if (arr[i] == brr[i]) {
-      ++c1;
-    } else if (i == brr[i]) {
-      ++c2;
+    if (arr[i] == brr[i] || i == brr[i]) continue;
+    int nxt = arr[i];
+    if (arr[nxt] == brr[nxt] || nxt != brr[nxt] || used[nxt]) {
+      cout << "NO";
+      return 0;
     }
+    used[nxt] = true;
   }
-  cout << ((c1 + c2 * 2) >= n ? "YES" : "NO");
+  cout << "YES";
 
   return 0;
 }
