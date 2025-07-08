@@ -110,7 +110,8 @@ int main() {
   while (t--) {
     int64_t n;
     cin >> n;
-    while (!solver.IsPrime(n)) ++n;
+    n = n <= 2 ? 2 : (n | 1);
+    while (!solver.IsPrime(n)) n += 2;
     cout << n << "\n";
   }
 
