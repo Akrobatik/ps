@@ -1,21 +1,26 @@
 // Title : 이분 그래프
 // Link  : https://www.acmicpc.net/problem/1707 
-// Time  : 220 ms
-// Memory: 6080 KB
+// Time  : 172 ms
+// Memory: 2176 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-bool Traverse(int cur, const vector<vector<int>>& edges, vector<int8_t>& memo) {
-  for (auto nxt : edges[cur]) {
-    if (memo[nxt]) {
-      if (memo[nxt] == memo[cur]) return false;
-    } else {
-      memo[nxt] = memo[cur] ^3;
-      if (!Traverse(nxt, edges, memo)) return false;
-    }
-  }
+int memo[20001], color[20001];
+
+pair<int, int> Find(int id) {
+  if (memo[id] == id) return {id, 0};
+  auto [par, col] = Find(memo[id]);
+  return {memo[id] = par, color[id] ^= col};
+}
+
+bool Union(int a, int b) {
+  auto [pa, ca] = Find(a);
+  auto [pb, cb] = Find(b);
+  if (pa == pb) return ca != cb;
+  memo[pb] = pa;
+  color[pb] = ca ^ cb ^ 1;
   return true;
 }
 
@@ -26,24 +31,17 @@ int main() {
   int t;
   cin >> t;
   while (t--) {
-    int v, e;
-    cin >> v >> e;
-    vector<vector<int>> edges(v + 1);
-    vector<int8_t> memo(v + 1);
-
-    while (e--) {
-      int a, b;
-      cin >> a >> b;
-      edges[a].push_back(b);
-      edges[b].push_back(a);
-    }
+    int n, m;
+    cin >> n >> m;
+    iota(memo, memo + n + 1, 0);
+    memset(color, 0, (n + 1) * sizeof(int));
 
     bool ok = true;
-    for (int i = 1; ok && i <= v; i++) {
-      if (memo[i]) continue;
-      memo[i] = 1;
-      ok = Traverse(i, edges, memo);
-    }
+    while (m--) {
+      int u, v;
+      cin >> u >> v;
+      if (ok) ok = Union(u, v);
+    } 
     cout << (ok ? "YES\n" : "NO\n");
   }
 
