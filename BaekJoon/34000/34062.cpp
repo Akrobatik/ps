@@ -1,6 +1,6 @@
 // Title : Distance Multiplication Maximization
 // Link  : https://www.acmicpc.net/problem/34062 
-// Time  : 3120 ms
+// Time  : 308 ms
 // Memory: 29436 KB
 
 #include <bits/stdc++.h>
@@ -92,7 +92,7 @@ int main() {
   while (l && l != maxd[l]) --l;
   while (r < na && na - r != maxd[r]) ++r;
 
-  map<int, vector<int>> mp;
+  map<int, vector<int>, greater<int>> mp;
   for (int i = l + 1; i < r; i++) mp[maxd[i]].push_back(i);
 
   vector<pair<int, vector<int>>> memo;
@@ -125,6 +125,9 @@ int main() {
       int pl = max<int>(l, uh) + 1, pr = min<int>(r, vh) - 1;
       int pv = (uh + vh + vd - ud - 1) >> 1;
       for (auto& [d, hs] : memo) {
+        int sum = ud + vd - uh + vh + (d << 1);
+        int half = sum >> 1;
+        if (maxx >= (int64_t)half * (sum - half)) break;
         auto rit = upper_bound(hs.begin(), hs.end(), pv);
         auto lit = (rit != hs.begin() ? rit - 1 : hs.end());
         for (auto& it : {lit, rit}) {
