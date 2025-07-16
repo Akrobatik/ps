@@ -1,6 +1,6 @@
 // Title : 시장조성하기
 // Link  : https://www.acmicpc.net/problem/34057 
-// Time  : 880 ms
+// Time  : 844 ms
 // Memory: 88036 KB
 
 #include <bits/stdc++.h>
@@ -34,13 +34,13 @@ int main() {
   for (auto [a, b, x] : arr) {
     int64_t rem = x;
     auto it = memo.upper_bound(b);
-    bool pass = (it == memo.end()) && !(a <= 0 && 0 <= b);
+    if (it == memo.end() && !(a <= 0 && 0 <= b)) continue;
     while (rem && it != memo.end()) {
       int64_t cut = min<int64_t>(rem, it->second);
       sum -= cut, rem -= cut;
       if ((it->second -= cut) == 0) it = memo.erase(it);
     }
-    if (!pass) memo[b] += x, sum += x;
+    memo[b] += x, sum += x;
   }
   cout << sum;
 
