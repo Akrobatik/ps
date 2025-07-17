@@ -1,7 +1,7 @@
 // Title : 안전한 비상연락망
 // Link  : https://www.acmicpc.net/problem/10169 
-// Time  : 900 ms
-// Memory: 22080 KB
+// Time  : 464 ms
+// Memory: 17380 KB
 
 #include <bits/stdc++.h>
 
@@ -9,11 +9,10 @@ using namespace std;
 
 struct LCT {
   struct Node {
-    Node() : l(nullptr), r(nullptr), p(nullptr), rev(0), val(0), maxx(0), midx(0), minn(INT_MAX), lazy(INT_MAX) {}
+    Node() : l(nullptr), r(nullptr), p(nullptr), rev(0), minn(INT_MAX), lazy(INT_MAX) {}
 
     Node *l, *r, *p;
     int rev;
-    int val, maxx, midx;
     int minn, lazy;
   };
 
@@ -25,7 +24,7 @@ struct LCT {
 
   void Set(int x, int w) {
     Access(&nodes[x]);
-    nodes[x].val = w;
+    // nodes[x].val = w;
     Pull(&nodes[x]);
   }
 
@@ -69,12 +68,6 @@ struct LCT {
     return GetLCA(&nodes[u], &nodes[v]) - nodes.data();
   }
 
-  pair<int, int> QueryMax(int u, int v) {
-    MakeRoot(&nodes[u]);
-    Access(&nodes[v]);
-    return {nodes[v].maxx, nodes[v].midx};
-  }
-
   int QueryMin(int x) {
     Access(&nodes[x]);
     return nodes[x].minn;
@@ -86,16 +79,8 @@ struct LCT {
   }
 
   void Pull(Node* x) {
-    x->maxx = x->val;
-    x->midx = x - nodes.data();
-    if (x->l) {
-      Push(x->l);
-      if (x->maxx < x->l->maxx) x->maxx = x->l->maxx, x->midx = x->l->midx;
-    }
-    if (x->r) {
-      Push(x->r);
-      if (x->maxx < x->r->maxx) x->maxx = x->r->maxx, x->midx = x->r->midx;
-    }
+    if (x->l) Push(x->l);
+    if (x->r) Push(x->r);
   }
 
   void Push(Node* x) {
@@ -258,47 +243,62 @@ int main() {
   int n, m;
   cin >> n >> m;
 
-  LCT lct(n + m);
   vector<tup> arr(m);
   for (auto& [u, v, w] : arr) cin >> u >> v >> w;
 
-  int64_t sum = 0;
-  vector<bool> used(m);
-  for (int i = 0; i < m; i++) {
-    auto [u, v, w] = arr[i];
-    lct.Set(i + n + 1, w);
-    if (lct.IsConnected(u, v)) {
-      auto [maxx, midx] = lct.QueryMax(u, v);
-      if (maxx <= w) continue;
+  vector<int> sorted(m);
+  iota(sorted.begin(), sorted.end(), 0);
+  sort(sorted.begin(), sorted.end(), [&](int lhs, int rhs) {
+    return get<2>(arr[lhs]) < get<2>(arr[rhs]);
+  });
 
-      auto [uu, vv, ww] = arr[midx - n - 1];
-      lct.Cut(uu, midx);
-      lct.Cut(midx, vv);
-      sum -= ww;
-      used[midx - n - 1] = false;
+  vector<int> memo(n + 1);
+  iota(memo.begin(), memo.end(), 0);
+
+  auto Find = [&](int id) {
+    while (id != memo[id]) {
+      int par = memo[id];
+      id = memo[id] = memo[par];
     }
-    lct.Link(u, i + n + 1);
-    lct.Link(i + n + 1, v);
-    sum += w;
-    used[i] = true;
+    return id;
+  };
+
+  auto Union = [&](int a, int b) {
+    a = Find(a), b = Find(b);
+    if (a == b) return false;
+    memo[b] = a;
+    return true;
+  };
+
+  int64_t sum = 0;
+  vector<int> used, unused;
+  used.reserve(n - 1), unused.reserve(m - n + 1);
+  LCT lct(n * 2 - 1);
+  for (auto i : sorted) {
+    auto [u, v, w] = arr[i];
+    if (Union(u, v)) {
+      sum += w;
+      used.push_back(i);
+      int idx = n + used.size();
+      lct.Set(idx, w);
+      lct.Link(u, idx);
+      lct.Link(idx, v);
+    } else {
+      unused.push_back(i);
+    }
   }
 
   vector<int64_t> ans(m, INT64_MAX);
-  vector<int> cands;
-  cands.reserve(n - 1);
-  for (int i = 0; i < m; i++) {
-    auto [u, v, w] = arr[i];
-    if (!used[i]) {
-      ans[i] = sum;
-      lct.SetLazy(u, v, w);
-    } else {
-      cands.push_back(i);
-    }
+  for (auto e : unused) {
+    auto [u, v, w] = arr[e];
+    ans[e] = sum;
+    lct.SetLazy(u, v, w);
   }
 
-  for (auto i : cands) {
-    int minn = lct.QueryMin(i + n + 1);
-    if (minn != INT_MAX) ans[i] = min<int64_t>(ans[i], sum - get<2>(arr[i]) + minn);
+  for (int i = 1; i < n; i++) {
+    int minn = lct.QueryMin(n + i);
+    int idx = used[i - 1];
+    if (minn != INT_MAX) ans[idx] = min<int64_t>(ans[idx], sum - get<2>(arr[idx]) + minn);
   }
 
   for (auto e : ans) {
