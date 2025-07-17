@@ -1,7 +1,7 @@
 // Title : 안전한 비상연락망
 // Link  : https://www.acmicpc.net/problem/10169 
-// Time  : 464 ms
-// Memory: 17380 KB
+// Time  : 484 ms
+// Memory: 17384 KB
 
 #include <bits/stdc++.h>
 
@@ -280,7 +280,6 @@ int main() {
       sum += w;
       used.push_back(i);
       int idx = n + used.size();
-      lct.Set(idx, w);
       lct.Link(u, idx);
       lct.Link(idx, v);
     } else {
