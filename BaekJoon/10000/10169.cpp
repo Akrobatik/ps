@@ -1,7 +1,7 @@
 // Title : 안전한 비상연락망
 // Link  : https://www.acmicpc.net/problem/10169 
-// Time  : 788 ms
-// Memory: 22084 KB
+// Time  : 900 ms
+// Memory: 22080 KB
 
 #include <bits/stdc++.h>
 
@@ -32,7 +32,6 @@ struct LCT {
   void SetLazy(int u, int v, int w) {
     MakeRoot(&nodes[u]);
     Access(&nodes[v]);
-    Splay(&nodes[v]);
     nodes[v].minn = min<int>(nodes[v].minn, w);
     nodes[v].lazy = min<int>(nodes[v].lazy, w);
   }
@@ -77,7 +76,7 @@ struct LCT {
   }
 
   int QueryMin(int x) {
-    Splay(&nodes[x]);
+    Access(&nodes[x]);
     return nodes[x].minn;
   }
 
