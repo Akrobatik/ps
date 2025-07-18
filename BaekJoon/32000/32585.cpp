@@ -11,15 +11,9 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int n;
+  int64_t n;
   cin >> n;
-
-  int64_t sum = 0, val = 0;
-  for (int i = 1; i <= n; i++) {
-    val += i;
-    sum += val;
-  }
-  cout << sum;
+  cout << n * (n + 1) * (n + 2) / 6;
 
   return 0;
 }
