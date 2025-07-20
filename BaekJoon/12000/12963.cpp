@@ -1,6 +1,6 @@
 // Title : 달리기
 // Link  : https://www.acmicpc.net/problem/12963 
-// Time  : 4 ms
+// Time  : 0 ms
 // Memory: 2156 KB
 
 #include <bits/stdc++.h>
@@ -24,6 +24,7 @@ int main() {
   for (int i = 1; i < m; i++) table[i] = (int64_t)table[i - 1] * 3 % kMod;
 
   vector<int> memo(n);
+  iota(memo.begin(), memo.end(), 0);
 
   auto Find = [&](int id) {
     while (id != memo[id]) {
@@ -35,32 +36,19 @@ int main() {
 
   auto Union = [&](int a, int b) {
     a = Find(a), b = Find(b);
-    if (a != b) {
-      if (a > b) swap(a, b);
-      memo[b] = a;
-    }
-    return a == 0 && Find(n - 1) == 0;
+    if (a == b) return false;
+    if (a > b) swap(a, b);
+    if (a == 0 && (Find(n - 1) == b)) return true;
+    memo[b] = a;
+    return false;
   };
 
   int ans = 0;
-  vector<bool> used(m);
-  for (;;) {
-    iota(memo.begin(), memo.end(), 0);
-
-    bool out = true;
-    for (int i = m - 1; i >= 0; i--) {
-      if (used[i]) continue;
-
-      auto [u, v] = edges[i];
-      if (Union(u, v)) {
-        used[i] = true;
-        if ((ans += table[i]) >= kMod) ans -= kMod;
-        out = false;
-        break;
-      }
+  for (int i = m - 1; i >= 0; i--) {
+    auto [u, v] = edges[i];
+    if (Union(u, v)) {
+      if ((ans += table[i]) >= kMod) ans -= kMod;
     }
-
-    if (out) break;
   }
   cout << ans;
 
