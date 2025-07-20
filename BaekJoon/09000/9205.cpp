@@ -11,8 +11,8 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  vector<pair<int, int>> yx;
-  vector<int> memo;
+  vector<pair<int16_t, int16_t>> yx;
+  vector<int8_t> memo;
 
   auto Find = [&](int id) {
     while (id != memo[id]) {
