@@ -1,7 +1,7 @@
 // Title : 빌라봉
 // Link  : https://www.acmicpc.net/problem/8872 
-// Time  : 72 ms
-// Memory: 16100 KB
+// Time  : 168 ms
+// Memory: 16104 KB
 
 #include <bits/stdc++.h>
 
@@ -24,7 +24,7 @@ pair<int, int> Find(int cur, int par, int sum) {
   return res;
 }
 
-int GetCentroid(int root) {
+pair<int, int> GetCentroid(int root) {
   auto [uw, u] = Find(root, 0, 0);
   auto [vw, v] = Find(u, 0, 0);
 
@@ -34,7 +34,7 @@ int GetCentroid(int root) {
     if (minn > val) minn = val, cent = cur;
     cur = parents[cur];
   } while (cur);
-  return cent;
+  return {minn, cent};
 }
 
 int GetDiameter(int root) {
@@ -57,15 +57,16 @@ int main() {
     edges[v].push_back({u, w});
   }
 
-  vector<int> roots;
+  vector<pair<int, int>> roots;
   for (int i = 1; i <= n; i++) {
     if (visited[i]) continue;
     roots.push_back(GetCentroid(i));
   }
+  sort(roots.begin(), roots.end(), greater<pair<int, int>>());
 
-  int u = roots[0];
+  int u = roots[0].second;
   for (int i = 1; i < roots.size(); i++) {
-    int v = roots[i];
+    int v = roots[i].second;
     edges[u].push_back({v, l});
     edges[v].push_back({u, l});
   }
