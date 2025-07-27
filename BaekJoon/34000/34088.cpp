@@ -1,7 +1,7 @@
 // Title : It's a Mod, Mod, Mod, Mod World 2
 // Link  : https://www.acmicpc.net/problem/34088 
-// Time  : 36 ms
-// Memory: 3780 KB
+// Time  : 72 ms
+// Memory: 3792 KB
 
 #include <bits/stdc++.h>
 
@@ -52,7 +52,7 @@ struct Factorization {
     return vec;
   }
 
-  static constexpr int kMaxCyrene = 1e4;
+  static constexpr int kMaxCyrene = 1e5;
 
   vector<bool> cyr;
 
@@ -130,7 +130,7 @@ int main() {
   mt19937 gen(random_device{}());
 
   auto Check = [&](int d, int r) {
-    int t = 5;
+    int t = 30;
     while (t--) {
       int x = arr[gen() % n];
       if (x % d == r) return true;
