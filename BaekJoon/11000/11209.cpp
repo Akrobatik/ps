@@ -1,13 +1,14 @@
 // Title : Intercept
 // Link  : https://www.acmicpc.net/problem/11209 
-// Time  : 36 ms
-// Memory: 7356 KB
+// Time  : 40 ms
+// Memory: 11196 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
 vector<pair<int, int>> edges[100000];
+vector<pair<int, int>> rev[100000];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -19,7 +20,7 @@ int main() {
     int u, v, w;
     cin >> u >> v >> w;
     edges[u].push_back({v, w});
-    edges[v].push_back({u, w});
+    rev[v].push_back({u, w});
   }
 
   int st, en;
@@ -65,7 +66,7 @@ int main() {
 
     if (pq.empty()) ans.push_back(cur);
 
-    for (auto [nxt, w] : edges[cur]) {
+    for (auto [nxt, w] : rev[cur]) {
       PushQ(nxt, d + w);
     }
   }
