@@ -1,7 +1,7 @@
 // Title : 트리 이사
 // Link  : https://www.acmicpc.net/problem/34086 
-// Time  : 200 ms
-// Memory: 18080 KB
+// Time  : 220 ms
+// Memory: 18076 KB
 
 #include <bits/stdc++.h>
 
@@ -24,6 +24,7 @@ int Find(int id) {
 void Union(int a, int b) {
   a = Find(a), b = Find(b);
   if (a == b) return;
+  if (edges[a].size() < edges[b].size()) swap(edges[a], edges[b]);
   edges[a].insert(edges[a].end(), edges[b].begin(), edges[b].end());
   edges[b] = vector<int>();
   memo[b] = a;
@@ -137,15 +138,14 @@ int main() {
   }
 
   int nl = leafs.size();
-  int md = 0, root = 0;
+  int md = 0;
   bool used[2001] = {};
   for (int i = 0; i < nl; i++) {
     if (used[leafs[i]]) continue;
     int v = Rebuild(leafs[i], md++);
     used[leafs[i]] = used[v] = true;
-    if (root == 0) root = leafs[i];
   }
-  SetCoord(root, 0, md, 0);
+  SetCoord(leafs[0], 0, md, 0);
 
   cout << md << "\n";
   for (int i = 1; i <= n; i++) {
