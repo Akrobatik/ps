@@ -1,6 +1,6 @@
 // Title : Wildcard and Query
 // Link  : https://www.acmicpc.net/problem/34089 
-// Time  : 228 ms
+// Time  : 216 ms
 // Memory: 97064 KB
 
 #include <bits/stdc++.h>
@@ -428,8 +428,7 @@ int main() {
     auto& ts = tss[i];
     int nt = ts.size();
     if (nt == 1) {
-      int ti = ts[0];
-      cout << (ti ? Match(0, n, keys[ti]) : 1) << "\n";
+      cout << Match(0, n, keys[ts[0]]) << "\n";
       continue;
     }
 
