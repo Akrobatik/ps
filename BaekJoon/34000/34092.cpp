@@ -1,7 +1,7 @@
 // Title : 자율 주행 프로그램 개발
 // Link  : https://www.acmicpc.net/problem/34092 
-// Time  : 316 ms
-// Memory: 27728 KB
+// Time  : 372 ms
+// Memory: 27540 KB
 
 #include <bits/stdc++.h>
 
@@ -117,11 +117,7 @@ int main() {
     int mid = GetMid(st, en, lca);
     int sd = (depth[st] + depth[en]) >> 1;
 
-    string sl = GetPath(st, lca);
-    string el = GetPath(en, lca);
-    string lr = GetPath(lca, 1);
-    sl = lr + sl;
-    el = lr + el;
+    string el = GetPath(en, 1);
     string_view sv(el);
     int ns = sv.size();
 
@@ -137,90 +133,58 @@ int main() {
     }
     SetHead(1, 0, 0);
 
+    int suf, m;
     if (depth[st] >= depth[en]) {
-      int suf = depth[en] - depth[lca];
-      auto sub = sv.substr(ns - suf);
-
-      memo.clear();
-      for (auto e : layers[sd]) {
-        int u = MoveRev(e, sub);
-        if (u == 0) continue;
-        int p = pend[head[e]];
-        if (!mask[u]) p = max<int>(p, pend[u] - p);
-        memo.push_back({u, p});
-      }
-
-      int m = mid;
-      while (m) {
-        bool ok = false;
-
-        int si = ns - (++suf);
-        char dir = (si >= 0 ? sv[si] : 'X');
-        mnxt.clear();
-        for (auto [e, p] : memo) {
-          if (e == m && p <= 0) {
-            ok = true;
-            break;
-          }
-          int u = MoveRev(e, dir);
-          if (u) mnxt.push_back({u, p - 1});
-        }
-
-        if (ok) break;
-
-        m = nodes[m].p;
-        swap(memo, mnxt);
-      }
-
-      if (m) {
-        int up = depth[st] - depth[m];
-        for (int i = 0; i < up; i++) cout << "B";
-        cout << sv.substr(ns - suf + 1) << "\n";
-      } else {
-        cout << "ERROR\n";
-      }
+      suf = depth[en] - depth[lca];
+      m = mid;
     } else {
-      int suf = depth[en] - depth[mid];
-      auto sub = sv.substr(ns - suf);
+      suf = depth[en] - depth[mid];
+      m = lca;
+    }
 
-      memo.clear();
-      for (auto e : layers[sd]) {
-        int u = MoveRev(e, sub);
-        if (u == 0) continue;
-        int p = pend[head[e]];
-        if (!mask[u]) p = max<int>(p, pend[u] - p);
-        memo.push_back({u, p});
+    auto sub = sv.substr(ns - suf);
+
+    memo.clear();
+    for (auto e : layers[sd]) {
+      int u = MoveRev(e, sub);
+      if (u == 0) continue;
+      int p = pend[head[e]];
+      if (!mask[u]) p = max<int>(p, pend[u] - p);
+      memo.push_back({u, p});
+    }
+
+    while (m) {
+      if (memo.empty()) {
+        m = 0;
+        break;
       }
 
-      int m = lca;
-      while (m) {
-        bool ok = false;
+      bool ok = false;
 
-        int si = ns - (++suf);
-        char dir = (si >= 0 ? sv[si] : 'X');
-        mnxt.clear();
-        for (auto [e, p] : memo) {
-          if (e == m && p <= 0) {
-            ok = true;
-            break;
-          }
-          int u = MoveRev(e, dir);
-          if (u) mnxt.push_back({u, p - 1});
+      int si = ns - (++suf);
+      char dir = (si >= 0 ? sv[si] : 'X');
+      mnxt.clear();
+      for (auto [e, p] : memo) {
+        if (e == m && p <= 0) {
+          ok = true;
+          break;
         }
-
-        if (ok) break;
-
-        m = nodes[m].p;
-        swap(memo, mnxt);
+        int u = MoveRev(e, dir);
+        if (u) mnxt.push_back({u, p - 1});
       }
 
-      if (m) {
-        int up = depth[st] - depth[m];
-        for (int i = 0; i < up; i++) cout << "B";
-        cout << sv.substr(ns - suf + 1) << "\n";
-      } else {
-        cout << "ERROR\n";
-      }
+      if (ok) break;
+
+      m = nodes[m].p;
+      swap(memo, mnxt);
+    }
+
+    if (m) {
+      int up = depth[st] - depth[m];
+      for (int i = 0; i < up; i++) cout << "B";
+      cout << sv.substr(ns - suf + 1) << "\n";
+    } else {
+      cout << "ERROR\n";
     }
   }
 
