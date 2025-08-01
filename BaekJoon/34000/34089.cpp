@@ -1,7 +1,7 @@
 // Title : Wildcard and Query
 // Link  : https://www.acmicpc.net/problem/34089 
-// Time  : 216 ms
-// Memory: 97064 KB
+// Time  : 220 ms
+// Memory: 89244 KB
 
 #include <bits/stdc++.h>
 
@@ -43,29 +43,29 @@ struct LCP {
     int n = sv.size();
     buf.resize(n + 1);
     sa = span<int>(buf.data() + 1, n);
-    // lcp.resize(n);
+    lcp.resize(n);
     SAIS(span<const char>(sv.data(), n + 1));
-    // Kasai(sv);
+    Kasai(sv);
   }
 
   span<int> sa;
-  // vector<int> lcp;
+  vector<int> lcp;
 
  private:
-  // void Kasai(const string_view sv) {
-  //   int n = sv.size();
-  //   vector<int> ranks(n);
-  //   for (int i = 0; i < n; i++) ranks[sa[i]] = i + 1;
-  //   for (int i = 0, k = 0; i < n; i++, k && --k) {
-  //     if (ranks[i] == n) {
-  //       k = 0;
-  //       continue;
-  //     }
-  //     int j = sa[ranks[i]];
-  //     while (i + k < n && j + k < n && sv[i + k] == sv[j + k]) k++;
-  //     lcp[ranks[i]] = k;
-  //   }
-  // }
+  void Kasai(const string_view sv) {
+    int n = sv.size();
+    vector<int> ranks(n);
+    for (int i = 0; i < n; i++) ranks[sa[i]] = i + 1;
+    for (int i = 0, k = 0; i < n; i++, k && --k) {
+      if (ranks[i] == n) {
+        k = 0;
+        continue;
+      }
+      int j = sa[ranks[i]];
+      while (i + k < n && j + k < n && sv[i + k] == sv[j + k]) k++;
+      lcp[ranks[i]] = k;
+    }
+  }
 
   template <typename T>
   void SAIS(span<const T> sv) {
@@ -159,118 +159,6 @@ struct LCP {
   vector<int> buf;
 };
 
-template <int32_t MOD>
-struct ModInt32 {
-  using CT = typename std::conditional<
-      (MOD <= std::numeric_limits<int32_t>::max() / 2),
-      int32_t,
-      int64_t>::type;
-
-  constexpr ModInt32() : val(0) {}
-  constexpr ModInt32(int32_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
-  constexpr ModInt32(int64_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
-  constexpr ModInt32(__int128_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
-
-  constexpr ModInt32 Pow(int64_t exp) const {
-    int64_t n = val, x = 1;
-    while (exp) {
-      if (exp & 1) x = x * n % MOD;
-      n = n * n % MOD;
-      exp >>= 1;
-    }
-
-    ModInt32 res;
-    res.val = x;
-    return res;
-  }
-
-  constexpr ModInt32 Inv() const {
-    return Pow(MOD - 2);
-  }
-
-  constexpr ModInt32& operator++() {
-    if (++val == MOD) val = 0;
-    return *this;
-  }
-
-  constexpr ModInt32 operator++(int) {
-    ModInt32 tmp(*this);
-    operator++();
-    return tmp;
-  }
-
-  constexpr ModInt32& operator+=(const ModInt32& other) {
-    CT x = (CT)val + other.val;
-    if (x >= MOD) x -= MOD;
-    val = x;
-    return *this;
-  }
-
-  constexpr ModInt32& operator-=(const ModInt32& other) {
-    CT x = (CT)val + (MOD - other.val);
-    if (x >= MOD) x -= MOD;
-    val = x;
-    return *this;
-  }
-
-  constexpr ModInt32& operator*=(const ModInt32& other) {
-    val = (int64_t)val * other.val % MOD;
-    return *this;
-  }
-
-  constexpr ModInt32& operator/=(const ModInt32& other) {
-    *this *= other.Inv();
-    return *this;
-  }
-
-  constexpr ModInt32 operator-() const {
-    ModInt32 res;
-    if (val) res.val = MOD - val;
-    return res;
-  }
-
-  constexpr ModInt32 operator+(const ModInt32& rhs) const {
-    return ModInt32(*this) += rhs;
-  }
-
-  constexpr ModInt32 operator-(const ModInt32& rhs) const {
-    return ModInt32(*this) -= rhs;
-  }
-
-  constexpr ModInt32 operator*(const ModInt32& rhs) const {
-    return ModInt32(*this) *= rhs;
-  }
-
-  constexpr ModInt32 operator/(const ModInt32& rhs) const {
-    return ModInt32(*this) /= rhs;
-  }
-
-  constexpr bool operator!() const {
-    return val == 0;
-  }
-
-  friend istream& operator>>(istream& is, ModInt32& num) {
-    is >> num.val;
-    if ((num.val %= MOD) < 0) num.val += MOD;
-    return is;
-  }
-
-  friend ostream& operator<<(ostream& os, const ModInt32& num) {
-    os << num.val;
-    return os;
-  }
-
-  int32_t val;
-};
-
-constexpr int kMod1 = 1e9 + 7;
-constexpr int kMod2 = 1e9 + 9;
-constexpr int kBase1 = 373;
-constexpr int kBase2 = 331;
-
-using M1 = ModInt32<kMod1>;
-using M2 = ModInt32<kMod2>;
-
 constexpr int kMax = 1 << 19;
 vector<int> tree[kMax << 1];
 
@@ -312,24 +200,22 @@ int main() {
   int q;
   cin >> s >> q;
   int n = s.size();
+  string org = s;
 
   vector<string> qss(q);
   for (auto& qs : qss) cin >> qs;
 
   s.push_back('~');
-  unordered_map<string_view, int> memo;
   vector<bool> masks(n + 1);
   vector<int> lens(n + 1);
 
   auto AppendToken = [&](string_view sv) {
     if (sv.empty()) return 0;
     if (sv.size() > n) return -1;
-    if (auto it = memo.find(sv); it != memo.end()) return it->second;
 
     int pos = s.size();
     s.append(sv);
     s.push_back('$');
-    memo[sv] = pos;
     masks.resize(s.size());
     masks[pos] = true;
     lens.resize(s.size());
@@ -353,56 +239,17 @@ int main() {
 
   int m = s.size();
 
-  M1 b1 = kBase1;
-  M2 b2 = kBase2;
-  vector<M1> pw1(m + 1), hs1(m + 1);
-  vector<M2> pw2(m + 1), hs2(m + 1);
-  pw1[0] = 1;
-  pw2[0] = 1;
-  for (int i = 0; i < m; i++) {
-    int x = s[i] - 'a' + 1;
-    pw1[i + 1] = pw1[i] * b1;
-    pw2[i + 1] = pw2[i] * b2;
-    hs1[i + 1] = hs1[i] + pw1[i] * x;
-    hs2[i + 1] = hs2[i] + pw2[i] * x;
-  }
-
-  auto Match = [&](int st, int len, int64_t key) {
-    if (st + len > m) return false;
-    M1 h1 = (hs1[st + len] - hs1[st]) * pw1[m - st];
-    M2 h2 = (hs2[st + len] - hs2[st]) * pw2[m - st];
-    int64_t h = ((int64_t)h1.val << 32) | h2.val;
-    return h == key;
-  };
-
-  string_view svv(s);
-  vector<int64_t> keys(m);
-  int idx = n + 1;
-  while (idx < m) {
-    int len = lens[idx];
-    auto sv = svv.substr(idx, len);
-    M1 k1 = 0;
-    M2 k2 = 0;
-    for (int i = 0; i < sv.size(); i++) {
-      int x = sv[i] - 'a' + 1;
-      k1 = k1 + pw1[i] * x;
-      k2 = k2 + pw2[i] * x;
-    }
-    k1 *= pw1[m];
-    k2 *= pw2[m];
-    keys[idx] = ((int64_t)k1.val << 32) | k2.val;
-    idx += len + 1;
-  }
-
   LCP solver;
   solver.Init(s);
   auto& sa = solver.sa;
+  auto& lcp = solver.lcp;
   vector<pair<int, int>> lrs(m);
   vector<int> stk;
-  idx = 0;
+  int idx = 0;
   for (int i = 0; i < m; i++) {
     int pos = sa[i];
-    while (!stk.empty() && !Match(pos, lens[stk.back()], keys[stk.back()])) {
+    int len = lcp[i];
+    while (!stk.empty() && len < lens[stk.back()]) {
       lrs[stk.back()].second = idx - 1;
       stk.pop_back();
     }
@@ -428,14 +275,12 @@ int main() {
     auto& ts = tss[i];
     int nt = ts.size();
     if (nt == 1) {
-      cout << Match(0, n, keys[ts[0]]) << "\n";
+      cout << (qss[i] == org) << "\n";
       continue;
     }
 
-    fwd.assign(nt, INT_MAX);
-    bwd.assign(nt, INT_MIN);
-
     int fi = 0;
+    fwd.assign(nt, INT_MAX);
     for (int j = 0; j < nt; j++) {
       int ti = ts[j];
       if (ti < 0) break;
