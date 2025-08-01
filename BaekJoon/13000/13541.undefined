@@ -1,7 +1,7 @@
 // Title : K번째 부분 문자열
 // Link  : https://www.acmicpc.net/problem/13541 
-// Time  : 56 ms
-// Memory: 48428 KB
+// Time  : 60 ms
+// Memory: 37500 KB
 
 #include <bits/stdc++.h>
 
@@ -84,6 +84,7 @@ int main() {
   }
 
   SuffixAutomaton sa;
+  sa.states.reserve(s.size() + 1);
   for (auto c : s) sa.Extend(c - 'a');
   auto& states = sa.states;
 
