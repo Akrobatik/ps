@@ -1,7 +1,7 @@
 // Title : Wildcard and Query
 // Link  : https://www.acmicpc.net/problem/34089 
-// Time  : 220 ms
-// Memory: 89244 KB
+// Time  : 200 ms
+// Memory: 86952 KB
 
 #include <bits/stdc++.h>
 
@@ -159,6 +159,118 @@ struct LCP {
   vector<int> buf;
 };
 
+template <int32_t MOD>
+struct ModInt32 {
+  using CT = typename std::conditional<
+      (MOD <= std::numeric_limits<int32_t>::max() / 2),
+      int32_t,
+      int64_t>::type;
+
+  constexpr ModInt32() : val(0) {}
+  constexpr ModInt32(int32_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
+  constexpr ModInt32(int64_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
+  constexpr ModInt32(__int128_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
+
+  constexpr ModInt32 Pow(int64_t exp) const {
+    int64_t n = val, x = 1;
+    while (exp) {
+      if (exp & 1) x = x * n % MOD;
+      n = n * n % MOD;
+      exp >>= 1;
+    }
+
+    ModInt32 res;
+    res.val = x;
+    return res;
+  }
+
+  constexpr ModInt32 Inv() const {
+    return Pow(MOD - 2);
+  }
+
+  constexpr ModInt32& operator++() {
+    if (++val == MOD) val = 0;
+    return *this;
+  }
+
+  constexpr ModInt32 operator++(int) {
+    ModInt32 tmp(*this);
+    operator++();
+    return tmp;
+  }
+
+  constexpr ModInt32& operator+=(const ModInt32& other) {
+    CT x = (CT)val + other.val;
+    if (x >= MOD) x -= MOD;
+    val = x;
+    return *this;
+  }
+
+  constexpr ModInt32& operator-=(const ModInt32& other) {
+    CT x = (CT)val + (MOD - other.val);
+    if (x >= MOD) x -= MOD;
+    val = x;
+    return *this;
+  }
+
+  constexpr ModInt32& operator*=(const ModInt32& other) {
+    val = (int64_t)val * other.val % MOD;
+    return *this;
+  }
+
+  constexpr ModInt32& operator/=(const ModInt32& other) {
+    *this *= other.Inv();
+    return *this;
+  }
+
+  constexpr ModInt32 operator-() const {
+    ModInt32 res;
+    if (val) res.val = MOD - val;
+    return res;
+  }
+
+  constexpr ModInt32 operator+(const ModInt32& rhs) const {
+    return ModInt32(*this) += rhs;
+  }
+
+  constexpr ModInt32 operator-(const ModInt32& rhs) const {
+    return ModInt32(*this) -= rhs;
+  }
+
+  constexpr ModInt32 operator*(const ModInt32& rhs) const {
+    return ModInt32(*this) *= rhs;
+  }
+
+  constexpr ModInt32 operator/(const ModInt32& rhs) const {
+    return ModInt32(*this) /= rhs;
+  }
+
+  constexpr bool operator!() const {
+    return val == 0;
+  }
+
+  friend istream& operator>>(istream& is, ModInt32& num) {
+    is >> num.val;
+    if ((num.val %= MOD) < 0) num.val += MOD;
+    return is;
+  }
+
+  friend ostream& operator<<(ostream& os, const ModInt32& num) {
+    os << num.val;
+    return os;
+  }
+
+  int32_t val;
+};
+
+constexpr int kMod1 = 1e9 + 7;
+constexpr int kMod2 = 1e9 + 9;
+constexpr int kBase1 = 373;
+constexpr int kBase2 = 331;
+
+using M1 = ModInt32<kMod1>;
+using M2 = ModInt32<kMod2>;
+
 constexpr int kMax = 1 << 19;
 vector<int> tree[kMax << 1];
 
@@ -206,16 +318,19 @@ int main() {
   for (auto& qs : qss) cin >> qs;
 
   s.push_back('~');
+  unordered_map<string_view, int> memo;
   vector<bool> masks(n + 1);
   vector<int> lens(n + 1);
 
   auto AppendToken = [&](string_view sv) {
     if (sv.empty()) return 0;
     if (sv.size() > n) return -1;
+    if (auto it = memo.find(sv); it != memo.end()) return it->second;
 
     int pos = s.size();
     s.append(sv);
     s.push_back('$');
+    memo[sv] = pos;
     masks.resize(s.size());
     masks[pos] = true;
     lens.resize(s.size());
@@ -224,6 +339,7 @@ int main() {
   };
 
   vector<vector<int>> tss(q);
+  vector<int> mask(q);
   for (int i = 0; i < q; i++) {
     auto& qs = qss[i];
     auto& ts = tss[i];
@@ -231,10 +347,16 @@ int main() {
     string_view sv(qs);
     size_t b = 0, e;
     while ((e = sv.find('*', b)) != string::npos) {
+      mask[i] |= ((e - b) > n);
       ts.push_back(AppendToken(sv.substr(b, e - b)));
       b = e + 1;
     }
+    mask[i] |= ((qs.size() - b) > n);
     ts.push_back(AppendToken(sv.substr(b)));
+
+    if (ts.size() == 1) {
+      mask[i] = (qs == org) + 1;
+    }
   }
 
   int m = s.size();
@@ -272,19 +394,18 @@ int main() {
 
   vector<int> fwd, bwd;
   for (int i = 0; i < q; i++) {
-    auto& ts = tss[i];
-    int nt = ts.size();
-    if (nt == 1) {
-      cout << (qss[i] == org) << "\n";
+    if (mask[i] > 0) {
+      cout << mask[i] - 1 << "\n";
       continue;
     }
 
+    auto& ts = tss[i];
+    int nt = ts.size();
+
     int fi = 0;
-    fwd.assign(nt, INT_MAX);
+    fwd.resize(nt);
     for (int j = 0; j < nt; j++) {
       int ti = ts[j];
-      if (ti < 0) break;
-
       int len = lens[ti];
       if (len > 0) {
         auto [l, r] = lrs[ti];
@@ -295,8 +416,13 @@ int main() {
       fi += len;
     }
 
+    if (fi == INT_MAX) {
+      cout << "0\n";
+      continue;
+    }
+
     int bi = n;
-    bwd.assign(nt, INT_MIN);
+    bwd.resize(nt);
     for (int j = nt - 1; j >= 0; j--) {
       int ti = ts[j];
       if (ti < 0) break;
@@ -305,7 +431,6 @@ int main() {
       if (len > 0) {
         auto [l, r] = lrs[ti];
         bi = QueryR(l, r, bi - len);
-        if (bi == INT_MIN) break;
       }
       bwd[j] = bi;
     }
@@ -315,9 +440,6 @@ int main() {
     bool suf = (ts.back() > 0);
     if (ok && pre) ok = (fwd[0] == 0);
     if (ok && suf) ok = (bwd[nt - 1] + lens[ts[nt - 1]] == n);
-    for (int j = 0; ok && j < nt; j++) {
-      ok = (fwd[j] != INT_MAX && bwd[j] != INT_MIN);
-    }
 
     if (ok) {
       bool all = (qss[i].size() + 1 == nt);
