@@ -1,13 +1,13 @@
 // Title : 시장조성하기
 // Link  : https://www.acmicpc.net/problem/34057 
-// Time  : 844 ms
+// Time  : 884 ms
 // Memory: 88036 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-using tup = tuple<int64_t, int64_t, int64_t>;
+using tup = tuple<int64_t, int64_t, int>;
 
 int main() {
   ios::sync_with_stdio(false);
@@ -15,12 +15,15 @@ int main() {
 
   int n;
   cin >> n;
-  vector<tup> arr(n);
+  vector<tup> arr;
+  arr.reserve(n);
   int64_t sa = 0, sb = 0;
-  for (auto& [a, b, x] : arr) {
+  for (int i = 0; i < n; i++) {
+    int a, b, x;
     cin >> a >> b >> x;
     sa += a, sb += b;
-    a = sa, b = sb;
+    if (sa > 0 || sb < 0) continue;
+    arr.push_back({sa, sb, x});
   }
 
   sort(arr.begin(), arr.end(), [](const tup& lhs, const tup& rhs) {
@@ -34,7 +37,6 @@ int main() {
   for (auto [a, b, x] : arr) {
     int64_t rem = x;
     auto it = memo.upper_bound(b);
-    if (it == memo.end() && !(a <= 0 && 0 <= b)) continue;
     while (rem && it != memo.end()) {
       int64_t cut = min<int64_t>(rem, it->second);
       sum -= cut, rem -= cut;
