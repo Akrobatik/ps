@@ -1,6 +1,6 @@
 // Title : 괄호 부분 문자열
 // Link  : https://www.acmicpc.net/problem/13535 
-// Time  : 184 ms
+// Time  : 124 ms
 // Memory: 37136 KB
 
 #include <bits/stdc++.h>
@@ -169,8 +169,14 @@ int main() {
 
   vector<int> arr(n + 1);
   arr[0] = n + 1;
+  int ns = 0;
   for (int i = 0; i < n; i++) {
-    arr[i + 1] = arr[i] + (s[i] == '(' ? 1 : -1);
+    if (s[i] == '(') {
+      ++ns;
+      arr[i + 1] = arr[i] + 1;
+    } else {
+      arr[i + 1] = arr[i] - 1;
+    }
   }
 
   vector<vector<int>> axr((n << 1) + 3);
@@ -184,7 +190,7 @@ int main() {
   auto& lcp = solver.lcp;
 
   int64_t ans = 0;
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < ns; i++) {
     int pos = sa[i];
     int dup = lcp[i];
     int val = arr[pos];
