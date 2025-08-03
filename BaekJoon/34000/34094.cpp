@@ -1,7 +1,7 @@
 // Title : 골드리치의 비밀 금고
 // Link  : https://www.acmicpc.net/problem/34094 
-// Time  : 276 ms
-// Memory: 10156 KB
+// Time  : 272 ms
+// Memory: 5928 KB
 
 #include <bits/stdc++.h>
 
@@ -19,30 +19,14 @@ int main() {
 
   if (arr.back() == 0) {
     cout << "0\n";
-    for (auto e : arr) cout << e << " ";
-    return 0;
-  }
-
-  deque<int> dq;
-
-  int cur = 0;
-  for (int i = 0; i < n; i++) {
-    if (arr[i] == cur) {
-      arr[i] = -1;
-      if (cur & 1) {
-        dq.push_front(cur);
-      } else {
-        dq.push_back(cur);
-      }
-      ++cur;
+  } else {
+    int x = 0;
+    for (auto e : arr) {
+      if (e == x) ++x;
     }
+    cout << x + 1 << "\n";
   }
-  cout << dq.size() + 1 << "\n";
-  for (auto e : dq) cout << e << " ";
-  for (auto e : arr) {
-    if (e == -1) continue;
-    cout << e << " ";
-  }
+  for (auto e : arr) cout << e << " ";
 
   return 0;
 }
