@@ -1,9 +1,8 @@
 // Title : 구슬
 // Link  : https://www.acmicpc.net/problem/4503 
-// Time  : 576 ms
+// Time  : 716 ms
 // Memory: 95328 KB
 
-#pragma GCC optimize("O3")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -11,7 +10,6 @@ using namespace std;
 constexpr int kLen = 13;
 constexpr int kMax = kLen << 1;
 constexpr int kMask = (1 << kLen) - 1;
-constexpr int kTable[] = {0, 4, 2, 6, 1, 5, 3, 7};
 
 int main() {
   ios::sync_with_stdio(false);
