@@ -1,7 +1,7 @@
 // Title : 괄호 부분 문자열
 // Link  : https://www.acmicpc.net/problem/13535 
 // Time  : 108 ms
-// Memory: 37136 KB
+// Memory: 37216 KB
 
 #include <bits/stdc++.h>
 
@@ -167,16 +167,19 @@ int main() {
   string s;
   cin >> n >> s;
 
+  int half = n >> 1;
+  int ns = count(s.begin(), s.end(), '(');
+
+  if (ns > half) {
+    for (auto& c : s) c ^= 1;
+    reverse(s.begin(), s.end());
+    ns = n - ns;
+  }
+
   vector<int> arr(n + 1);
   arr[0] = n + 1;
-  int ns = 0;
   for (int i = 0; i < n; i++) {
-    if (s[i] == '(') {
-      ++ns;
-      arr[i + 1] = arr[i] + 1;
-    } else {
-      arr[i + 1] = arr[i] - 1;
-    }
+    arr[i + 1] = arr[i] + (s[i] == '(' ? 1 : -1);
   }
 
   vector<vector<int>> axr((n << 1) + 3);
