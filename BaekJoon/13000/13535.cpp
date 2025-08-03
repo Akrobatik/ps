@@ -1,6 +1,6 @@
 // Title : 괄호 부분 문자열
 // Link  : https://www.acmicpc.net/problem/13535 
-// Time  : 124 ms
+// Time  : 116 ms
 // Memory: 37136 KB
 
 #include <bits/stdc++.h>
@@ -198,8 +198,8 @@ int main() {
     int ub = uit != axr[val - 1].end() ? *uit : INT_MAX;
 
     auto bit = upper_bound(axr[val].begin(), axr[val].end(), pos + dup);
-    auto eit = lower_bound(axr[val].begin(), axr[val].end(), ub);
-    if (bit < eit) ans += eit - bit;
+    auto eit = lower_bound(bit, axr[val].end(), ub);
+    ans += eit - bit;
   }
   cout << ans;
 
