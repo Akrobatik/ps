@@ -21,16 +21,14 @@ int main() {
   for (auto& e : arr) e /= g;
 
   int limit = arr[0];
-  vector<int> axr(limit, INT_MAX);
+  vector<int> edges;
+  vector<bool> used(limit);
+  used[0] = true;
   for (auto e : arr) {
     int x = e % limit;
-    axr[x] = min<int>(axr[x], e);
-  }
-
-  vector<int> edges;
-  for (int i = 1; i < limit; i++) {
-    if (axr[i] == INT_MAX) continue;
-    edges.push_back(axr[i]);
+    if (used[x]) continue;
+    used[x] = true;
+    edges.push_back(e);
   }
 
   vector<int64_t> dist(limit, INT64_MAX);
