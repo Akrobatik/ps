@@ -1,7 +1,7 @@
 // Title : g-raph 신앙 (Hard)
 // Link  : https://www.acmicpc.net/problem/33972 
-// Time  : 156 ms
-// Memory: 28140 KB
+// Time  : 176 ms
+// Memory: 27364 KB
 
 #include <bits/stdc++.h>
 
@@ -136,7 +136,6 @@ struct FenwickTree {
 };
 
 vector<pair<int, int>> edges[200001];
-int order[200001];
 int in[200001], out[200001], sz[200001];
 int oidx;
 
