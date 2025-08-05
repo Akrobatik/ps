@@ -109,6 +109,27 @@ struct ModInt32 {
 constexpr int kMod = 998244353;
 using ModInt = ModInt32<kMod>;
 
+struct FenwickTree {
+  FenwickTree(int _n) : n(_n), fwt(n + 1, 0) {}
+
+  void Update(int i, ModInt x) {
+    for (; i <= n; i += i & (-i)) fwt[i] += x;
+  }
+
+  ModInt Query(int i) {
+    ModInt res = 0;
+    for (; i > 0; i -= i & (-i)) res += fwt[i];
+    return res;
+  }
+
+  ModInt Query(int l, int r) {
+    return Query(r) - Query(l - 1);
+  }
+
+  int n;
+  vector<ModInt> fwt;
+};
+
 vector<pair<int, int>> edges[5001];
 int order[5001];
 int in[5001], out[5001], sz[5001];
@@ -144,26 +165,35 @@ int main() {
   ModInt pl = (int64_t)n * (n - 1) / 2 - (n - 2);
   ModInt all = pc * pc * pl * pl;
 
+  vector<int> ids(n - 1);
+  iota(ids.begin(), ids.end(), 1);
+  sort(ids.begin(), ids.end(), [&](int lhs, int rhs) {
+    return in[lhs] > in[rhs];
+  });
+
+  FenwickTree f1(n), f2(n), f3(n);
+  ModInt s1 = 0, s2 = 0, s3 = 0;
+
   ModInt sum = 0;
-  for (int i = 1; i < n; i++) {
+  for (auto i : ids) {
     ModInt iu = sz[i], iv = n - sz[i];
     sum += iu * iv * iu * iv;
-    for (int j = 1; j < n; j++) {
-      if (i == j) continue;
-      if (in[i] <= in[j] && in[j] <= out[i]) {
-        ModInt ju = sz[j], jv = iu - ju;
-        sum += iv * ju * (iv + ju) * jv;
-        sum += iv * jv * (iv + jv) * ju;
-      } else if (in[j] <= in[i] && in[i] <= out[j]) {
-        ModInt ju = n - sz[j], jv = iv - ju;
-        sum += iu * ju * (iu + ju) * jv;
-        sum += iu * jv * (iu + jv) * ju;
-      } else {
-        ModInt ju = sz[j], jv = iv - ju;
-        sum += iu * ju * (iu + ju) * jv;
-        sum += iu * jv * (iu + jv) * ju;
-      }
-    }
+
+    ModInt x1 = f1.Query(in[i], out[i]);
+    ModInt x2 = f2.Query(in[i], out[i]);
+    ModInt x3 = f3.Query(in[i], out[i]);
+
+    ModInt y = iu * 2 + iv * 3;
+    sum += iv * (iu * y * x1 + (iu - y) * x2 - x3);
+
+    ModInt z = iu * 3 + iv * 2;
+    sum += iu * (iv * z * (s1 - x1) + (iv - z) * (s2 - x2) - (s3 - x3));
+
+    ModInt w1 = iu, w2 = w1 * iu, w3 = w2 * iu;
+    f1.Update(in[i], w1);
+    f2.Update(in[i], w2);
+    f3.Update(in[i], w3);
+    s1 += w1, s2 += w2, s3 += w3;
   }
   cout << sum / all;
 
