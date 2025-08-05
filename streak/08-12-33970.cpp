@@ -131,7 +131,6 @@ struct FenwickTree {
 };
 
 vector<pair<int, int>> edges[5001];
-int order[5001];
 int in[5001], out[5001], sz[5001];
 int oidx;
 
