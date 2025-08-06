@@ -1,7 +1,7 @@
 // Title : 시간선 통합
 // Link  : https://www.acmicpc.net/problem/34093 
 // Time  : 88 ms
-// Memory: 10104 KB
+// Memory: 8392 KB
 
 #include <bits/stdc++.h>
 
@@ -59,6 +59,8 @@ int main() {
 
     ans.clear();
     sns.clear();
+    ans.reserve(n - 1);
+    sns.reserve(n - 1);
 
     auto Push = [&]() {
       if (arem > 0) {
