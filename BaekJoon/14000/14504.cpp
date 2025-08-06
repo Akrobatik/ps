@@ -1,6 +1,6 @@
 // Title : 수열과 쿼리 18
 // Link  : https://www.acmicpc.net/problem/14504 
-// Time  : 316 ms
+// Time  : 268 ms
 // Memory: 2412 KB
 
 #pragma GCC optimize("O3,unroll-loops")
@@ -31,13 +31,13 @@ int main() {
     const __m256i cmp = _mm256_set1_epi32(k);
     for (; l + 7 <= r; l += 8) {
       __m256i val = _mm256_load_si256((const __m256i*)(arr + l));
-      sum = _mm256_add_epi32(sum, _mm256_cmpgt_epi32(val, cmp));
+      sum = _mm256_sub_epi32(sum, _mm256_cmpgt_epi32(val, cmp));
     }
     while (l <= r) res += (arr[l++] > k);
 
     int cnt[8];
     _mm256_store_si256((__m256i*)cnt, sum);
-    for (int i = 0; i < 8; i++) res -= cnt[i];
+    for (int i = 0; i < 8; i++) res += cnt[i];
  
     return res;
   };
