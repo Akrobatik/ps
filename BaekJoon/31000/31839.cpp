@@ -1,7 +1,7 @@
 // Title : 불꽃놀이의 아름다움
 // Link  : https://www.acmicpc.net/problem/31839 
-// Time  : 212 ms
-// Memory: 27264 KB
+// Time  : 220 ms
+// Memory: 26484 KB
 
 #include <bits/stdc++.h>
 
@@ -9,13 +9,11 @@ using namespace std;
 
 constexpr int kMax = 2e5;
 
-vector<int> edges[kMax + 1];
-int weights[kMax + 1];
+vector<int> edges[kMax + 1];;
 pair<int64_t, int64_t> memo[kMax + 1];
 
 void DFS1(int cur, int par) {
   auto& [ccnt, csum] = memo[cur];
-  ccnt = weights[cur];
   for (auto nxt : edges[cur]) {
     if (nxt == par) continue;
     DFS1(nxt, cur);
@@ -51,7 +49,7 @@ int main() {
     edges[v].push_back(u);
   }
   for (int i = 1; i <= n; i++) {
-    cin >> weights[i];
+    cin >> memo[i].first;
   }
   DFS1(1, 0);
   DFS2(1, 0);
