@@ -1,7 +1,7 @@
 // Title : 불꽃놀이의 아름다움
 // Link  : https://www.acmicpc.net/problem/31839 
-// Time  : 220 ms
-// Memory: 26484 KB
+// Time  : 120 ms
+// Memory: 26476 KB
 
 #include <bits/stdc++.h>
 
@@ -9,7 +9,7 @@ using namespace std;
 
 constexpr int kMax = 2e5;
 
-vector<int> edges[kMax + 1];;
+vector<int> edges[kMax + 1];
 pair<int64_t, int64_t> memo[kMax + 1];
 
 void DFS1(int cur, int par) {
