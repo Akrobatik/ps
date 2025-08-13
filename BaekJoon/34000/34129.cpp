@@ -1,6 +1,6 @@
 // Title : 노래 오래 부를래
 // Link  : https://www.acmicpc.net/problem/34129 
-// Time  : 192 ms
+// Time  : 188 ms
 // Memory: 2548 KB
 
 #include <bits/stdc++.h>
@@ -27,11 +27,13 @@ int main() {
 
   bitset<kMax> memo;
   memo.set(0);
+  int limit = 0;
   for (int i = 0; i < n - 1; i++) {
     int id = axr[i];
     auto mnxt = memo;
     mnxt |= (memo << arr[id]);
-    for (int j = 0; j < k; j++) {
+    limit = min<int>(limit + arr[id], k - 1);
+    for (int j = 0; j <= limit; j++) {
       if (!memo[j] && mnxt[j]) {
         nxt[j] = id + 1;
       }
@@ -39,7 +41,7 @@ int main() {
     swap(memo, mnxt);
   }
 
-  int maxx = k - 1;
+  int maxx = limit;
   while (!memo[maxx]) --maxx;
 
   int64_t sum = arr[axr[n - 1]];
