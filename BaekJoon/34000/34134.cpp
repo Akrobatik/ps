@@ -1,6 +1,6 @@
 // Title : [Y] 새로운 요세푸스 문제
 // Link  : https://www.acmicpc.net/problem/34134 
-// Time  : 116 ms
+// Time  : 96 ms
 // Memory: 4852 KB
 
 #include <bits/stdc++.h>
@@ -28,12 +28,7 @@ int Query(int l, int r) {
 int Count(int l, int r, int n) {
   if (l == r) return 0;
   if (l < r) return Query(l + 1, r);
-  return Query(l + 1, n) + Query(1, r);
-}
-
-int64_t GCD(int64_t a, int64_t b) {
-  while (b) a %= b, swap(a, b);
-  return a;
+  return n - Query(r + 1, l);
 }
 
 int64_t ExtGCD(int64_t a, int64_t b, int64_t& x, int64_t& y) {
@@ -53,6 +48,7 @@ pair<int64_t, int64_t> CRT(const pair<int64_t, int64_t>& a, const pair<int64_t, 
   auto [br, bm] = b;
   int64_t x, y;
   int64_t g = ExtGCD(am, bm, x, y);
+  if (abs(ar - br) % g) return {INT64_MAX, INT64_MAX};
   int64_t l = am * bm / g;
   int64_t t = ((br - ar) / g) * x % (bm / g);
   if (t < 0) t += bm / g;
@@ -77,7 +73,7 @@ int main() {
   for (int i = 0; i < n; i++) {
     int x;
     cin >> x;
-    arr[i] = Count(old, x, n) % (n - i);
+    arr[i] = Count(old, x, n - i) % (n - i);
     Dec(x);
     old = x;
   }
@@ -88,8 +84,7 @@ int main() {
     int64_t lv = arr[idx], ls = n - idx;
     while (++idx < n) {
       int64_t rv = arr[idx], rs = n - idx;
-      int64_t g = GCD(ls, rs);
-      if (abs(lv - rv) % g) break;
+      int64_t d = abs(lv - rv);
 
       auto [x, y] = CRT({lv, ls}, {rv, rs});
       if ((x %= y) <= 0) x += y;
