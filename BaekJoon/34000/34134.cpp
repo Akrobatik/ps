@@ -1,6 +1,6 @@
 // Title : [Y] 새로운 요세푸스 문제
 // Link  : https://www.acmicpc.net/problem/34134 
-// Time  : 96 ms
+// Time  : 88 ms
 // Memory: 4852 KB
 
 #include <bits/stdc++.h>
@@ -87,6 +87,7 @@ int main() {
       int64_t d = abs(lv - rv);
 
       auto [x, y] = CRT({lv, ls}, {rv, rs});
+      if (x == INT64_MAX) break;
       if ((x %= y) <= 0) x += y;
 
       if (x > m) break;
