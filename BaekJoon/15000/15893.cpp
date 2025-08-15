@@ -1,9 +1,7 @@
 // Title : 가장 긴 공통부분 팰린드롬
 // Link  : https://www.acmicpc.net/problem/15893 
-// Time  : 316 ms
-// Memory: 63464 KB
-
-#pragma GCC optimize("O3")
+// Time  : 248 ms
+// Memory: 55648 KB
 
 #include <bits/stdc++.h>
 
@@ -208,8 +206,6 @@ int main() {
   cin.tie(nullptr);
 
   Manacher mnchr;
-  vector<int> ids;
-
   PolyHash<kMod1, kBase1, kMod2, kBase2> ph;
 
   int n;
@@ -223,13 +219,7 @@ int main() {
 
     auto& table = mnchr.table;
     int ns = table.size();
-    ids.resize(ns);
-    iota(ids.begin(), ids.end(), 0);
-    sort(ids.begin(), ids.end(), [&](int lhs, int rhs) {
-      return table[lhs] > table[rhs];
-    });
-
-    for (auto i : ids) {
+    for (int i = 0; i < ns; i++) {
       int len = table[i];
       int st = (i >> 1) - (len >> 1);
       while (len > 0) {
