@@ -2,7 +2,7 @@
 
 using namespace std;
 
-template <typename V, typename OP, auto IV>
+template <typename V, auto IV, typename OP>
   requires requires(V a, V b) {
     { OP{}(a, b) } -> convertible_to<V>;
     requires(is_invocable_r_v<V, decltype(IV)> || convertible_to<decltype(IV), V>);
@@ -11,6 +11,10 @@ struct SegTree {
   void Init(int n) {
     nmax = bit_ceil(static_cast<unsigned>(n));
     tree.assign(nmax << 1, IValue());
+  }
+
+  V Get(int idx) {
+    return tree[idx + nmax];
   }
 
   void Set(int idx, const V& val) {
@@ -26,18 +30,6 @@ struct SegTree {
   void Update(int idx, const V& val) {
     int node = idx + nmax;
     tree[node] = val;
-    while (node >>= 1) {
-      tree[node] = OP{}(tree[node << 1], tree[node << 1 | 1]);
-    }
-  }
-
-  template <typename T, typename F>
-    requires requires(V a, T b) {
-      { F{}(a, b) } -> convertible_to<V>;
-    }
-  void Update(int idx, const T& delta, F func) {
-    int node = idx + nmax;
-    tree[node] = func(tree[node], delta);
     while (node >>= 1) {
       tree[node] = OP{}(tree[node << 1], tree[node << 1 | 1]);
     }
