@@ -40,6 +40,7 @@ struct SegTree {
     return OP{}(lv, rv);
   }
 
+ private:
   int nmax;
   V iv;
   vector<V> tree;
