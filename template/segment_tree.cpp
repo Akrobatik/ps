@@ -41,6 +41,6 @@ struct SegTree {
   }
 
   int nmax;
-  vector<V> tree;
   V iv;
+  vector<V> tree;
 };
