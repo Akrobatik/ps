@@ -8,7 +8,7 @@ template <typename V, typename OP>
   }
 struct SegTree {
   void Init(int n, const V& ival) {
-    nmax = bit_ceil(static_cast<unsigned>(n));
+    nmax = bit_ceil((uint32_t)n);
     iv = ival;
     tree.assign(nmax << 1, iv);
   }
