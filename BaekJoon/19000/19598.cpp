@@ -1,7 +1,7 @@
 // Title : 최소 회의실 개수
 // Link  : https://www.acmicpc.net/problem/19598 
-// Time  : 116 ms
-// Memory: 11396 KB
+// Time  : 36 ms
+// Memory: 3588 KB
 
 #include <bits/stdc++.h>
 
@@ -16,16 +16,19 @@ int main() {
   int n;
   cin >> n;
 
-  map<uint32_t, int> mp;
+  vector<pair<uint32_t, int>> arr;
+  arr.reserve(n << 1);
   while (n--) {
     uint32_t s, e;
     cin >> s >> e;
-    ++mp[s], --mp[e];
+    arr.push_back({s, 1});
+    arr.push_back({e, -1});
   }
+  sort(arr.begin(), arr.end());
 
-  int maxx = 0, cur = 0;
-  for (auto& [k, v] : mp) {
-    cur += v;
+  int cur = 0, maxx = 0;
+  for (auto [x, y] : arr) {
+    cur += y;
     maxx = max<int>(maxx, cur);
   }
   cout << maxx;
