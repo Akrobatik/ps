@@ -1,7 +1,7 @@
 // Title : 조화로운 사각형
 // Link  : https://www.acmicpc.net/problem/34145 
-// Time  : 1260 ms
-// Memory: 9192 KB
+// Time  : 1328 ms
+// Memory: 7480 KB
 
 #include <bits/stdc++.h>
 
@@ -54,7 +54,7 @@ int main() {
   };
 
   long long cnt = 0;
-  vector<vector<char>> check(n + 2, vector<char>(m + 2, 0));
+  vector<vector<bool>> check(n + 2, vector<bool>(m + 2, 0));
   for (int y = 2; y <= n; ++y) {
     for (int x = 2; x <= m; ++x) {
       check[y][x] = Check(y, x);
@@ -64,11 +64,10 @@ int main() {
   cout << cnt << "\n";
 
   vector<pair<int, int>> cands;
-  vector<vector<char>> vis(n + 2, vector<char>(m + 2, 0));
+  vector<vector<bool>> vis(n + 2, vector<bool>(m + 2, 0));
   auto Push = [&](int y, int x) {
-    if (y < 1 || x < 1 || y > n || x > m) return;
     if (vis[y][x]) return;
-    vis[y][x] = 1;
+    vis[y][x] = true;
     cands.emplace_back(y, x);
   };
 
@@ -77,43 +76,34 @@ int main() {
     cin >> t >> y1 >> x1 >> y2 >> x2;
 
     cands.clear();
-
     for (int x = x1; x <= x2 + 1; ++x) {
       Push(y1, x);
       Push(y2 + 1, x);
     }
-
     for (int y = y1 + 1; y <= y2; ++y) {
       Push(y, x1);
       Push(y, x2 + 1);
     }
-
     for (auto [y, x] : cands) {
       cnt -= check[y][x];
       vis[y][x] = 0;
     }
-
     for (int x = x1 + 1; x <= x2; ++x) {
       Apply(y1, x, 2, t);
       Apply(y1, x, 3, t);
     }
-
     Apply(y1, x1, 3, t);
     Apply(y1, x2 + 1, 2, t);
-
     for (int x = x1 + 1; x <= x2; ++x) {
       Apply(y2 + 1, x, 0, t);
       Apply(y2 + 1, x, 1, t);
     }
-
     Apply(y2 + 1, x1, 1, t);
     Apply(y2 + 1, x2 + 1, 0, t);
-
     for (int y = y1 + 1; y <= y2; ++y) {
       Apply(y, x1, 1, t);
       Apply(y, x1, 3, t);
     }
-
     for (int y = y1 + 1; y <= y2; ++y) {
       Apply(y, x2 + 1, 0, t);
       Apply(y, x2 + 1, 2, t);
