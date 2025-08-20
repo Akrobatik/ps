@@ -31,6 +31,10 @@ struct SegTree {
     }
   }
 
+  V Query(int idx) const {
+    return tree[idx + nmax];
+  }
+
   V Query(int l, int r) const {
     V lv = iv, rv = iv;
     for (l += nmax, r += nmax + 1; l < r; l >>= 1, r >>= 1) {
