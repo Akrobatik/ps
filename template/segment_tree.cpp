@@ -49,3 +49,11 @@ struct SegTree {
   V iv;
   vector<V> tree;
 };
+
+// using Node = int64_t;
+
+// struct FOp {
+//   Node operator()(const Node& a, const Node& b) const {
+//     return a + b;
+//   }
+// };
