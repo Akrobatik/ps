@@ -1,7 +1,7 @@
 // Title : 조화로운 사각형
 // Link  : https://www.acmicpc.net/problem/34145 
-// Time  : 1752 ms
-// Memory: 4560 KB
+// Time  : 1260 ms
+// Memory: 9192 KB
 
 #include <bits/stdc++.h>
 
@@ -14,43 +14,15 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int n, m, q;
-  cin >> n >> m >> q;
-
-  vector<vector<int8_t>> fwt(n + 2, vector<int8_t>(m + 2));
-
-  auto UpdatePt = [&](int y, int x, int8_t v) {
-    for (int i = y; i <= n; i += (i & -i)) {
-      for (int j = x; j <= m; j += (j & -j)) {
-        fwt[i][j] ^= v;
-      }
-    }
-  };
-
-  auto UpdateRc = [&](int y1, int x1, int y2, int x2, int8_t v) {
-    UpdatePt(y1, x1, v);
-    UpdatePt(y1, x2 + 1, v);
-    UpdatePt(y2 + 1, x1, v);
-    UpdatePt(y2 + 1, x2 + 1, v);
-  };
-
-  auto Calc = [&](int y, int x) -> int8_t {
-    int8_t res = 0;
-    for (int i = y; i > 0; i -= (i & -i)) {
-      for (int j = x; j > 0; j -= (j & -j)) {
-        res ^= fwt[i][j];
-      }
-    }
-    return res;
-  };
-
   auto Get = [&](char c) -> int8_t {
     if (c == 'E') return 0;
     if (c == 'F') return 1;
     if (c == 'W') return 2;
     if (c == 'A') return 3;
-    assert(0);
   };
+
+  int n, m, q;
+  cin >> n >> m >> q;
 
   vector<vector<int8_t>> board(n + 2, vector<int8_t>(m + 2, 4));
   for (int i = 1; i <= n; i++) {
@@ -61,35 +33,43 @@ int main() {
     }
   }
 
-  auto Check = [&](int y, int x) {
+  vector<vector<array<int8_t, 4>>> keys(n + 2, vector<array<int8_t, 4>>(m + 2, {0, 0, 0, 0}));
+
+  auto Check = [&](int y, int x) -> bool {
     bool used[4] = {};
-    for (int i = 0; i < 4; i++) {
-      auto [dy, dx] = kDelta[i];
+    for (int z = 0; z < 4; ++z) {
+      auto [dy, dx] = kDelta[z];
       int yy = y + dy, xx = x + dx;
-      int v = board[yy][xx] ^ Calc(yy, xx);
+      int v = board[yy][xx] ^ keys[yy][xx][z];
       if (v >= 4 || used[v]) return false;
       used[v] = true;
     }
     return true;
   };
 
-  int cnt = 0;
-  vector<vector<bool>> check(n + 2, vector<bool>(m + 2));
-  for (int i = 2; i <= n; i++) {
-    for (int j = 2; j <= m; j++) {
-      check[i][j] = Check(i, j);
-      cnt += check[i][j];
+  auto Apply = [&](int y, int x, int z, int8_t t) {
+    auto [dy, dx] = kDelta[z];
+    int yy = y + dy, xx = x + dx;
+    keys[yy][xx][z] ^= t;
+  };
+
+  long long cnt = 0;
+  vector<vector<char>> check(n + 2, vector<char>(m + 2, 0));
+  for (int y = 2; y <= n; ++y) {
+    for (int x = 2; x <= m; ++x) {
+      check[y][x] = Check(y, x);
+      cnt += check[y][x];
     }
   }
   cout << cnt << "\n";
 
   vector<pair<int, int>> cands;
-  vector<vector<bool>> visited(n + 2, vector<bool>(m + 2));
-
+  vector<vector<char>> vis(n + 2, vector<char>(m + 2, 0));
   auto Push = [&](int y, int x) {
-    if (visited[y][x]) return;
-    visited[y][x] = true;
-    cands.push_back({y, x});
+    if (y < 1 || x < 1 || y > n || x > m) return;
+    if (vis[y][x]) return;
+    vis[y][x] = 1;
+    cands.emplace_back(y, x);
   };
 
   while (q--) {
@@ -97,21 +77,48 @@ int main() {
     cin >> t >> y1 >> x1 >> y2 >> x2;
 
     cands.clear();
-    for (int i = x1; i <= x2 + 1; i++) {
-      Push(y1, i);
-      Push(y2 + 1, i);
+
+    for (int x = x1; x <= x2 + 1; ++x) {
+      Push(y1, x);
+      Push(y2 + 1, x);
     }
-    for (int i = y1 + 1; i <= y2; i++) {
-      Push(i, x1);
-      Push(i, x2 + 1);
+
+    for (int y = y1 + 1; y <= y2; ++y) {
+      Push(y, x1);
+      Push(y, x2 + 1);
     }
 
     for (auto [y, x] : cands) {
       cnt -= check[y][x];
-      visited[y][x] = false;
+      vis[y][x] = 0;
     }
 
-    UpdateRc(y1, x1, y2, x2, t);
+    for (int x = x1 + 1; x <= x2; ++x) {
+      Apply(y1, x, 2, t);
+      Apply(y1, x, 3, t);
+    }
+
+    Apply(y1, x1, 3, t);
+    Apply(y1, x2 + 1, 2, t);
+
+    for (int x = x1 + 1; x <= x2; ++x) {
+      Apply(y2 + 1, x, 0, t);
+      Apply(y2 + 1, x, 1, t);
+    }
+
+    Apply(y2 + 1, x1, 1, t);
+    Apply(y2 + 1, x2 + 1, 0, t);
+
+    for (int y = y1 + 1; y <= y2; ++y) {
+      Apply(y, x1, 1, t);
+      Apply(y, x1, 3, t);
+    }
+
+    for (int y = y1 + 1; y <= y2; ++y) {
+      Apply(y, x2 + 1, 0, t);
+      Apply(y, x2 + 1, 2, t);
+    }
+
     for (auto [y, x] : cands) {
       check[y][x] = Check(y, x);
       cnt += check[y][x];
