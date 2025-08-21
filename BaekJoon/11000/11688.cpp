@@ -27,10 +27,11 @@ int main() {
   }
 
   int64_t y = l / x;
-  int64_t res = 1;
-  for (int i = 2; y > 1; i++) {
+  int64_t res = y;
+  int limit = max<int>(a, b);
+  for (int i = 2; y > 1 && i <= limit; i++) {
     if (y % i) continue;
-    while (y % i == 0) y /= i, res *= i;
+    while (y % i == 0) y /= i;
 
     int c1 = 0, c2 = 0;
     while (a % i == 0) a /= i, ++c1;
