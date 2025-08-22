@@ -123,7 +123,7 @@ int main() {
   cin >> n;
 
   ModInt ans = 0, s1 = 1, s2 = 2;
-  for (int i = 1, j = 0; i + 1 < n; i++) {
+  for (int i = 1; i + 1 < n; i++) {
     s1 += s1;
     if (i != (i & -i)) s1 += s1, s2 += s2;
     ans += ans + s1 + 1;
