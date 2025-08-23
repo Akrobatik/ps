@@ -1,6 +1,6 @@
 // Title : Game with Segment Tree
 // Link  : https://www.acmicpc.net/problem/34158 
-// Time  : 88 ms
+// Time  : 96 ms
 // Memory: 2020 KB
 
 #include <bits/stdc++.h>
@@ -25,7 +25,7 @@ int main() {
     int x = 0;
 
     l += nmax - 1, r += nmax;
-    for (int i = 1; l < r; l >>= 1, r >>= 1) {
+    for (int i = 1; l < r; l >>= 1, r >>= 1, i++) {
       if (l & 1) x ^= Grundy(i), ++l;
       if (r & 1) x ^= Grundy(i), --r;
     }
