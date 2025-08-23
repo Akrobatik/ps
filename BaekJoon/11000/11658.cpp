@@ -7,9 +7,6 @@
 
 using namespace std;
 
-constexpr pair<int, int> kDelta[] = {
-    {-1, -1}, {-1, 0}, {0, -1}, {0, 0}};
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
