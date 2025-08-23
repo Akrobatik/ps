@@ -1,6 +1,6 @@
 // Title : Game with Segment Tree
 // Link  : https://www.acmicpc.net/problem/34158 
-// Time  : 96 ms
+// Time  : 160 ms
 // Memory: 2020 KB
 
 #include <bits/stdc++.h>
@@ -17,8 +17,7 @@ int main() {
   int64_t nmax = 1LL << (k - 1);
 
   auto Grundy = [&](int x) {
-    int h = __builtin_ctz(x) + 1;
-    return h & -h;
+    return x & -x;
   };
 
   auto Check = [&](int64_t l, int64_t r) {
