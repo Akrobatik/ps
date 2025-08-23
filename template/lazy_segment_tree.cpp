@@ -27,7 +27,7 @@ struct LazySegTree {
   }
 
   void Build() {
-    for (int i = nmax - 1; i > 0; --i) {
+    for (int i = nmax - 1; i > 0; i--) {
       tree[i] = OP{}(tree[i << 1], tree[i << 1 | 1]);
     }
   }
