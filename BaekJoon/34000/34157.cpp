@@ -1,7 +1,7 @@
 // Title : Split the SSHS 5
 // Link  : https://www.acmicpc.net/problem/34157 
-// Time  : 100 ms
-// Memory: 14744 KB
+// Time  : 76 ms
+// Memory: 15524 KB
 
 #include <bits/stdc++.h>
 
@@ -119,7 +119,7 @@ using ModInt = ModInt32<kMod>;
 vector<int> edges[kMax + 1];
 vector<int> bombs[kMax + 1];
 int in[kMax + 1], out[kMax + 1], nidx;
-ModInt prob[kMax + 1], inv[kMax + 1];
+ModInt prob[kMax + 1], fact[kMax + 1], ifac[kMax + 1], inv[kMax + 1];
 vector<int> stk;
 
 void Build(int cur, int par) {
@@ -183,10 +183,15 @@ int main() {
   }
 
   ModInt one = 1;
-  prob[0] = inv[0] = one;
+  prob[0] = fact[0] = ifac[0] = inv[0] = one;
   for (int i = 1; i <= n; i++) {
     prob[i] = one;
-    inv[i] = ModInt(i).Inv();
+    fact[i] = fact[i - 1] * i;
+  }
+  ifac[n] = fact[n].Inv();
+  for (int i = n; i > 0; i--) {
+    ifac[i - 1] = ifac[i] * i;
+    inv[i] = fact[i - 1] * ifac[i];
   }
   Traverse(1, 0);
 
