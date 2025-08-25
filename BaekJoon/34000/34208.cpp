@@ -1,6 +1,6 @@
 // Title : 수열과 쿼리 46
 // Link  : https://www.acmicpc.net/problem/34208 
-// Time  : 728 ms
+// Time  : 700 ms
 // Memory: 74448 KB
 
 #include <bits/stdc++.h>
@@ -29,17 +29,8 @@ struct CHT {
       return (__int128_t)a * x + b;
     };
 
-    int lo = ptr, hi = lines.size();
-    while (lo + 1 < hi) {
-      int mid = (lo + hi) >> 1;
-      if (F(mid - 1) <= F(mid)) {
-        lo = mid;
-      } else {
-        hi = mid;
-      }
-    }
-    ptr = lo;
-
+    int nl = lines.size();
+    while (ptr + 1 < nl && F(ptr) <= F(ptr + 1)) ++ptr; 
     return F(ptr);
   }
 
