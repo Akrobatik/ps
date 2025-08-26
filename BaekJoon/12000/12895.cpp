@@ -1,6 +1,6 @@
 // Title : 화려한 마을
 // Link  : https://www.acmicpc.net/problem/12895 
-// Time  : 68 ms
+// Time  : 60 ms
 // Memory: 5108 KB
 
 #include <bits/stdc++.h>
@@ -12,6 +12,7 @@ template <typename V, typename L, typename OP, typename APPLY, typename COMPO>
     { OP{}(va, vb) } -> convertible_to<V>;
     { APPLY{}(va, la, sz) } -> convertible_to<V>;
     { COMPO{}(la, lb) } -> convertible_to<L>;
+    { la == lb } -> convertible_to<bool>;
   }
 struct LazySegTree {
   void Init(int n, const V& ival, const L& ilzy) {
@@ -96,6 +97,7 @@ struct LazySegTree {
   }
 
   void Push(int node) {
+    if (lazy[node] == il) return;
     Apply(node << 1, lazy[node]);
     Apply(node << 1 | 1, lazy[node]);
     lazy[node] = il;
