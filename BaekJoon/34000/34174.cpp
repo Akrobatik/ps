@@ -196,7 +196,7 @@ int main() {
 
   auto B = [&](int n, int m) {
     ModInt res = 0, x = 1, y = 1;
-    for (int i = 1, s = -1; i <= m; i++, s *= -1) {
+    for (int i = 1, s = 1; i <= m; i++, s *= -1) {
       x *= ModInt(m - i + 1) * inv[i];
       y *= (n <= i ? 0 : ModInt(2) * inv[n - i]);
       if (i >= 3) res += x * y * s;
@@ -226,6 +226,6 @@ int main() {
     if (~i & 1) ex -= C(i);
     cout << ex << "\n";
   }
-
+  
   return 0;
 }
