@@ -4,10 +4,7 @@ using namespace std;
 
 template <int32_t MOD>
 struct ModInt32 {
-  using CT = typename std::conditional<
-      (MOD <= std::numeric_limits<int32_t>::max() / 2),
-      int32_t,
-      int64_t>::type;
+  using CT = conditional_t<MOD <= numeric_limits<int32_t>::max() / 2, int32_t, int64_t>;
 
   constexpr ModInt32() : val(0) {}
   constexpr ModInt32(int32_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
@@ -108,10 +105,7 @@ struct ModInt32 {
 
 template <int64_t MOD>
 struct ModInt64 {
-  using CT = typename std::conditional<
-      (MOD <= std::numeric_limits<int64_t>::max() / 2),
-      int64_t,
-      __int128_t>::type;
+  using CT = conditional_t<MOD <= numeric_limits<int32_t>::max() / 2, int64_t, __int128_t>;
 
   constexpr ModInt64() : val(0) {}
   constexpr ModInt64(int32_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
