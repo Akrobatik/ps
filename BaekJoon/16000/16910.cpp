@@ -1,6 +1,6 @@
 // Title : mex와 쿼리
 // Link  : https://www.acmicpc.net/problem/16910 
-// Time  : 764 ms
+// Time  : 212 ms
 // Memory: 21360 KB
 
 #include <bits/stdc++.h>
@@ -77,6 +77,10 @@ struct LazySegTree {
     return OP{}(lv, rv);
   }
 
+  int FirstZero(int l, int r) {
+    return FirstZero(1, 0, nmax - 1, l, r);
+  }
+
  private:
   int nmax, nlog;
   V iv;
@@ -96,13 +100,26 @@ struct LazySegTree {
   }
 
   void Push(int node) {
-    Apply(node << 1, lazy[node]);
-    Apply(node << 1 | 1, lazy[node]);
+    if (node < nmax) {
+      Apply(node << 1, lazy[node]);
+      Apply(node << 1 | 1, lazy[node]);
+    }
     lazy[node] = il;
   }
 
   void Pull(int node) {
     tree[node] = OP{}(tree[node << 1], tree[node << 1 | 1]);
+  }
+
+  int FirstZero(int node, int b, int e, int l, int r) {
+    Push(node);
+    if (l > e || b > r) return -1;
+    if (tree[node] == e - b + 1) return -1;
+    if (b == e) return b;
+    int mid = (b + e) >> 1;
+    int lres = FirstZero(node << 1, b, mid, l, r);
+    if (lres != -1) return lres;
+    return FirstZero(node << 1 | 1, mid + 1, e, l, r);
   }
 };
 
@@ -167,24 +184,10 @@ int main() {
   LazySegTree<Node, Lazy, FOp, FApply, FCompo> seg;
   seg.Init(nm, 0, 0);
 
-  auto Mex = [&]() {
-    int lo = -1, hi = nm;
-    while (lo + 1 < hi) {
-      int mid = (lo + hi) >> 1;
-      int cnt = seg.Query(0, mid);
-      if (seg.Query(0, mid) == mid + 1) {
-        lo = mid;
-      } else {
-        hi = mid;
-      }
-    }
-    return memo[hi];
-  };
-
   for (auto [t, l, r] : arr) {
     l = Get(l), r = Get(r);
     seg.Update(l, r, t);
-    cout << Mex() << "\n";
+    cout << memo[seg.FirstZero(0, nm - 1)] << "\n";
   }
 
   return 0;
