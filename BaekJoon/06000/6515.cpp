@@ -1,6 +1,6 @@
 // Title : Frequent values
 // Link  : https://www.acmicpc.net/problem/6515 
-// Time  : 696 ms
+// Time  : 508 ms
 // Memory: 7240 KB
 
 #include <bits/stdc++.h>
@@ -18,7 +18,7 @@ int main() {
 
   vector<int> arr;
   vector<tup> queries;
-  vector<int> cnt, freq, bkt;
+  vector<int> cnt, freq;
   vector<int> ans;
 
   int n, m;
@@ -45,43 +45,26 @@ int main() {
       return ls < rs || (ls == rs && lr < rr);
     });
 
+    int maxx = 0;
     cnt.assign(kMax + 1, 0);
-    freq.assign(n + 1, 0), bkt.assign(s + 1, 0);
-    cnt[0] = freq[0] = bkt[0] = n;
-
-    auto Add = [&](int x) {
-      ++bkt[x / s];
-      ++freq[x];
-    };
-
-    auto Sub = [&](int x) {
-      --bkt[x / s];
-      --freq[x];
-    };
+    freq.assign(n + 1, 0);
 
     auto Push = [&](int i) {
       int x = arr[i];
-      int old = cnt[x];
-      Sub(old);
-      Add(++cnt[x]);
+      int old = cnt[x], cur = ++cnt[x];
+      --freq[old], ++freq[cur];
+      maxx = max<int>(maxx, cur);
     };
 
     auto Pop = [&](int i) {
       int x = arr[i];
-      int old = cnt[x];
-      Sub(old);
-      Add(--cnt[x]);
+      int old = cnt[x], cur = --cnt[x];
+      --freq[old], ++freq[cur];
+      if (maxx == old && freq[old] == 0) --maxx;
     };
 
     auto Max = [&]() {
-      for (int i = s; i >= 0; i--) {
-        if (bkt[i] == 0) continue;
-        int x = min<int>((i + 1) * s, n + 1);
-        while (x--) {
-          if (freq[x]) return x;
-        }
-      }
-      return 0;
+      return maxx;
     };
 
     ans.resize(m);
