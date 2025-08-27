@@ -1,6 +1,6 @@
 // Title : XOR
 // Link  : https://www.acmicpc.net/problem/14245 
-// Time  : 236 ms
+// Time  : 232 ms
 // Memory: 14324 KB
 
 #include <bits/stdc++.h>
@@ -111,7 +111,7 @@ using Lazy = int;
 
 struct FOp {
   Node operator()(const Node& a, const Node& b) const {
-    return a ^ b;
+    return 0;
   }
 };
 
