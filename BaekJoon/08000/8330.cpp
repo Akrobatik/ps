@@ -1,6 +1,6 @@
 // Title : 순열
 // Link  : https://www.acmicpc.net/problem/8330 
-// Time  : 212 ms
+// Time  : 228 ms
 // Memory: 7688 KB
 
 #include <bits/stdc++.h>
@@ -105,6 +105,8 @@ int main() {
   while (m--) {
     int i, x;
     cin >> i >> x;
+    if (x < 0) x = 0;
+    if (x > n) x = n;
 
     int old = arr[i];
     arr[i] = x;
