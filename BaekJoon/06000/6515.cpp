@@ -1,7 +1,7 @@
 // Title : Frequent values
 // Link  : https://www.acmicpc.net/problem/6515 
-// Time  : 684 ms
-// Memory: 5284 KB
+// Time  : 696 ms
+// Memory: 7240 KB
 
 #include <bits/stdc++.h>
 
@@ -16,16 +16,21 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
+  vector<int> arr;
+  vector<tup> queries;
+  vector<int> cnt, freq, bkt;
+  vector<int> ans;
+
   int n, m;
   while (cin >> n >> m) {
-    vector<int> arr(n + 1);
+    arr.resize(n + 1);
     for (int i = 1; i <= n; i++) {
       int x;
       cin >> x;
       arr[i] = x + kPad;
     }
 
-    vector<tup> queries(m);
+    queries.resize(m);
     for (int i = 0; i < m; i++) {
       int l, r;
       cin >> l >> r;
@@ -40,8 +45,8 @@ int main() {
       return ls < rs || (ls == rs && lr < rr);
     });
 
-    vector<int> cnt(kMax + 1);
-    vector<int> freq(n + 1), bkt(s + 1);
+    cnt.assign(kMax + 1, 0);
+    freq.assign(n + 1, 0), bkt.assign(s + 1, 0);
     cnt[0] = freq[0] = bkt[0] = n;
 
     auto Add = [&](int x) {
@@ -79,7 +84,7 @@ int main() {
       return 0;
     };
 
-    vector<int> ans(m);
+    ans.resize(m);
     auto [l, r, q] = queries[0];
     for (int i = l; i <= r; i++) {
       Push(i);
