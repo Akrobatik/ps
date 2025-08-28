@@ -7,10 +7,6 @@
 
 using namespace std;
 
-#include <bits/stdc++.h>
-
-using namespace std;
-
 template <typename V, typename OP>
   requires requires(V a, V b) {
     { OP{}(a, b) } -> convertible_to<V>;
