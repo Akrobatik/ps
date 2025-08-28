@@ -1,6 +1,6 @@
 // Title : 가희의 수열놀이 (Large)
 // Link  : https://www.acmicpc.net/problem/17163 
-// Time  : 516 ms
+// Time  : 452 ms
 // Memory: 71184 KB
 
 #include <bits/stdc++.h>
@@ -53,7 +53,7 @@ struct SegTree {
     return OP{}(lv, rv);
   }
 
- private:
+  // private:
   int nmax;
   V iv;
   vector<V> tree;
@@ -111,7 +111,7 @@ int main() {
       seg.Update(x, memo[x].back());
     } else {
       int sz = arr.size();
-      int minn = seg.Query(0, m - 1);
+      int minn = seg.tree[1];
       cout << (minn != -1 ? sz - minn : -1) << "\n";
     }
   }
