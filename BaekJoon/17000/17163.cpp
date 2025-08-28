@@ -1,11 +1,7 @@
 // Title : 가희의 수열놀이 (Large)
 // Link  : https://www.acmicpc.net/problem/17163 
-// Time  : 452 ms
+// Time  : 444 ms
 // Memory: 71184 KB
-
-#include <bits/stdc++.h>
-
-using namespace std;
 
 #include <bits/stdc++.h>
 
