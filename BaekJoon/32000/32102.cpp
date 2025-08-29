@@ -1,7 +1,7 @@
 // Title : 삼색정리
 // Link  : https://www.acmicpc.net/problem/32102 
-// Time  : 552 ms
-// Memory: 37288 KB
+// Time  : 68 ms
+// Memory: 6036 KB
 
 #include <bits/stdc++.h>
 
@@ -17,25 +17,6 @@ int main() {
   cin >> n >> m;
   int nm = n * m;
 
-  vector<pair<int, int>> arr;
-  arr.reserve(nm);
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < m; j++) {
-      arr.push_back({i, j});
-    }
-  }
-
-  sort(arr.begin(), arr.end(), [&](const pair<int, int>& lhs, const pair<int, int>& rhs) {
-    auto [ly, lx] = lhs;
-    auto [ry, rx] = rhs;
-
-    int ls = ly + lx, rs = ry + rx;
-    int lv = ls & 1, rv = rs & 1;
-    if (lv != rv) return lv < rv;
-    if (ls != rs) return ls < rs;
-    return lx < rx;
-  });
-
   pair<int, int> color[3];
   for (int i = 0; i < 3; i++) {
     int x;
@@ -45,19 +26,34 @@ int main() {
   sort(color, color + 3, greater<pair<int, int>>());
   swap(color[1], color[2]);
 
-  int ub = (nm + 1) >> 1;
-  if (color[0].first > ub) {
+  if (color[0].first > ((nm + 1) >> 1)) {
     cout << "NO";
     return 0;
   }
 
-  vector<string> board(n, string(m, 'X'));
+  int type = 0;
 
-  for (int i = 0, j = 0; i < 3; i++) {
-    auto [rem, type] = color[i];
-    while (rem--) {
-      auto [y, x] = arr[j++];
-      board[y][x] = kType[type];
+  vector<string> board(n, string(m, '\0'));
+  int limit = n + m - 2;
+  for (int i = 0; i <= limit; i += 2) {
+    int lb = max<int>(i - n + 1, 0);
+    int ub = min<int>(i, m - 1);
+    for (int x = lb; x <= ub; x++) {
+      int y = i - x;
+      while (color[type].first == 0) ++type;
+      board[y][x] = kType[color[type].second];
+      --color[type].first;
+    }
+  }
+
+  for (int i = 1; i <= limit; i += 2) {
+    int lb = max<int>(i - n + 1, 0);
+    int ub = min<int>(i, m - 1);
+    for (int x = lb; x <= ub; x++) {
+      int y = i - x;
+      while (color[type].first == 0) ++type;
+      board[y][x] = kType[color[type].second];
+      --color[type].first;
     }
   }
 
