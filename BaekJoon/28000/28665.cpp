@@ -1,7 +1,7 @@
 // Title : Лемурьи вечеринки (Prime)
 // Link  : https://www.acmicpc.net/problem/28665 
 // Time  : 8 ms
-// Memory: 5932 KB
+// Memory: 5928 KB
 
 #include <bits/stdc++.h>
 
@@ -113,17 +113,12 @@ constexpr int kMax = 5e5;
 
 using ModInt = ModInt32<kMod>;
 
-vector<ModInt> fact, ifac;
-
-ModInt Comb(int n, int r) {
-  return fact[n] * ifac[r] * ifac[n - r];
-}
+ModInt fact[kMax + 1], ifac[kMax + 1];
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  fact.resize(kMax + 1), ifac.resize(kMax + 1);
   fact[0] = 1;
   for (int i = 1; i <= kMax; i++) fact[i] = fact[i - 1] * i;
   ifac[kMax] = fact[kMax].Inv();
@@ -134,10 +129,10 @@ int main() {
 
   ModInt ans = 0;
 
-  int lb = max<int>(n - k, 0);
-  for (int i = lb; i * 2 <= n; i++) {
-    int two = i, one = n - (i * 2);
-    ans += Comb(k, two) * Comb(k - two, one);
+  int lb = max<int>(n - k, 0), ub = n >> 1;
+  for (int i = lb; i <= ub; i++) {
+    int two = i, one = n - (i << 1);
+    ans += fact[k] * ifac[two] * ifac[one] * ifac[k - two - one];
   }
   cout << ans;
 
