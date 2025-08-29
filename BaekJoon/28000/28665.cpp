@@ -1,7 +1,7 @@
 // Title : Лемурьи вечеринки (Prime)
 // Link  : https://www.acmicpc.net/problem/28665 
 // Time  : 8 ms
-// Memory: 5928 KB
+// Memory: 5804 KB
 
 #include <bits/stdc++.h>
 
@@ -113,11 +113,11 @@ constexpr int kMax = 5e5;
 
 using ModInt = ModInt32<kMod>;
 
-ModInt fact[kMax + 1], ifac[kMax + 1];
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
+
+  ModInt fact[kMax + 1], ifac[kMax + 1];
 
   fact[0] = 1;
   for (int i = 1; i <= kMax; i++) fact[i] = fact[i - 1] * i;
@@ -132,9 +132,9 @@ int main() {
   int lb = max<int>(n - k, 0), ub = n >> 1;
   for (int i = lb; i <= ub; i++) {
     int two = i, one = n - (i << 1);
-    ans += fact[k] * ifac[two] * ifac[one] * ifac[k - two - one];
+    ans += ifac[two] * ifac[one] * ifac[k - two - one];
   }
-  cout << ans;
+  cout << ans * fact[k];
 
   return 0;
 }
