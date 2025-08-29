@@ -1,7 +1,7 @@
 // Title : Лемурьи вечеринки (Prime)
 // Link  : https://www.acmicpc.net/problem/28665 
-// Time  : 12 ms
-// Memory: 9836 KB
+// Time  : 8 ms
+// Memory: 5932 KB
 
 #include <bits/stdc++.h>
 
@@ -109,7 +109,7 @@ struct ModInt32 {
 };
 
 constexpr int kMod = 1e9 + 7;
-constexpr int kMax = 1e6;
+constexpr int kMax = 5e5;
 
 using ModInt = ModInt32<kMod>;
 
