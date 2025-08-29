@@ -35,25 +35,15 @@ int main() {
 
   vector<string> board(n, string(m, '\0'));
   int limit = n + m - 2;
-  for (int i = 0; i <= limit; i += 2) {
-    int lb = max<int>(i - n + 1, 0);
-    int ub = min<int>(i, m - 1);
-    for (int x = lb; x <= ub; x++) {
-      int y = i - x;
-      while (color[type].first == 0) ++type;
-      board[y][x] = kType[color[type].second];
-      --color[type].first;
-    }
-  }
-
-  for (int i = 1; i <= limit; i += 2) {
-    int lb = max<int>(i - n + 1, 0);
-    int ub = min<int>(i, m - 1);
-    for (int x = lb; x <= ub; x++) {
-      int y = i - x;
-      while (color[type].first == 0) ++type;
-      board[y][x] = kType[color[type].second];
-      --color[type].first;
+  for (int b = 0; b < 2; b++) {
+    for (int i = b; i <= limit; i += 2) {
+      int lb = max<int>(i - n + 1, 0);
+      int ub = min<int>(i, m - 1);
+      for (int x = lb; x <= ub; x++) {
+        int y = i - x;
+        board[y][x] = kType[color[type].second];
+        if (--color[type].first == 0) ++type;
+      }
     }
   }
 
