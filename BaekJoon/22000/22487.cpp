@@ -1,7 +1,7 @@
 // Title : Do use segment tree
 // Link  : https://www.acmicpc.net/problem/22487 
-// Time  : 636 ms
-// Memory: 16104 KB
+// Time  : 536 ms
+// Memory: 12980 KB
 
 #include <bits/stdc++.h>
 
@@ -14,7 +14,7 @@ struct LCT {
     Node *l, *r, *p;
     int rev, sz;
     int val, lazy;
-    int64_t maxx, fwd, bwd, sum;
+    int maxx, fwd, bwd, sum;
   };
 
   LCT(int n) : nodes(n + 1) {}
@@ -81,7 +81,7 @@ struct LCT {
 
   void Apply(Node* x, int lzy) {
     x->val = x->lazy = lzy;
-    x->sum = (int64_t)lzy * x->sz;
+    x->sum = lzy * x->sz;
     if (x->sum > 0) {
       x->maxx = x->fwd = x->bwd = x->sum;
     } else {
@@ -100,10 +100,10 @@ struct LCT {
       if (l == nullptr || r == nullptr) continue;
 
       int sz = l->sz + r->sz;
-      int64_t maxx = max<int64_t>({l->maxx, r->maxx, l->bwd + r->fwd});
-      int64_t fwd = max<int64_t>(l->fwd, l->sum + r->fwd);
-      int64_t bwd = max<int64_t>(r->bwd, r->sum + l->bwd);
-      int64_t sum = l->sum + r->sum;
+      int maxx = max<int>({l->maxx, r->maxx, l->bwd + r->fwd});
+      int fwd = max<int>(l->fwd, l->sum + r->fwd);
+      int bwd = max<int>(r->bwd, r->sum + l->bwd);
+      int sum = l->sum + r->sum;
       x->sz = sz;
       x->maxx = maxx;
       x->fwd = fwd;
