@@ -7,6 +7,34 @@
 
 using namespace std;
 
+// n, m = rows, cols
+// sy, sx = start coords
+// ty, tx = terminal coords
+// sy, sx, ty, tx is 0-based
+vector<pair<int, int>> LongestPath(int n, int m, int sy, int sx, int ty, int tx) {
+  //   procedure LongestPath(R(m, n), s, t)
+  // 1: if R is 1-rectangle or 2-rectangle then
+  // 2: return the solution of (R(m, n), s, t) based on Lemma 4.1
+  // 3: else
+  // 4: if R can be stripped then
+  // 5: let S be a strip of R
+  // 6: P ← LongestPath(R − S, s, t)
+  // 7: C ← HamiltonianCycle(S)
+  // 8: return MergeStrip(P, C, s, t)
+  // 9: else
+  // 10: if R can be split then
+  // 11: let R be split to Rp and Rq
+  // 12: P1 ← LongestPath(Rp, s, p)
+  // 13: P2 ← LongestPath(Rq, q, t)
+  // 14: return MergeSplit (P1, P2, p, q)
+  // 15: else
+  // 16: /* (R(m, n), s, t) is a prime problem */
+  // 17: return the solution of (R(m, n), s, t) based on Lemma 4.6
+  // 18: end if
+  // 19: end if
+  // 20: end if
+}
+
 bool FindPath(int n, int m, int k, int sy, int sx, int ty, int tx, string& out) {
   int lb = abs(sy - ty) + abs(sx - tx) + 1;
   if (((lb + k) & 1) || k < lb) return false;
@@ -66,8 +94,24 @@ bool FindPath(int n, int m, int k, int sy, int sx, int ty, int tx, string& out) 
     return false;
   };
 
+  auto Rotate = [&]() {
+    int np = path.size();
+    for (int i = 2; i < np; i++) {
+      auto [y1, x1] = path[i - 2];
+      auto [y2, x2] = path[i - 1];
+      auto [y3, x3] = path[i];
+
+      if (abs(y3 - y1) != 1 || abs(x3 - x1) != 1) continue;
+
+      int y = y1 ^ y2 ^ y3, x = x1 ^ x2 ^ x3;
+      path[i - 1] = {y, x};
+      return true;
+    }
+    return false;
+  };
+
   while (path.size() < k) {
-    if (!Expand()) return false;
+    if (!Expand() && !Rotate()) return false;
   }
 
   out.clear();
