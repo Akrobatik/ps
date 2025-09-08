@@ -1,7 +1,7 @@
 // Title : 플러스 마이너스 합 최대
 // Link  : https://www.acmicpc.net/problem/34239 
-// Time  : 56 ms
-// Memory: 19196 KB
+// Time  : 64 ms
+// Memory: 19192 KB
 
 #include <bits/stdc++.h>
 
@@ -58,17 +58,30 @@ struct SegTree {
 constexpr int64_t kInf = 1e18;
 
 struct Node {
-  Node() : maxx(-kInf), sum(0) {}
-  Node(int64_t v) : maxx(v), sum(v) {}
+  Node() : sz(0), minn(kInf), maxx(-kInf), sum(0) {}
+  Node(int64_t v) : sz(1), minn(v), maxx(v), sum(v) {}
 
-  int64_t maxx, sum;
+  int sz;
+  int64_t minn, maxx, sum;
 };
 
 struct FOp {
   Node operator()(const Node& a, const Node& b) const {
+    if (a.sz == 0) return b;
+    if (b.sz == 0) return a;
+
+    int64_t rmin, rmax, rsum;
+    if (a.sz & 1) {
+      rmin = -b.maxx, rmax = -b.minn, rsum = -b.sum;
+    } else {
+      rmin = b.minn, rmax = b.maxx, rsum = b.sum;
+    }
+
     Node res;
-    res.maxx = max<int64_t>(a.maxx, a.sum + b.maxx);
-    res.sum = a.sum + b.sum;
+    res.sz = a.sz + b.sz;
+    res.minn = min<int64_t>(a.minn, a.sum + rmin);
+    res.maxx = max<int64_t>(a.maxx, a.sum + rmax);
+    res.sum = a.sum + rsum;
     return res;
   }
 };
@@ -83,23 +96,17 @@ int main() {
   vector<int> arr(n);
   for (auto& e : arr) cin >> e;
 
-  SegTree<Node, FOp> s1, s2;
-  s1.Init(n, Node());
-  s2.Init(n, Node());
-  for (int i = 0, s = 1; i < n; i++, s *= -1) {
-    s1.Set(i, arr[i] * s);
-    s2.Set(i, arr[i] * -s);
+  SegTree<Node, FOp> seg;
+  seg.Init(n, Node());
+  for (int i = 0; i < n; i++) {
+    seg.Set(i, arr[i]);
   }
-  s1.Build();
-  s2.Build();
+  seg.Build();
 
   int64_t maxx = -kInf;
   for (int i = 0; i < n; i++) {
-    if (i & 1) {
-      maxx = max<int64_t>(maxx, s2.Query(i, n - 1).maxx);
-    } else {
-      maxx = max<int64_t>(maxx, s1.Query(i, n - 1).maxx);
-    }
+    int64_t cur = seg.Query(i, n - 1).maxx;
+    maxx = max<int64_t>(maxx, cur);
   }
   cout << maxx;
 
