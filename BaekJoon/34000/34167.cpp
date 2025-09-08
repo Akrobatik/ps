@@ -1,6 +1,6 @@
 // Title : Hello, MatKor Cup!
 // Link  : https://www.acmicpc.net/problem/34167 
-// Time  : 28 ms
+// Time  : 120 ms
 // Memory: 13676 KB
 
 #include <bits/stdc++.h>
@@ -18,7 +18,7 @@ int main() {
   vector<vector<int>> queries;
 
   int s = 1, r = n, t = k;
-  while (r > t) {
+  while (r > t || weights.empty()) {
     int c = r / t;
     while (--c) {
       weights.push_back(t);
