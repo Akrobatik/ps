@@ -1,6 +1,6 @@
 // Title : Balloons
 // Link  : https://www.acmicpc.net/problem/8363 
-// Time  : 76 ms
+// Time  : 64 ms
 // Memory: 6720 KB
 
 #include <bits/stdc++.h>
@@ -27,9 +27,10 @@ int main() {
   for (int i = 0; i < m; i++) bxr[i + 1] = bxr[i] + brr[i];
 
   bool ok = true;
+  int idx = 0;
   for (int i = 1; i <= m; i++) {
-    int x = lower_bound(arr.begin(), arr.end(), i) - arr.begin();
-    int64_t y = axr[x] + (int64_t)(n - x) * i;
+    while (idx < n && arr[idx] < i) ++idx;
+    int64_t y = axr[idx] + (int64_t)(n - idx) * i;
     if (y < bxr[i]) {
       ok = false;
       break;
