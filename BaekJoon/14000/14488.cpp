@@ -1,7 +1,7 @@
 // Title : 준오는 급식충이야!!
 // Link  : https://www.acmicpc.net/problem/14488 
-// Time  : 56 ms
-// Memory: 10732 KB
+// Time  : 16 ms
+// Memory: 5940 KB
 
 #include <bits/stdc++.h>
 
@@ -31,23 +31,27 @@ int main() {
   for (auto& e : arr) cin >> e, e *= 10000;
   for (auto& e : axr) cin >> e;
 
-  map<__int128_t, pair<int, int>> mp;
+  vector<pair<__int128_t, int>> memo;
+  memo.reserve(n << 1);
   for (int i = 0; i < n; i++) {
     __int128_t mid = arr[i];
     __int128_t dlt = (__int128_t)axr[i] * t;
     __int128_t l = mid - dlt, r = mid + dlt;
-    mp[l].first += 1, mp[r].second -= 1;
+    memo.push_back({l, 1}), memo.push_back({r, -1});
   }
 
+  sort(memo.begin(), memo.end(), [&](const pair<__int128_t, int>& lhs, const pair<__int128_t, int>& rhs) {
+    auto [lx, ld] = lhs;
+    auto [rx, rd] = rhs;
+    return lx < rx || (lx == rx && ld > rd);
+  });
+
   int cur = 0;
-  for (auto [key, val] : mp) {
-    if ((cur += val.first) == n) {
-      cout << "1";
-      return 0;
-    }
-    cur -= val.second;
+  bool ok = false;
+  for (auto [x, d] : memo) {
+    ok |= ((cur += d) == n);
   }
-  cout << "0";
+  cout << ok;
 
   return 0;
 }
