@@ -42,7 +42,8 @@ int main() {
       cur += (s[i] == '(' ? 1 : -1);
     } else {
       bitset<64> bits(k);
-      for (int j = i; j < n; j++) s[j] ^= bits[n - j - 1];
+      int rem = n - i;
+      for (int j = 0; j < rem; j++) s[n - j - 1] ^= bits[j];
       break;
     }
   }
