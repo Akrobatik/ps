@@ -1,7 +1,7 @@
 // Title : 코코아와 마법사의 돌
 // Link  : https://www.acmicpc.net/problem/32214 
 // Time  : 0 ms
-// Memory: 2168 KB
+// Memory: 2172 KB
 
 #include <bits/stdc++.h>
 
@@ -32,8 +32,11 @@ int main() {
   };
 
   vector<int> cands;
+  vector<bool> used(n + 1);
   int m = n / 5;
   for (int i = 1; i <= n; i++) {
+    if (used[i]) continue;
+
     cands.clear();
     visited.assign(n + 1, false);
 
@@ -53,6 +56,8 @@ int main() {
     }
 
     if (cands.size() <= m + 1) break;
+
+    for (auto e : cands) used[e] = true;
   }
 
   int na = cands.size();
