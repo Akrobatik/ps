@@ -1,7 +1,7 @@
 // Title : 2vs2 배스킨라빈스 31
 // Link  : https://www.acmicpc.net/problem/34402 
 // Time  : 80 ms
-// Memory: 2380 KB
+// Memory: 2024 KB
 
 #include <bits/stdc++.h>
 
@@ -41,7 +41,7 @@ int main() {
     }
     sort(ans.begin(), ans.end());
 
-    for (auto [a, b] : ans) cout << format("({},{}) ", a, b);
+    for (auto [a, b] : ans) cout << "(" << a << "," << b << ") ";
     cout << "\n";
   }
 
