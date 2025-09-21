@@ -1,7 +1,7 @@
 // Title : 코코아와 마법사의 돌
 // Link  : https://www.acmicpc.net/problem/32214 
 // Time  : 0 ms
-// Memory: 2224 KB
+// Memory: 2168 KB
 
 #include <bits/stdc++.h>
 
@@ -22,24 +22,43 @@ int main() {
     g[v].push_back(u);
   }
 
-  vector<int> color[5];
+  queue<int> q;
+  vector<bool> visited;
 
-  [&](this auto&& self, int cur, int par, int d) -> void {
-    color[d % 5].push_back(cur);
-    for (auto nxt : g[cur]) {
-      if (nxt == par) continue;
-      self(nxt, cur, d + 1);
+  auto Push = [&](int x) {
+    if (visited[x]) return;
+    visited[x] = true;
+    q.push(x);
+  };
+
+  vector<int> cands;
+  int m = n / 5;
+  for (int i = 1; i <= n; i++) {
+    cands.clear();
+    visited.assign(n + 1, false);
+
+    Push(i);
+    for (int j = 0; !q.empty(); j++) {
+      int nq = q.size();
+      while (nq--) {
+        int cur = q.front();
+        q.pop();
+
+        if (j % 5 == 0) cands.push_back(cur);
+
+        for (auto nxt : g[cur]) {
+          Push(nxt);
+        }
+      }
     }
-  }(1, 0, 0);
 
-  int idx = 0, m = n / 5;
-  while (color[idx].size() > m + 1) ++idx;
+    if (cands.size() <= m + 1) break;
+  }
 
-  auto& arr = color[idx];
-  int na = arr.size();
+  int na = cands.size();
   cout << max<int>(na - 1, 0) << "\n";
   for (int i = 1; i < na; i++) {
-    cout << arr[0] << " " << arr[i] << "\n";
+    cout << cands[0] << " " << cands[i] << "\n";
   }
 
   return 0;
