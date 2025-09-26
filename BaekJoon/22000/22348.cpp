@@ -1,10 +1,8 @@
 // Title : 헬기 착륙장
 // Link  : https://www.acmicpc.net/problem/22348 
-// Time  : 128 ms
+// Time  : 168 ms
 // Memory: 89960 KB
 
-#pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx,avx2,fma")
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -117,6 +115,24 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
+  int a = 50000, b = 50000, s = a + b, r = 1;
+  while ((r + 1) * (r + 2) / 2 <= s) ++r;
+
+  vector<vector<ModInt>> memo(r + 1, vector<ModInt>(a + 1));
+  memo[0][0] = 1;
+  for (int i = 1; i <= r; i++) {
+    int ub = min<int>(a, i * (i + 1) / 2);
+    for (int j = 0; j <= ub; j++) {
+      memo[i][j] = memo[i - 1][j];
+      if (i <= j) memo[i][j] += memo[i - 1][j - i];
+    }
+  }
+  for (int i = 1; i <= r; i++) {
+    for (int j = 1; j <= a; j++) {
+      memo[i][j] += memo[i][j - 1];
+    }
+  }
+
   int t;
   cin >> t;
   while (t--) {
@@ -124,21 +140,15 @@ int main() {
     cin >> a >> b;
     if (a > b) swap(a, b);
 
-    int s = a + b;
-    int r = 1;
+    int s = a + b, r = 1;
     while ((r + 1) * (r + 2) / 2 <= s) ++r;
 
     ModInt ans = 0;
-    vector<vector<ModInt>> memo(r + 1, vector<ModInt>(a + 1));
-    memo[0][a] = 1;
-    for (int i = 1, rem = s; i <= r; rem -= i++) {
-      int limit = min<int>(a, rem);
-      for (int j = 0; j <= limit; j++) {
-        int k = rem - j;
-        if (i + j <= a) memo[i][j] += memo[i - 1][j + i];
-        if (i <= k) memo[i][j] += memo[i - 1][j];
-      }
-      ans += accumulate(memo[i].begin(), memo[i].end(), ModInt());
+    for (int i = 1; i <= r; i++) {
+      int is = i * (i + 1) / 2;
+      int lb = max<int>(is - b, 0);
+      int ub = min<int>(a, is);
+      ans += memo[i][ub] - (lb ? memo[i][lb - 1] : 0);
     }
     cout << ans << "\n";
   }
