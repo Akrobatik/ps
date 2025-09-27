@@ -227,16 +227,16 @@ int main() {
         return rank[in[lhs]] < rank[in[rhs]];
       });
 
+      int fst = g[i][0];
+      int val = nxtz[in[fst]] - in[fst] + in[i] + 1;
+      if (limit < val) continue;
+
       int ng = g[i].size();
       bool ok = true;
       for (int j = 1; ok && j < ng; j++) {
         ok = (g[i][j - 1] < g[i][j]);
       }
       if (ok) continue;
-
-      int fst = g[i][0];
-      int val = nxtz[in[fst]] - in[fst] + in[i] + 1;
-      if (limit < val) continue;
 
       string tmp = org;
       int idx = in[i] + 1;
