@@ -1,6 +1,6 @@
 // Title : Euler Tour Problem
 // Link  : https://www.acmicpc.net/problem/34533 
-// Time  : 96 ms
+// Time  : 80 ms
 // Memory: 19224 KB
 
 #include <bits/stdc++.h>
@@ -165,6 +165,8 @@ int main() {
 
   LCP solver;
   vector<vector<int>> g;
+  string org, ans, tmp;
+  vector<int> in, out, ids, nxtz, rank;
 
   int t;
   cin >> t;
@@ -184,9 +186,10 @@ int main() {
       sort(g[i].begin(), g[i].end());
     }
 
-    string org;
+    org.clear();
     org.reserve(m);
-    vector<int> in(n + 1), out(n + 1), ids;
+    in.resize(n + 1), out.resize(n + 1);
+    ids.clear();
     ids.reserve(n);
 
     [&](this auto&& self, int cur) -> void {
@@ -200,7 +203,7 @@ int main() {
       out[cur] = org.size();
     }(1);
 
-    vector<int> nxtz(m);
+    nxtz.resize(m);
     for (int i = m - 1, j = 0; i >= 0; i--) {
       if (org[i] == '0') {
         j = i;
@@ -212,12 +215,13 @@ int main() {
     solver.Init(org);
     auto sa = solver.sa;
 
-    vector<int> rank(m);
+    rank.resize(m);
     for (int i = 0; i < m; i++) {
       rank[sa[i]] = i;
     }
 
-    string ans = org;
+    ans.resize(m);
+    copy(org.begin(), org.end(), ans.begin());
     int limit = INT_MAX;
     for (auto i : ids) {
       if (g[i].size() <= 1) continue;
@@ -238,7 +242,8 @@ int main() {
       }
       if (ok) continue;
 
-      string tmp = org;
+      tmp.resize(m);
+      copy(org.begin(), org.end(), tmp.begin());
       int idx = in[i] + 1;
       for (auto nxt : g[i]) {
         int st = in[nxt], en = out[nxt];
