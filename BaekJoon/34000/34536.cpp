@@ -1,11 +1,28 @@
 // Title : Hostile Cooperation
 // Link  : https://www.acmicpc.net/problem/34536 
-// Time  : 112 ms
-// Memory: 6716 KB
+// Time  : 72 ms
+// Memory: 5288 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
+
+constexpr int kMax = 2e5;
+constexpr int kShift = 16;
+constexpr int kMask = (1 << kShift) - 1;
+
+void Sort(int* arr, int n) {
+  int tmp[kMax];
+  auto a = arr, b = tmp;
+  for (int shift = 0; shift < 32; shift += kShift) {
+    int cnt[kMask + 1] = {};
+    for (int i = 0; i < n; i++) ++cnt[(a[i] >> shift) & kMask];
+    for (int i = 0; i < kMask; i++) cnt[i + 1] += cnt[i];
+    int idx = n;
+    while (idx--) b[--cnt[(a[idx] >> shift) & kMask]] = a[idx];
+    swap(a, b);
+  }
+}
 
 int main() {
   ios::sync_with_stdio(false);
@@ -14,21 +31,21 @@ int main() {
   int64_t n, k;
   cin >> n >> k;
 
-  vector<int64_t> arr(n), brr(n), crr(n);
+  vector<int> arr(n), brr(n), crr(n);
   for (auto& e : arr) cin >> e;
   for (auto& e : brr) cin >> e;
   for (auto& e : crr) cin >> e;
-  sort(arr.begin(), arr.end());
-  sort(brr.begin(), brr.end());
-  sort(crr.begin(), crr.end());
 
   if (n == 1) {
-    cout << abs(arr[0] + brr[0] + crr[0] - k);
+    cout << abs(k - arr[0] - brr[0] - crr[0]);
     return 0;
   }
 
+  Sort(arr.data(), n), Sort(brr.data(), n);
+  auto [minn, maxx] = minmax_element(crr.begin(), crr.end());
+
   int64_t ans = INT64_MAX;
-  int64_t c1 = crr.front(), c2 = crr.back();
+  int64_t c1 = *minn, c2 = *maxx;
   int64_t pv = k - ((c1 + c2 + 1) >> 1);
   int ai = 0, bi = n - 2;
   while (ai < n) {
