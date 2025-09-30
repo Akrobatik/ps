@@ -1,6 +1,6 @@
 // Title : 합
 // Link  : https://www.acmicpc.net/problem/1132 
-// Time  : 32 ms
+// Time  : 0 ms
 // Memory: 2024 KB
 
 #include <bits/stdc++.h>
@@ -32,17 +32,25 @@ int main() {
     }
   }
 
+  vector<int> vals(9);
+
   int64_t maxx = 0;
-  vector<int> vals(10);
-  iota(vals.begin(), vals.end(), 0);
-  do {
-    if (mask[vals[0]]) continue;
+  for (int i = 0; i < 10; i++) {
+    if (mask[i]) continue;
+
+    iota(vals.begin(), vals.end(), 0);
+    for (int j = i; j < 9; j++) ++vals[j];
+
+    sort(vals.begin(), vals.end(), [&](int lhs, int rhs) {
+      return w[lhs] < w[rhs];
+    });
+
     int64_t cur = 0;
-    for (int i = 1; i < 10; i++) {
-      cur += w[vals[i]] * i;
+    for (int j = 0; j < 9; j++) {
+      cur += w[vals[j]] * (j + 1);
     }
     maxx = max<int64_t>(maxx, cur);
-  } while (next_permutation(vals.begin(), vals.end()));
+  }
   cout << maxx;
 
   return 0;
