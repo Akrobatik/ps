@@ -7,6 +7,7 @@ template <typename V, typename L, typename OP, typename APPLY, typename COMPO>
     { OP{}(va, vb) } -> convertible_to<V>;
     { APPLY{}(va, la, sz) } -> convertible_to<V>;
     { COMPO{}(la, lb) } -> convertible_to<L>;
+    { la == lb } -> convertible_to<bool>;
   }
 struct LazySegTree {
   void Init(int n, const V& ival, const L& ilzy) {
@@ -91,6 +92,7 @@ struct LazySegTree {
   }
 
   void Push(int node) {
+    if (lazy[node] == il) return;
     Apply(node << 1, lazy[node]);
     Apply(node << 1 | 1, lazy[node]);
     lazy[node] = il;
