@@ -73,11 +73,13 @@ int main() {
     arr.push_back({i * i, mind[i]});
   }
 
+  int na = arr.size(), limit = 0;
   vector<int> memo(k + 1);
   for (int i = 1; i <= k; i++) {
     memo[i] = max<int>(memo[i], memo[i - 1]);
-    for (auto [r, w] : arr) {
-      if (w > i) break;
+    while (limit < na && arr[limit].second <= i) ++limit;
+    for (int j = 0; j < limit; j++) {
+      auto [r, w] = arr[j];
       memo[i] = max<int>(memo[i], memo[i - w] + r);
     }
   }
