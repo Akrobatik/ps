@@ -1,16 +1,11 @@
 // Title : 터치 앤 리턴
 // Link  : https://www.acmicpc.net/problem/34562 
-// Time  : 176 ms
-// Memory: 84340 KB
+// Time  : 228 ms
+// Memory: 88124 KB
 
-#pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
 
 using namespace std;
-
-int dist[1 << 20][20];
-int mat[20][20];
-int mind[20], memo[100001];
 
 int main() {
   ios::sync_with_stdio(false);
@@ -18,20 +13,9 @@ int main() {
 
   int n, m, k;
   cin >> n >> m >> k;
-  int mb = 1 << n;
 
-  for (int i = 0; i < mb; i++) {
-    for (int j = 0; j < n; j++) {
-      dist[i][j] = k + 1;
-    }
-  }
-
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      mat[i][j] = (i != j ? k + 1 : 0);
-    }
-  }
-
+  vector<vector<int>> mat(n, vector<int>(n, k + 1));
+  for (int i = 0; i < n; i++) mat[i][i] = 0;
   while (m--) {
     int u, v, w;
     cin >> u >> v >> w;
@@ -48,16 +32,15 @@ int main() {
     }
   }
 
+  int64_t mb = 1LL << n;
   vector<int> incl, excl;
-  dist[1][0] = 0;
-  for (int l = 1; l < n; l++) {
-    int i = 1, j = 0;
-    int nb = i | (1 << l);
-    dist[nb][l] = min<int>(dist[nb][l], dist[i][j] + mat[j][l]);
-  }
-  for (int i = 3; i < mb; i += 2) {
+  vector<vector<int>> dist(n, vector<int>(mb, k + 1));
+  dist[0][1] = 0;
+  for (int i = 0; i < mb; i++) {
+    if (~i & 1) continue;
+
     incl.clear(), excl.clear();
-    for (int j = 1; j < n; j++) {
+    for (int j = 0; j < n; j++) {
       if (i & (1 << j)) {
         incl.push_back(j);
       } else {
@@ -67,18 +50,19 @@ int main() {
 
     for (auto j : incl) {
       for (auto l : excl) {
-        int nb = i | (1 << l);
-        dist[nb][l] = min<int>(dist[nb][l], dist[i][j] + mat[j][l]);
+        dist[l][i | (1 << l)] = min<int>(dist[l][i | (1 << l)], dist[j][i] + mat[j][l]);
       }
     }
   }
 
-  for (int i = 0; i < n; i++) mind[i] = k + 1;
+  vector<int> mind(n, k + 1);
+  for (int i = 0; i < mb; i++) {
+    if (~i & 1) continue;
 
-  for (int i = 1; i < mb; i += 2) {
     int pc = popcount((uint32_t)i) - 1;
     for (int j = 0; j < n; j++) {
-      mind[pc] = min<int>(mind[pc], dist[i][j] + mat[j][0]);
+      if (~i & (1 << j)) continue;
+      mind[pc] = min<int>(mind[pc], dist[j][i] + mat[j][0]);
     }
   }
 
@@ -89,12 +73,11 @@ int main() {
     arr.push_back({i * i, mind[i]});
   }
 
-  int na = arr.size(), limit = 0;
+  vector<int> memo(k + 1);
   for (int i = 1; i <= k; i++) {
     memo[i] = max<int>(memo[i], memo[i - 1]);
-    while (limit < na && arr[limit].second <= i) ++limit;
-    for (int j = 0; j < limit; j++) {
-      auto [r, w] = arr[j];
+    for (auto [r, w] : arr) {
+      if (w > i) break;
       memo[i] = max<int>(memo[i], memo[i - w] + r);
     }
   }
