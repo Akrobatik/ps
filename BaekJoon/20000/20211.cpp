@@ -1,7 +1,7 @@
 // Title : 게임 개발자 영우
 // Link  : https://www.acmicpc.net/problem/20211 
-// Time  : 48 ms
-// Memory: 2400 KB
+// Time  : 40 ms
+// Memory: 2396 KB
 
 #include <bits/stdc++.h>
 
@@ -34,7 +34,8 @@ int main() {
   }
 
   vector<pair<int, int>> arr;
-  for (int i = 1; i <= n * 5; i++) {
+  int limit = max<int>(fwd[0][n], fwd[1][n]);
+  for (int i = 1; i <= limit; i++) {
     int idx = 0, key = 0, cnt = 0;
     while (idx < n) {
       int nxt = lower_bound(fwd[key].begin() + idx, fwd[key].end(), fwd[key][idx] + i) - fwd[key].begin();
@@ -42,7 +43,6 @@ int main() {
     }
     if (idx == n) arr.push_back({i, cnt});
   }
-  sort(arr.begin(), arr.end());
 
   cout << arr.size() << "\n";
   for (auto [x, y] : arr) cout << x << " " << y << "\n";
