@@ -19,18 +19,9 @@ int main() {
   for (auto& e : fwd) e.assign(n + 1, 0);
 
   for (int i = 0; i < n; i++) {
-    if (s[i] == 'H') {
-      fwd[0][i + 1] = fwd[0][i] + 3;
-      fwd[1][i + 1] = fwd[1][i] + 3;
-    } else {
-      if (i & 1) {
-        fwd[0][i + 1] = fwd[0][i] + 1;
-        fwd[1][i + 1] = fwd[1][i] + 5;
-      } else {
-        fwd[0][i + 1] = fwd[0][i] + 5;
-        fwd[1][i + 1] = fwd[1][i] + 1;
-      }
-    }
+    int x = (s[i] == 'H' ? 0 : ((i & 1) ? 2 : -2));
+    fwd[0][i + 1] = fwd[0][i] - x + 3;
+    fwd[1][i + 1] = fwd[1][i] + x + 3;
   }
 
   vector<pair<int, int>> arr;
