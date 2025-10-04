@@ -2,12 +2,12 @@
 
 using namespace std;
 
-struct LCP {
+struct SuffixArray {
  private:
   struct Buckets : public vector<int> {
     template <typename T>
-    Buckets(span<const T> sv) : vector<int>(*max_element(sv.begin(), sv.end()) + 1) {
-      for (auto e : sv) ++operator[](e);
+    Buckets(span<const T> s) : vector<int>(*max_element(s.begin(), s.end()) + 1) {
+      for (auto e : s) ++operator[](e);
     }
 
     vector<int> Incl() const {
@@ -23,32 +23,60 @@ struct LCP {
     }
   };
 
-  struct LTypes : public vector<bool> {
+  struct LTypes : public vector<int8_t> {
     template <typename T>
-    LTypes(span<const T> sv) : vector<bool>(sv.size()) {
-      int n = sv.size();
+    LTypes(span<const T> s) : vector<int8_t>(s.size()) {
+      int n = s.size();
       for (int i = n - 2; i >= 0; i--) {
-        operator[](i) = sv[i] > sv[i + 1] || (sv[i] == sv[i + 1] && operator[](i + 1));
+        operator[](i) = s[i] > s[i + 1] || (s[i] == s[i + 1] && operator[](i + 1));
       }
     }
   };
 
  public:
-  void Init(const string_view sv) {
-    int n = sv.size();
+  void Init(string_view s, bool with_lcp) {
+    int n = s.size();
     buf.resize(n + 1);
     sa = span<int>(buf.data() + 1, n);
-    lcp.resize(n);
-    SAIS(span<const char>(sv.data(), n + 1));
-    Kasai(sv);
+    SAIS(span<const char>(s.data(), n + 1));
+
+    if (with_lcp) {
+      lcp.resize(n);
+      Kasai(span<const char>(s.data(), n));
+    }
+  }
+
+  template <typename T>
+  void Init(const vector<T>& s, bool with_lcp) {
+    int n = s.size();
+
+    vector<T> comp(s.begin(), s.end());
+    sort(comp.begin(), comp.end());
+    comp.erase(unique(comp.begin(), comp.end()), comp.end());
+
+    tmp.resize(n + 1);
+    tmp[n] = 0;
+    for (int i = 0; i < n; i++) {
+      tmp[i] = upper_bound(comp.begin(), comp.end(), s[i]) - comp.begin();
+    }
+
+    buf.resize(n + 1);
+    sa = span<int>(buf.data() + 1, n);
+    SAIS(span<const T>(tmp));
+
+    if (with_lcp) {
+      lcp.resize(n);
+      Kasai(span<const T>(tmp.data(), n));
+    }
   }
 
   span<int> sa;
   vector<int> lcp;
 
  private:
-  void Kasai(const string_view sv) {
-    int n = sv.size();
+  template <typename T>
+  void Kasai(span<const T> s) {
+    int n = s.size();
     vector<int> ranks(n);
     for (int i = 0; i < n; i++) ranks[sa[i]] = i + 1;
     for (int i = 0, k = 0; i < n; i++, k && --k) {
@@ -57,21 +85,21 @@ struct LCP {
         continue;
       }
       int j = sa[ranks[i]];
-      while (i + k < n && j + k < n && sv[i + k] == sv[j + k]) k++;
+      while (i + k < n && j + k < n && s[i + k] == s[j + k]) k++;
       lcp[ranks[i]] = k;
     }
   }
 
   template <typename T>
-  void SAIS(span<const T> sv) {
-    int n = sv.size();
+  void SAIS(span<const T> s) {
+    int n = s.size();
     memset(buf.data(), 0, n * sizeof(int));
-    Buckets bkts(sv);
-    LTypes ltypes(sv);
-    Sort(sv, ltypes, bkts);
+    Buckets bkts(s);
+    LTypes ltypes(s);
+    Sort(s, ltypes, bkts);
 
     int *sub, sub_len;
-    if (!Reduce(sv, ltypes, bkts, sub, sub_len)) {
+    if (!Reduce(s, ltypes, bkts, sub, sub_len)) {
       SAIS(span<const int>(sub, sub_len));
       for (int i = 0; i < sub_len; i++) sub[buf[i]] = i;
     }
@@ -80,45 +108,45 @@ struct LCP {
       if (IsLMS(ltypes, i)) buf[sub[j++]] = -i;
     }
     memset(buf.data() + sub_len, 0, (n - sub_len) * sizeof(int));
-    Sort(sv, ltypes, sub_len, bkts);
+    Sort(s, ltypes, sub_len, bkts);
   }
 
   template <typename T>
-  void Sort(span<const T> sv, const LTypes& ltypes, Buckets& bkts) {
-    int n = sv.size();
+  void Sort(span<const T> s, const LTypes& ltypes, Buckets& bkts) {
+    int n = s.size();
     auto incl = bkts.Incl();
     for (int i = 1; i < n; i++) {
-      if (IsLMS(ltypes, i)) buf[--incl[sv[i]]] = i;
+      if (IsLMS(ltypes, i)) buf[--incl[s[i]]] = i;
     }
-    SortLS(sv, ltypes, bkts);
+    SortLS(s, ltypes, bkts);
   }
 
   template <typename T>
-  void Sort(span<const T> sv, const LTypes& ltypes, int lms_len, Buckets& bkts) {
+  void Sort(span<const T> s, const LTypes& ltypes, int lms_len, Buckets& bkts) {
     auto incl = bkts.Incl();
-    for (int i = lms_len - 1; i >= 0; i--) buf[--incl[sv[-buf[i]]]] = -buf[i];
-    SortLS(sv, ltypes, bkts);
+    for (int i = lms_len - 1; i >= 0; i--) buf[--incl[s[-buf[i]]]] = -buf[i];
+    SortLS(s, ltypes, bkts);
   }
 
   template <typename T>
-  void SortLS(span<const T> sv, const LTypes& ltypes, Buckets& bkts) {
-    int n = sv.size();
+  void SortLS(span<const T> s, const LTypes& ltypes, Buckets& bkts) {
+    int n = s.size();
     auto incl = bkts.Incl(), excl = bkts.Excl();
 
     for (int i = 0; i < n; i++) {
       int pos = buf[i] - 1;
-      if (pos >= 0 && ltypes[pos]) buf[excl[sv[pos]]++] = pos;
+      if (pos >= 0 && ltypes[pos]) buf[excl[s[pos]]++] = pos;
     }
 
     for (int i = n - 1; i > 0; i--) {
       int pos = buf[i] - 1;
-      if (pos >= 0 && !ltypes[pos]) buf[--incl[sv[pos]]] = pos;
+      if (pos >= 0 && !ltypes[pos]) buf[--incl[s[pos]]] = pos;
     }
   }
 
   template <typename T>
-  bool Reduce(span<const T> sv, const LTypes& ltypes, const Buckets& bkts, int*& sub, int& sub_len) {
-    int n = sv.size();
+  bool Reduce(span<const T> s, const LTypes& ltypes, const Buckets& bkts, int*& sub, int& sub_len) {
+    int n = s.size();
     sub = buf.data() + (n >> 1);
     sub_len = n - (n >> 1);
 
@@ -130,7 +158,7 @@ struct LCP {
 
     int rank = sub[(buf[0] - 1) >> 1] = 0;
     for (int i = 1; i < rcnt; i++) {
-      if (!IsEqual(sv, ltypes, buf[i - 1], buf[i])) ++rank;
+      if (!IsEqual(s, ltypes, buf[i - 1], buf[i])) ++rank;
       sub[(buf[i] - 1) >> 1] = rank;
     }
 
@@ -143,13 +171,12 @@ struct LCP {
   }
 
   template <typename T>
-  bool IsEqual(span<const T> sv, const LTypes& ltypes, int i, int j) {
+  bool IsEqual(span<const T> s, const LTypes& ltypes, int i, int j) {
     for (;; i++, j++) {
-      if (sv[i] != sv[j] || ltypes[i] != ltypes[j]) return false;
-      if (IsLMS(ltypes, i + 1) && IsLMS(ltypes, j + 1)) return sv[i + 1] == sv[j + 1];
+      if (s[i] != s[j] || ltypes[i] != ltypes[j]) return false;
+      if (IsLMS(ltypes, i + 1) && IsLMS(ltypes, j + 1)) return s[i + 1] == s[j + 1];
     }
   }
 
- private:
-  vector<int> buf;
+  vector<int> buf, tmp;
 };
