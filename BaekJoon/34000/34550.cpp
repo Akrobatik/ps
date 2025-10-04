@@ -1,7 +1,7 @@
 // Title : 순회공연
 // Link  : https://www.acmicpc.net/problem/34550 
-// Time  : 56 ms
-// Memory: 12440 KB
+// Time  : 40 ms
+// Memory: 11372 KB
 
 #include <bits/stdc++.h>
 
@@ -39,11 +39,11 @@ int main() {
   }
 
   queue<int> q;
-  vector<bool> cyc(n + 1, true);
+  vector<int8_t> cyc(n + 1, 1);
 
   for (int i = 1; i <= n; i++) {
     if (deg[i]) continue;
-    cyc[i] = false;
+    cyc[i] = 0;
     q.push(i);
   }
 
@@ -53,16 +53,15 @@ int main() {
 
     int nxt = arr[cur];
     if (--deg[nxt] == 0) {
-      cyc[nxt] = false;
+      cyc[nxt] = 0;
       q.push(nxt);
     }
   }
 
-  vector<int> stk;
+  vector<int> gid(n + 1, -1), order(n + 1), stk;
   vector<vector<int>> groups;
-  vector<pair<int, int>> memo(n + 1, {-1, -1});
   for (int i = 1; i <= n; i++) {
-    if (!cyc[i] || memo[i].first != -1) continue;
+    if (!cyc[i] || gid[i] != -1) continue;
 
     stk.clear();
     int cur = i;
@@ -77,24 +76,14 @@ int main() {
 
     for (int j = 0; j < ns; j++) {
       int x = stk[j];
-      memo[x] = {ng, j};
+      gid[x] = ng, order[x] = j;
     }
   }
 
-  auto Get = [&](int r, int t) {
-    auto [gi, ord] = memo[r];
-    int sz = groups[gi].size();
-    ord -= t;
-    if ((ord %= sz) < 0) ord += sz;
-    return groups[gi][ord];
-  };
-
   vector<int> root(n + 1);
-  vector<tuple<int, int, int>> brr;
   for (int i = 1; i <= n; i++) {
     if (!cyc[i]) continue;
     root[i] = i;
-    if (cnt[i]) brr.push_back({0, i, cnt[i]});
     q.push(i);
   }
 
@@ -104,20 +93,20 @@ int main() {
       int cur = q.front();
       q.pop();
 
+      int r = root[cur], gi = gid[r], ri = order[r];
+      int gsz = groups[gi].size();
       for (auto nxt : g[cur]) {
         if (root[nxt]) continue;
-        root[nxt] = root[cur];
-        if (cnt[nxt]) brr.push_back({i, Get(root[nxt], i), cnt[nxt]});
+        root[nxt] = r;
+        int ord = (ri - i) % gsz;
+        if (ord < 0) ord += gsz;
+        int y = groups[gi][ord];
+        if ((cnt[y] += cnt[nxt]) >= k) {
+          cout << i + 1;
+          return 0;
+        }
         q.push(nxt);
       }
-    }
-  }
-
-  vector<int> sum(n + 1);
-  for (auto [t, i, c] : brr) {
-    if ((sum[i] += c) >= k) {
-      cout << t + 1;
-      return 0;
     }
   }
   cout << "-1";
