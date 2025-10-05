@@ -1,7 +1,7 @@
 // Title : 즐거운 회의
 // Link  : https://www.acmicpc.net/problem/31997 
 // Time  : 88 ms
-// Memory: 4372 KB
+// Memory: 4368 KB
 
 #include <bits/stdc++.h>
 
@@ -14,16 +14,16 @@ int main() {
   int n, m, t;
   cin >> n >> m >> t;
 
-  vector<int> st(n + 1), en(n + 1);
-  for (int i = 1; i <= n; i++) {
-    cin >> st[i] >> en[i];
-  }
+  vector<pair<int, int>> lr(n);
+  for (auto& [l, r] : lr) cin >> l >> r;
 
   vector<int> arr(t + 1);
   while (m--) {
     int u, v;
-    cin >> u >> v;
-    int s = max<int>(st[u], st[v]), e = min<int>(en[u], en[v]);
+    cin >> u >> v, --u, --v;
+    auto [ul, ur] = lr[u];
+    auto [vl, vr] = lr[v];
+    int s = max<int>(ul, vl), e = min<int>(ur, vr);
     if (s < e) ++arr[s], --arr[e];
   }
 
