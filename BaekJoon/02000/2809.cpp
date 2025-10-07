@@ -1,6 +1,6 @@
 // Title : 아스키 거리
 // Link  : https://www.acmicpc.net/problem/2809 
-// Time  : 332 ms
+// Time  : 284 ms
 // Memory: 40836 KB
 
 #include <bits/stdc++.h>
@@ -386,8 +386,7 @@ int main() {
     if (cidx != idx) ph2.Init(strs[idx]), cidx = idx;
 
     string_view sv = strs[idx];
-    int limit = min<int>(n - p, sv.size());
-    int lo = 0, hi = limit;
+    int lo = 0, hi = min<int>(n - p, sv.size());
     while (lo + 1 < hi) {
       int mid = (lo + hi) >> 1;
       if (ph.GetHash(p, mid) == ph2.GetHash(0, mid)) {
@@ -407,7 +406,7 @@ int main() {
     while (idx < m && Check(p, idx)) {
       int len = strs[idx++].size();
       int64_t key = ph2.GetHash(0, len);
-      stk.push_back({len, key});
+      if (p + len <= n && ph.GetHash(p, len) == key) stk.push_back({len, key});
     }
     while (!stk.empty() && (n - p < stk.back().first || ph.GetHash(p, stk.back().first) != stk.back().second)) stk.pop_back();
     axr[p] = (stk.empty() ? 0 : stk.back().first);
