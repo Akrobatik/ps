@@ -10,10 +10,9 @@ using namespace std;
 int64_t Read() {
   string s;
   cin >> s;
+  while (s.size() >= 2 && s.back() == '0') s.pop_back(); 
   reverse(s.begin(), s.end());
-  int64_t res;
-  from_chars(s.data(), s.data() + s.size(), res);
-  return res;
+  return stoll(s);
 }
 
 int main() {
