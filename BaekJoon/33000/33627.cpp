@@ -1,6 +1,6 @@
 // Title : 네모네모
 // Link  : https://www.acmicpc.net/problem/33627 
-// Time  : 180 ms
+// Time  : 184 ms
 // Memory: 33284 KB
 
 #include <bits/stdc++.h>
@@ -45,7 +45,7 @@ int main() {
 
   auto Calc = [&](int64_t s1, int64_t e1, int64_t s2, int64_t e2) -> int64_t {
     int64_t s = max<int64_t>(s1, s2);
-    int64_t e = min<int64_t>(e1, e1);
+    int64_t e = min<int64_t>(e1, e2);
     return (s <= e ? e - s + 1 : 0);
   };
 
