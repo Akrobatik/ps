@@ -1,6 +1,6 @@
 // Title : 아스키 거리
 // Link  : https://www.acmicpc.net/problem/2809 
-// Time  : 3172 ms
+// Time  : 2956 ms
 // Memory: 239292 KB
 
 #include <bits/stdc++.h>
@@ -294,7 +294,7 @@ struct PolyHash {
   using M1 = ModInt32<MOD1>;
   using M2 = ModInt32<MOD2>;
 
-  PolyHash() : b1(BASE1), b2(BASE2), p1{1}, p2{1}, h1{0}, h2{0} {}
+  PolyHash() : b1(BASE1), b2(BASE2), p1{1}, p2{1}, r1{1}, r2{1}, h1{0}, h2{0} {}
 
   void Init(string_view sv) {
     n = sv.size();
@@ -307,7 +307,7 @@ struct PolyHash {
 
     r1.resize(n + 1), r2.resize(n + 1);
     r1[n] = p1[n].Inv(), r2[n] = p2[n].Inv();
-    for (int i = n - 1; i >= 0; i--) {
+    for (int i = n - 1; i >= old; i--) {
       r1[i] = r1[i + 1] * b1;
       r2[i] = r2[i + 1] * b2;
     }
