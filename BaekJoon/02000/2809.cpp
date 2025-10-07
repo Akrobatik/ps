@@ -1,6 +1,6 @@
 // Title : 아스키 거리
 // Link  : https://www.acmicpc.net/problem/2809 
-// Time  : 3860 ms
+// Time  : 3928 ms
 // Memory: 510764 KB
 
 #include <bits/stdc++.h>
@@ -259,18 +259,6 @@ struct LazySegTree {
     return OP{}(lv, rv);
   }
 
-  int CountZero(int limit) {
-    for (int i = 1; i < nmax; i++) {
-      Push(i);
-    }
-
-    int cnt = 0;
-    for (int i = 0; i < limit; i++) {
-      cnt += (tree[i + nmax] == 0);
-    }
-    return cnt;
-  }
-
  private:
   int nmax, nlog;
   V iv;
@@ -312,13 +300,14 @@ struct FOp {
 
 struct FApply {
   Node operator()(const Node& a, const Lazy& b, int sz) const {
-    return a + b * sz;
+    if (b) return 0;
+    return a;
   }
 };
 
 struct FCompo {
   Lazy operator()(const Lazy& a, const Lazy& b) const {
-    return a + b;
+    return a | b;
   }
 };
 
@@ -351,6 +340,10 @@ int main() {
 
   LazySegTree<Node, Lazy, FOp, FApply, FCompo> seg;
   seg.Init(n, 0, 0);
+  for (int i = 0; i < n; i++) {
+    seg.Set(i, 1);
+  }
+  seg.Build();
 
   int ns = s.size();
   vector<int> stk;
@@ -366,7 +359,7 @@ int main() {
     }
   }
 
-  cout << seg.CountZero(n);
+  cout << seg.Query(0, n - 1);
 
   return 0;
 }
