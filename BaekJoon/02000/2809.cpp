@@ -1,6 +1,6 @@
 // Title : 아스키 거리
 // Link  : https://www.acmicpc.net/problem/2809 
-// Time  : 2956 ms
+// Time  : 2940 ms
 // Memory: 239292 KB
 
 #include <bits/stdc++.h>
@@ -325,6 +325,20 @@ struct PolyHash {
     return GetHash(i, len) == GetHash(j, len);
   }
 
+  int64_t GetHash(string_view sv) {
+    int len = sv.size();
+    if (len > n) return -1;
+
+    M1 x1 = 0;
+    M2 x2 = 0;
+    for (int i = 0; i < len; i++) {
+      int x = (int)sv[i] + 1;
+      x1 += p1[i] * x;
+      x2 += p2[i] * x;
+    }
+    return (((int64_t)x1.val) << 32) | x2.val;
+  }
+
   int64_t GetHash(int i, int len) {
     if (i + len > n) return -1;
     M1 x1 = h1[i + len] - h1[i];
@@ -355,7 +369,7 @@ int main() {
   string s;
   cin >> n >> s >> m;
 
-  PolyHash<kMod1, kBase1, kMod2, kBase2> ph, ph2;
+  PolyHash<kMod1, kBase1, kMod2, kBase2> ph;
   ph.Init(s);
 
   s.push_back('~');
@@ -379,15 +393,15 @@ int main() {
 
   int ns = s.size();
   vector<pair<int, int64_t>> stk;
+  string_view sv = s;
   for (int i = 0; i < ns; i++) {
     int pos = sa[i];
     if (pos < n) {
       while (!stk.empty() && ph.GetHash(pos, lens[stk.back().first]) != stk.back().second) stk.pop_back();
       lens[pos] = (stk.empty() ? 0 : lens[stk.back().first]);
     } else if (lens[pos]) {
-      string_view sv = s;
-      ph2.Init(sv.substr(pos, lens[pos]));
-      stk.push_back({pos, ph2.GetHash(0, lens[pos])});
+      int64_t key = ph.GetHash(sv.substr(pos, lens[pos]));
+      stk.push_back({pos, key});
     }
   }
 
