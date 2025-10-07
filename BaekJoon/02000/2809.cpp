@@ -1,7 +1,7 @@
 // Title : 아스키 거리
 // Link  : https://www.acmicpc.net/problem/2809 
-// Time  : 3832 ms
-// Memory: 510768 KB
+// Time  : 3860 ms
+// Memory: 510764 KB
 
 #include <bits/stdc++.h>
 
@@ -352,24 +352,17 @@ int main() {
   LazySegTree<Node, Lazy, FOp, FApply, FCompo> seg;
   seg.Init(n, 0, 0);
 
-  map<int, int, greater<int>> memo;
-
   int ns = s.size();
   vector<int> stk;
   for (int i = 0; i < ns; i++) {
     int pos = sa[i], len = lcp[i];
-    while (!stk.empty() && len < stk.back()) {
-      auto it = memo.find(stk.back());
-      if ((it->second -= 1) == 0) memo.erase(it);
-      stk.pop_back();
-    }
+    while (!stk.empty() && len < stk.back()) stk.pop_back();
 
     if (pos < n) {
-      int x = (memo.empty() ? 0 : memo.begin()->first);
+      int x = (stk.empty() ? 0 : stk.back());
       seg.Update(pos, pos + x - 1, 1);
     } else if (lens[pos]) {
       stk.push_back(lens[pos]);
-      ++memo[lens[pos]];
     }
   }
 
