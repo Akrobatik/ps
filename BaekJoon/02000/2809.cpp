@@ -1,7 +1,7 @@
 // Title : 아스키 거리
 // Link  : https://www.acmicpc.net/problem/2809 
-// Time  : 2940 ms
-// Memory: 239292 KB
+// Time  : 420 ms
+// Memory: 40688 KB
 
 #include <bits/stdc++.h>
 
@@ -368,46 +368,54 @@ int main() {
   int n, m;
   string s;
   cin >> n >> s >> m;
-
-  PolyHash<kMod1, kBase1, kMod2, kBase2> ph;
-  ph.Init(s);
-
   s.push_back('~');
-  vector<int16_t> lens(n + 1);
-  for (int i = 0; i < m; i++) {
-    string tmp;
-    cin >> tmp;
-
-    int old = s.size();
-    s.append(tmp);
-    s.push_back('$');
-    lens.resize(s.size());
-    lens[old] = tmp.size();
-  }
 
   SuffixArray solver;
   solver.Init(s, false);
-
   auto& sa = solver.sa;
-  auto& lcp = solver.lcp;
 
-  int ns = s.size();
-  vector<pair<int, int64_t>> stk;
-  string_view sv = s;
-  for (int i = 0; i < ns; i++) {
-    int pos = sa[i];
-    if (pos < n) {
-      while (!stk.empty() && ph.GetHash(pos, lens[stk.back().first]) != stk.back().second) stk.pop_back();
-      lens[pos] = (stk.empty() ? 0 : lens[stk.back().first]);
-    } else if (lens[pos]) {
-      int64_t key = ph.GetHash(sv.substr(pos, lens[pos]));
-      stk.push_back({pos, key});
+  PolyHash<kMod1, kBase1, kMod2, kBase2> ph, ph2;
+  ph.Init(s);
+
+  vector<string> strs(m);
+  for (auto& str : strs) cin >> str;
+  sort(strs.begin(), strs.end());
+
+  vector<pair<int, int64_t>> arr(m);
+  for (int i = 0; i < m; i++) {
+    arr[i] = {strs[i].size(), ph.GetHash(strs[i])};
+  }
+
+  int cidx = -1;
+  auto Check = [&](int p, int idx) {
+    if (cidx != idx) ph2.Init(strs[idx]), cidx = idx;
+
+    string_view sv = strs[idx];
+    int limit = min<int>(n - p, sv.size());
+    int lo = 0, hi = limit;
+    while (lo + 1 < hi) {
+      int mid = (lo + hi) >> 1;
+      if (ph.GetHash(p, mid) == ph2.GetHash(0, mid)) {
+        lo = mid;
+      } else {
+        hi = mid;
+      }
     }
+    return sv[hi - 1] <= s[p + hi - 1];
+  };
+
+  int idx = 0;
+  vector<int> stk, axr(n);
+  for (int i = 0; i < n; i++) {
+    int p = sa[i];
+    while (idx < m && Check(p, idx)) stk.push_back(idx++);
+    while (!stk.empty() && (n - p < arr[stk.back()].first || ph.GetHash(p, arr[stk.back()].first) != arr[stk.back()].second)) stk.pop_back();
+    axr[p] = (stk.empty() ? 0 : arr[stk.back()].first);
   }
 
   int cnt = 0, cur = 0;
   for (int i = 0; i < n; i++) {
-    cur = max<int>(cur, i + lens[i]);
+    cur = max<int>(cur, i + axr[i]);
     cnt += (cur == i);
   }
   cout << cnt;
