@@ -1,7 +1,7 @@
 // Title : 아스키 거리
 // Link  : https://www.acmicpc.net/problem/2809 
-// Time  : 420 ms
-// Memory: 40688 KB
+// Time  : 332 ms
+// Memory: 40836 KB
 
 #include <bits/stdc++.h>
 
@@ -381,11 +381,6 @@ int main() {
   for (auto& str : strs) cin >> str;
   sort(strs.begin(), strs.end());
 
-  vector<pair<int, int64_t>> arr(m);
-  for (int i = 0; i < m; i++) {
-    arr[i] = {strs[i].size(), ph.GetHash(strs[i])};
-  }
-
   int cidx = -1;
   auto Check = [&](int p, int idx) {
     if (cidx != idx) ph2.Init(strs[idx]), cidx = idx;
@@ -405,12 +400,17 @@ int main() {
   };
 
   int idx = 0;
-  vector<int> stk, axr(n);
+  vector<int> axr(n);
+  vector<pair<int, int64_t>> stk;
   for (int i = 0; i < n; i++) {
     int p = sa[i];
-    while (idx < m && Check(p, idx)) stk.push_back(idx++);
-    while (!stk.empty() && (n - p < arr[stk.back()].first || ph.GetHash(p, arr[stk.back()].first) != arr[stk.back()].second)) stk.pop_back();
-    axr[p] = (stk.empty() ? 0 : arr[stk.back()].first);
+    while (idx < m && Check(p, idx)) {
+      int len = strs[idx++].size();
+      int64_t key = ph2.GetHash(0, len);
+      stk.push_back({len, key});
+    }
+    while (!stk.empty() && (n - p < stk.back().first || ph.GetHash(p, stk.back().first) != stk.back().second)) stk.pop_back();
+    axr[p] = (stk.empty() ? 0 : stk.back().first);
   }
 
   int cnt = 0, cur = 0;
