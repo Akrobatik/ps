@@ -1,6 +1,6 @@
 // Title : 홍준이는 색칠을 좋아해
 // Link  : https://www.acmicpc.net/problem/12856 
-// Time  : 168 ms
+// Time  : 172 ms
 // Memory: 15348 KB
 
 #include <bits/stdc++.h>
@@ -9,13 +9,13 @@ using namespace std;
 
 // https://github.com/Akrobatik/ps/blob/main/template/lazy_segment_tree.cpp
 template <typename V, typename L, typename OP, typename APPLY, typename COMPO>
-// requires requires(V va, V vb, L la, L lb, int sz) {
-//   { OP{}(va, vb) } -> convertible_to<V>;
-//   { APPLY{}(va, la, sz) } -> convertible_to<V>;
-//   { COMPO{}(la, lb) } -> convertible_to<L>;
-//   { la == lb } -> convertible_to<bool>;
-//   { va.fail } -> convertible_to<bool>;
-// }
+  requires requires(V va, V vb, L la, L lb, int sz) {
+    { OP{}(va, vb) } -> convertible_to<V>;
+    { APPLY{}(va, la, sz) } -> convertible_to<V>;
+    { COMPO{}(la, lb) } -> convertible_to<L>;
+    { la == lb } -> convertible_to<bool>;
+    { va.fail } -> convertible_to<bool>;
+  }
 struct LazySegTree {
   void Init(int n, const V& ival, const L& ilzy) {
     nmax = bit_ceil((uint32_t)n);
@@ -125,7 +125,7 @@ struct Lazy {
   Lazy() : x(0), y(0), add(0) {}
   Lazy(int64_t v) : x(v), y(v), add(0) {}
 
-  bool operator==(const Lazy& o) const {
+  constexpr bool operator==(const Lazy& o) const {
     return x == o.x && y == o.y && add == o.add;
   }
 
