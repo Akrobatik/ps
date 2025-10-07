@@ -1,6 +1,6 @@
 // Title : 네모네모
 // Link  : https://www.acmicpc.net/problem/33627 
-// Time  : 184 ms
+// Time  : 188 ms
 // Memory: 33284 KB
 
 #include <bits/stdc++.h>
@@ -43,15 +43,13 @@ int main() {
     en -= len;
   }
 
-  auto Calc = [&](int64_t s1, int64_t e1, int64_t s2, int64_t e2) -> int64_t {
-    int64_t s = max<int64_t>(s1, s2);
-    int64_t e = min<int64_t>(e1, e2);
+  auto Calc = [&](int64_t s, int64_t e) -> int64_t {
     return (s <= e ? e - s + 1 : 0);
   };
 
   int64_t cnt = 0;
   for (int i = 0; i < n; i++) {
-    cnt += Calc(fwd[i], fwd[i] + arr[i] - 1, bwd[i], bwd[i] + arr[i] - 1);
+    cnt += Calc(bwd[i], fwd[i] + arr[i] - 1);
   }
   cout << cnt;
 
