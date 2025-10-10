@@ -1,6 +1,6 @@
 // Title : FFT
 // Link  : https://www.acmicpc.net/problem/34514 
-// Time  : 292 ms
+// Time  : 284 ms
 // Memory: 17376 KB
 
 #include <bits/stdc++.h>
@@ -364,33 +364,27 @@ int main() {
     }
     sort(arr.begin(), arr.end());
 
-    int na = arr.size(), nf, nt, idx = 1;
-    if (na == 1) {
-      auto [x, y] = arr[0];
-      while (x--) adj.push_back({1, ++idx});
-      nf = idx;
-      while (y--) adj.push_back({1, ++idx});
-      nt = idx - nf;
-    } else {
-      swap(arr[1], arr.back());
+    int na = arr.size();
+    if (na >= 3) swap(arr[1], arr.back());
 
-      for (int i = 1; i < na; i++) {
-        adj.push_back({i, i + 1});
-      }
-
-      idx = na;
-      for (int i = 1; i <= na; i++) {
-        auto [x, y] = arr[i - 1];
-        x -= (i == 1 || i == na ? 1 : 2);
-        while (x--) adj.push_back({i, ++idx});
-      }
-      nf = idx;
-      for (int i = 1; i <= na; i++) {
-        auto [x, y] = arr[i - 1];
-        while (y--) adj.push_back({i, ++idx});
-      }
-      nt = idx - nf;
+    for (int i = 1; i < na; i++) {
+      adj.push_back({i, i + 1});
     }
+
+    int idx = na;
+    for (int i = 1; i <= na; i++) {
+      int x = arr[i - 1].first - 2;
+      if (i == 1) ++x;
+      if (i == na) ++x;
+      while (x--) adj.push_back({i, ++idx});
+    }
+    int nf = idx;
+
+    for (int i = 1; i <= na; i++) {
+      int y = arr[i - 1].second;
+      while (y--) adj.push_back({i, ++idx});
+    }
+    int nt = idx - nf;
 
     string ans;
     ans.reserve(idx);
