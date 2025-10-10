@@ -1,14 +1,11 @@
 // Title : Floor is Lava
 // Link  : https://www.acmicpc.net/problem/34469 
-// Time  : 1448 ms
-// Memory: 43928 KB
+// Time  : 188 ms
+// Memory: 29584 KB
 
-#pragma GCC optimize("O3")
 #include <bits/stdc++.h>
 
 using namespace std;
-
-using tup = tuple<int64_t, int, int, int, int>;
 
 constexpr int64_t kInf = 1e18;
 
@@ -19,67 +16,54 @@ int main() {
   int n, m;
   cin >> n >> m;
 
-  vector<vector<tuple<int, int, int>>> g(n + 1);
-  for (int i = 0; i < m; i++) {
+  vector<vector<pair<int, int>>> g(n + 1);
+  for (int i = 1; i <= m; i++) {
     int u, v, w;
     cin >> u >> v >> w;
-    int nu = g[u].size(), nv = g[v].size();
-    g[u].push_back({v, nv, w});
-    g[v].push_back({u, nu, w});
+    g[u].push_back({w, i});
+    g[v].push_back({w, i});
   }
 
-  vector<vector<int>> nidx(n + 1);
+  vector<vector<pair<int, int>>> ng(m + 1);
   for (int i = 1; i <= n; i++) {
-    nidx[i].resize(g[i].size());
-  }
-
-  vector<int> tmp;
-  for (int i = 1; i <= n; i++) {
-    int sz = g[i].size();
-    tmp.resize(sz);
-    for (int j = 0; j < sz; j++) {
-      tmp[j] = get<2>(g[i][j]);
-    }
-    sort(tmp.begin(), tmp.end());
-
-    for (auto [v, nv, w] : g[i]) {
-      int ord = lower_bound(tmp.begin(), tmp.end(), w) - tmp.begin();
-      nidx[v][nv] = ord;
+    sort(g[i].begin(), g[i].end());
+    for (int j = 1; j < g[i].size(); j++) {
+      auto [w1, u] = g[i][j - 1];
+      auto [w2, v] = g[i][j];
+      int w = w2 - w1;
+      ng[u].push_back({v, w});
+      ng[v].push_back({u, w});
     }
   }
-
-  for (int i = 1; i <= n; i++) {
-    int sz = g[i].size();
-    for (int j = 0; j < sz; j++) {
-      get<1>(g[i][j]) = nidx[i][j];
-    }
+  for (auto [w, v] : g[n]) {
+    ng[v].push_back({0, 0});
   }
 
-  vector<vector<int64_t>> memo(n + 1);
-  for (int i = 1; i <= n; i++) {
-    int sz = g[i].size();
-    memo[i].assign(sz, i != 1 ? kInf : 0);
+  vector<int64_t> dist(m + 1, kInf);
+  priority_queue<pair<int64_t, int>, vector<pair<int64_t, int>>, greater<pair<int64_t, int>>> pq;
+
+  auto Push = [&](int x, int64_t d) {
+    if (dist[x] <= d) return;
+    dist[x] = d;
+    pq.push({d, x});
+  };
+
+  for (auto [w, v] : g[1]) {
+    Push(v, w);
   }
 
-  priority_queue<tup, vector<tup>, greater<tup>> pq;
-  pq.push({0, 1, 0, 0, 0});
   while (!pq.empty()) {
-    auto [d, cur, ci, cw, prv] = pq.top();
+    auto [d, cur] = pq.top();
     pq.pop();
 
-    if (memo[cur][ci] != d) continue;
-    if (cur == n) break;
+    if (dist[cur] != d) continue;
+    if (cur == 0) break;
 
-    for (auto [nxt, ni, w] : g[cur]) {
-      if (nxt == prv) continue;
-      int64_t nd = d + abs(cw - w);
-      if (memo[nxt][ni] <= nd) continue;
-      memo[nxt][ni] = nd;
-      pq.push({nd, nxt, ni, w, cur});
+    for (auto [nxt, w] : ng[cur]) {
+      Push(nxt, d + w);
     }
   }
-
-  cout << *min_element(memo[n].begin(), memo[n].end());
+  cout << dist[0];
 
   return 0;
 }
