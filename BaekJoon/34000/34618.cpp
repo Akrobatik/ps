@@ -54,8 +54,8 @@ struct Board {
     return 0;
   }
 
-  int color[3][3];
-  int life[3][3];
+  int64_t color[3][3];
+  int64_t life[3][3];
 };
 
 constexpr const char* kName[3] = {"", "BLOOM", "STELLA"};
@@ -69,7 +69,7 @@ int main() {
   int n;
   cin >> n;
   for (int i = 1, t = 1; i <= n; i++, t ^= 3) {
-    int y, x, r;
+    int64_t y, x, r;
     cin >> y >> x >> r, --y, --x;
     int o = board.Process(t, y, x, r);
     if (o == 0) continue;
