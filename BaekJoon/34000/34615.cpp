@@ -1,6 +1,6 @@
 // Title : Bombončići
 // Link  : https://www.acmicpc.net/problem/34615 
-// Time  : 1196 ms
+// Time  : 1216 ms
 // Memory: 111608 KB
 
 #include <bits/stdc++.h>
@@ -123,7 +123,7 @@ struct Node {
 
 struct Lazy {
   Lazy() : cnt(0), val{} {}
-  Lazy(uint32_t x) : cnt(1), val{1, x} {}
+  Lazy(uint32_t x) : cnt(1), val{0, x} {}
 
   constexpr bool operator==(const Lazy& other) const {
     return cnt == other.cnt;
@@ -174,7 +174,7 @@ struct FCompo {
     res.cnt = min<int>(a.cnt + b.cnt, 26);
     for (int i = 1; i <= a.cnt; i++) {
       int j = countr_zero(a.val[i]);
-      res.val[i] = (b.cnt <= j ? (a.val[i] >> j) : b.val[j + 1]);
+      res.val[i] = (b.cnt <= j ? (a.val[i] >> b.cnt) : b.val[j + 1]);
     }
 
     for (int i = a.cnt + 1; i <= res.cnt; i++) {
