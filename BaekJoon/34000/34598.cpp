@@ -1,7 +1,9 @@
 // Title : Rim
 // Link  : https://www.acmicpc.net/problem/34598 
-// Time  : 3916 ms
-// Memory: 38116 KB
+// Time  : 3044 ms
+// Memory: 38120 KB
+
+#pragma GCC optimize("O3")
 
 #include <bits/stdc++.h>
 
