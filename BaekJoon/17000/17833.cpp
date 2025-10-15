@@ -1,13 +1,11 @@
 // Title : 홍익대학교 지하캠퍼스
 // Link  : https://www.acmicpc.net/problem/17833 
-// Time  : 72 ms
+// Time  : 68 ms
 // Memory: 50100 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
-
-constexpr int64_t kInf = 1e18;
 
 int main() {
   ios::sync_with_stdio(false);
@@ -39,10 +37,10 @@ int main() {
     }
   }
 
-  priority_queue<pair<int64_t, int>, vector<pair<int64_t, int>>, greater<pair<int64_t, int>>> pq;
-  vector<int64_t> dist(n + 1, kInf);
+  priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+  vector<int> dist(n + 1, INT_MAX);
 
-  auto Push = [&](int x, int64_t ds) {
+  auto Push = [&](int x, int ds) {
     if (dist[x] <= ds) return;
     dist[x] = ds;
     pq.push({ds, x});
@@ -60,7 +58,7 @@ int main() {
       Push(nxt, ds + w);
     }
   }
-  cout << (dist[d] != kInf ? dist[d] : -1);
+  cout << (dist[d] != INT_MAX ? dist[d] : -1);
 
   return 0;
 }
