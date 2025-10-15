@@ -38,7 +38,7 @@ int main() {
     if (t > 1) cout << "\n";
     cout << "Problem " << t << "\n";
     string s;
-    while (cin >> s && *max_element(s.begin(), s.end()) > '0') {
+    while (cin >> s && s != "0") {
       cout << Find(s) << "\n";
     }
   }
