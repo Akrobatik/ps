@@ -1,7 +1,7 @@
 // Title : 홍익대학교 지하캠퍼스
 // Link  : https://www.acmicpc.net/problem/17833 
-// Time  : 316 ms
-// Memory: 66400 KB
+// Time  : 72 ms
+// Memory: 50100 KB
 
 #include <bits/stdc++.h>
 
@@ -16,7 +16,7 @@ int main() {
   int n, r, d, m;
   cin >> n >> r >> d >> m;
 
-  vector<vector<pair<int, int>>> g(n + 1);
+  vector<vector<int>> mat(n + 1, vector<int>(n + 1, INT_MAX));
   while (m--) {
     int h, t, e1, e2;
     cin >> h >> t >> e1 >> e2;
@@ -26,8 +26,16 @@ int main() {
 
     for (int u = e1; u + dt + mg <= n; u++) {
       int v = u + dt;
-      g[u].push_back({v, t});
-      g[v].push_back({u, t});
+      mat[u][v] = min<int>(mat[u][v], t);
+    }
+  }
+
+  vector<vector<pair<int, int>>> g(n + 1);
+  for (int u = 1; u <= n; u++) {
+    for (int v = u + 1; v <= n; v++) {
+      if (mat[u][v] == INT_MAX) continue;
+      g[u].push_back({v, mat[u][v]});
+      g[v].push_back({u, mat[u][v]});
     }
   }
 
