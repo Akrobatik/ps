@@ -1,7 +1,7 @@
 // Title : PIRAMIDA
 // Link  : https://www.acmicpc.net/problem/34574 
-// Time  : 220 ms
-// Memory: 11064 KB
+// Time  : 216 ms
+// Memory: 12172 KB
 
 #include <bits/stdc++.h>
 
@@ -82,25 +82,25 @@ int main() {
   SegTree<Node, FOp> seg;
   seg.Init(n, 0);
 
-  deque<int> dq;
+  vector<int> axr;
 
   int64_t ans = 0;
   int idx = 0;
   while (idx < n) {
     int val = arr[ids[idx]];
-    while (idx < n && arr[ids[idx]] == val) dq.push_back(ids[idx++]);
+    axr.clear();
+    while (idx < n && arr[ids[idx]] == val) axr.push_back(ids[idx++]);
 
-    while (!dq.empty()) {
-      int fwd = dq.front(), bwd = dq.back();
+    int l = 0, r = axr.size() - 1;
+    while (l <= r) {
+      int fwd = axr[l], bwd = axr[r];
       int fcnt = fwd - seg.Query(0, fwd), bcnt = (n - bwd - 1) - seg.Query(bwd + 1, n - 1);
       if (fcnt < bcnt) {
-        dq.pop_front();
+        ans += fcnt, ++l;
         seg.Update(fwd, 1);
-        ans += fcnt;
       } else {
-        dq.pop_back();
+        ans += bcnt, --r;
         seg.Update(bwd, 1);
-        ans += bcnt;
       }
     }
   }
