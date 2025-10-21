@@ -1,6 +1,6 @@
 // Title : Zečevi
 // Link  : https://www.acmicpc.net/problem/34583 
-// Time  : 1768 ms
+// Time  : 1736 ms
 // Memory: 30944 KB
 
 #pragma GCC optimize("O3")
@@ -73,18 +73,6 @@ struct FOp {
     return res;
   }
 };
-
-int64_t CalcMax(const vector<pair<int64_t, int64_t>>& arr, const vector<pair<int64_t, int64_t>>& brr) {
-  int64_t maxx = INT64_MAX;
-  for (auto [a, b] : arr) {
-    pair<int64_t, int64_t> pr{a, 0};
-    auto it = lower_bound(brr.begin(), brr.end(), pr);
-    if (it == brr.end() || a + b < it->first) {
-      maxx = min<int64_t>(maxx, b);
-    }
-  }
-  return maxx;
-}
 
 int main() {
   ios::sync_with_stdio(false);
@@ -170,7 +158,14 @@ int main() {
   for (auto [a, b] : arr) s += b;
   for (auto [a, b] : brr) s += b;
 
-  int64_t lo = 0, hi = min<int64_t>(s / n, CalcMax(arr, brr)) + 1;
+  int64_t limit = INT64_MAX;
+  idx = 0;
+  for (auto [a, b] : arr) {
+    while (idx < brr.size() && brr[idx].first < a) ++idx;
+    if (idx == brr.size() || a + b < brr[idx].first) limit = min<int64_t>(limit, b);
+  }
+
+  int64_t lo = 0, hi = min<int64_t>(s / n, limit) + 1;
   while (lo + 1 < hi) {
     int64_t mid = (lo + hi) >> 1;
     if (Check(mid)) {
