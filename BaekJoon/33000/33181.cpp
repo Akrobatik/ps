@@ -1,6 +1,6 @@
 // Title : Cup of Tea
 // Link  : https://www.acmicpc.net/problem/33181 
-// Time  : 244 ms
+// Time  : 220 ms
 // Memory: 60548 KB
 
 #include <bits/stdc++.h>
@@ -44,6 +44,13 @@ int main() {
     return true;
   };
 
+  auto Check = [&](int i, int64_t d, int64_t r) {
+    auto& mp = memo[i];
+    auto it = mp.find(d);
+    if (it == mp.end()) return false;
+    return it->second == r;
+  };
+
   auto Cmp = [](const tup& lhs, const tup& rhs) {
     auto [ld, lr, li] = lhs;
     auto [rd, rr, ri] = rhs;
@@ -53,20 +60,20 @@ int main() {
   };
 
   priority_queue<tup, vector<tup>, decltype(Cmp)> pq(Cmp);
-  pq.push({0, k, 1});
+  if (Push(1, 0, k)) pq.push({0, k, 1});
 
   while (!pq.empty()) {
     auto [d, r, cur] = pq.top();
     pq.pop();
 
-    if (mask[cur]) r = k;
-    if (!Push(cur, d, r)) continue;
+    if (!Check(cur, d, r)) continue;
     dist[cur] = min<int64_t>(dist[cur], d);
 
     for (auto [nxt, w] : g[cur]) {
       int64_t nd = d + w, nr = r - w;
       if (nr < 0) continue;
-      pq.push({nd, nr, nxt});
+      if (mask[nxt]) nr = k;
+      if (Push(nxt, nd, nr)) pq.push({nd, nr, nxt});
     }
   }
 
