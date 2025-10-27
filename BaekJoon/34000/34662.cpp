@@ -1,7 +1,7 @@
 // Title : 월향 수목원
 // Link  : https://www.acmicpc.net/problem/34662 
-// Time  : 3448 ms
-// Memory: 65664 KB
+// Time  : 3356 ms
+// Memory: 62100 KB
 
 #pragma GCC optimize("O3")
 
@@ -2605,7 +2605,8 @@ int main() {
   };
 
   int ans = 0, cnt = 0;
-  vector<pair<int, int64_t>> arr;
+  vector<int64_t> arr(n + 2);
+  vector<int> used(n + 2), tmp;
   for (int t = 1; cnt < n && t <= kMax; t++) {
     auto& g = group[t];
     if (g.empty()) continue;
@@ -2613,42 +2614,41 @@ int main() {
     ans = t;
     cnt += g.size();
 
-    arr.clear();
+    tmp.clear();
     for (auto i : g) {
       Merge(i);
       Union(i, i + 1);
-
       auto [l, r] = lr[i];
-      arr.push_back({l, add[i]});
-      arr.push_back({r + 1, -add[i]});
+      arr[l] += add[i], arr[r + 1] -= add[i];
+      if (!used[l]) used[l] = 1, tmp.push_back(l);
+      if (!used[r + 1]) used[r + 1] = 1, tmp.push_back(r + 1);
     }
-    sort(arr.begin(), arr.end());
+    sort(tmp.begin(), tmp.end());
 
-    int64_t acc = 0;
-    int na = arr.size(), idx = 0, p = 0;
-    while (idx < na) {
-      int cp = arr[idx].first;
+    int64_t acc = 0, p = 0;
+    for (auto i : tmp) {
+      if (acc == 0) {
+        p = Find(i);
+      } else {
+        while (p < i) {
+          int dt = t - time[p];
+          rem[p] -= cut[p] * dt;
+          cut[p] += acc;
+          time[p] = t;
 
-      if (acc == 0) p = Find(cp);
+          int extra = (rem[p] + cut[p] - 1) / cut[p];
+          int old = out[p], cur = t + extra;
+          if (cur < old) {
+            out[p] = cur;
+            group[old].erase(p);
+            group[cur].insert(p);
+          }
 
-      while (p < cp) {
-        int dt = t - time[p];
-        rem[p] -= cut[p] * dt;
-        cut[p] += acc;
-        time[p] = t;
-
-        int extra = (rem[p] + cut[p] - 1) / cut[p];
-        int old = out[p], cur = t + extra;
-        if (cur < old) {
-          out[p] = cur;
-          group[old].erase(p);
-          group[cur].insert(p);
+          p = link[p].second;
         }
-
-        p = link[p].second;
       }
-
-      while (idx < na && arr[idx].first == cp) acc += arr[idx++].second;
+      acc += arr[i];
+      arr[i] = 0, used[i] = 0;
     }
   }
   cout << ans;
