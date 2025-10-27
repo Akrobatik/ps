@@ -1,9 +1,7 @@
 // Title : 월향 수목원
 // Link  : https://www.acmicpc.net/problem/34662 
-// Time  : 1916 ms
-// Memory: 314552 KB
-
-#pragma GCC optimize("O3")
+// Time  : 1836 ms
+// Memory: 254824 KB
 
 #include <bits/stdc++.h>
 
@@ -68,46 +66,50 @@ int main() {
     for (auto& i : views::reverse(g)) {
       if (out[i] < t) swap(i, g.back()), g.pop_back();
     }
-    if (g.empty()) continue;
 
-    ans = t;
-    cnt += g.size();
+    if (!g.empty()) {
+      ans = t;
+      cnt += g.size();
 
-    tmp.clear();
-    for (auto i : g) {
-      Merge(i);
-      Union(i, i + 1);
-      auto [l, r] = lr[i];
-      arr[l] += add[i], arr[r + 1] -= add[i];
-      if (!used[l]) used[l] = 1, tmp.push_back(l);
-      if (!used[r + 1]) used[r + 1] = 1, tmp.push_back(r + 1);
-    }
-    sort(tmp.begin(), tmp.end());
-
-    int64_t acc = 0, p = 0;
-    for (auto i : tmp) {
-      if (acc == 0) {
-        p = Find(i);
-      } else {
-        while (p < i) {
-          int dt = t - time[p];
-          rem[p] -= cut[p] * dt;
-          cut[p] += acc;
-          time[p] = t;
-
-          int extra = (rem[p] + cut[p] - 1) / cut[p];
-          int old = out[p], cur = t + extra;
-          if (cur < old) {
-            out[p] = cur;
-            group[cur].push_back(p);
-          }
-
-          p = link[p].second;
-        }
+      tmp.clear();
+      for (auto i : g) {
+        Merge(i);
+        Union(i, i + 1);
+        auto [l, r] = lr[i];
+        arr[l] += add[i], arr[r + 1] -= add[i];
+        if (!used[l]) used[l] = 1, tmp.push_back(l);
+        if (!used[r + 1]) used[r + 1] = 1, tmp.push_back(r + 1);
       }
-      acc += arr[i];
-      arr[i] = 0, used[i] = 0;
+      sort(tmp.begin(), tmp.end());
+
+      int64_t acc = 0, p = 0;
+      for (auto i : tmp) {
+        if (acc == 0) {
+          p = Find(i);
+        } else {
+          while (p < i) {
+            int dt = t - time[p];
+            rem[p] -= cut[p] * dt;
+            cut[p] += acc;
+            time[p] = t;
+
+            int extra = (rem[p] + cut[p] - 1) / cut[p];
+            int old = out[p], cur = t + extra;
+            if (cur < old) {
+              out[p] = cur;
+              group[cur].push_back(p);
+            }
+
+            p = link[p].second;
+          }
+        }
+        acc += arr[i];
+        arr[i] = 0, used[i] = 0;
+      }
     }
+
+    g.clear();
+    g.shrink_to_fit();
   }
   cout << ans;
 
