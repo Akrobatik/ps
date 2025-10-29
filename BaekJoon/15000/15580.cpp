@@ -1,7 +1,7 @@
 // Title : Clickbait
 // Link  : https://www.acmicpc.net/problem/15580 
 // Time  : 12 ms
-// Memory: 8200 KB
+// Memory: 8196 KB
 
 #include <bits/stdc++.h>
 
@@ -69,8 +69,7 @@ int main() {
 
   vector<vector<int>> g(maxx + 1);
   for (int i = 1; i <= maxx; i++) {
-    sort(units[i].begin(), units[i].end(), greater<pair<int, int>>());
-    for (auto [y, x] : units[i]) {
+    for (auto [y, x] : views::reverse(units[i])) {
       for (int dx : {-2, 2}) {
         int yy = y, xx = x + dx;
         if (0 <= xx && xx < m && board[yy][xx] == '-') {
