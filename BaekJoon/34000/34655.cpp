@@ -1,7 +1,7 @@
 // Title : Halcyon
 // Link  : https://www.acmicpc.net/problem/34655 
-// Time  : 5220 ms
-// Memory: 36072 KB
+// Time  : 1560 ms
+// Memory: 32312 KB
 
 #include <bits/stdc++.h>
 
@@ -245,36 +245,27 @@ int main() {
     lct.Link(idx, bv);
   }
 
-  priority_queue<tup, vector<tup>, greater<tup>> pq;
+  sort(arr.begin() + 1, arr.end(), [&](const tup& lhs, const tup& rhs) {
+    return get<2>(lhs) < get<2>(rhs);
+  });
+
+  vector<int> dt(n);
   for (int i = 1; i < n; i++) {
     auto [au, av, aw] = arr[i];
     auto [mw, mi] = lct.Query(au, av);
-    pq.push({aw - mw, i, mi});
+    auto [bu, bv, bw] = brr[mi];
+    int idx = mi + n;
+    lct.Cut(bu, idx);
+    lct.Cut(idx, bv);
+    lct.Link(au, av);
+    dt[i] = aw - mw;
   }
+  sort(dt.begin() + 1, dt.end());
 
   cout << sum << "\n";
   for (int i = 1; i < n; i++) {
-    while (!pq.empty()) {
-      auto [dt, ai, bi] = pq.top();
-      pq.pop();
-
-      auto [au, av, aw] = arr[ai];
-      auto [mw, mi] = lct.Query(au, av);
-      if (mi != bi) {
-        pq.push({aw - mw, ai, mi});
-        continue;
-      }
-
-      auto [bu, bv, bw] = brr[bi];
-      int idx = bi + n;
-      lct.Cut(bu, idx);
-      lct.Cut(idx, bv);
-      lct.Link(au, av);
-
-      sum += dt;
-      cout << sum << "\n";
-      break;
-    }
+    sum += dt[i];
+    cout << sum << "\n";
   }
 
   return 0;
