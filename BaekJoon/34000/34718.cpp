@@ -1,6 +1,6 @@
 // Title : 불 뿌리기
 // Link  : https://www.acmicpc.net/problem/34718 
-// Time  : 1352 ms
+// Time  : 1228 ms
 // Memory: 108772 KB
 
 #include <bits/stdc++.h>
@@ -105,7 +105,12 @@ int main() {
   auto Push = [&](int i, int d, int r) {
     auto& mp = memo[i];
     auto it = mp.lower_bound(d);
-    if (it != mp.end() && it->second >= r) return false;
+    if (it != mp.end() && it->second >= r) {
+      if (it->second >= r) return false;
+      int dt = r - it->second;
+      int rd = d - dt * k;
+      if (rd >= it->first) return false;
+    }
 
     while (it != mp.begin() && prev(it)->second <= r) it = mp.erase(prev(it));
     mp[d] = r;
