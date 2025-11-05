@@ -1,7 +1,7 @@
 // Title : 불 뿌리기
 // Link  : https://www.acmicpc.net/problem/34718 
-// Time  : 1704 ms
-// Memory: 108756 KB
+// Time  : 1352 ms
+// Memory: 108772 KB
 
 #include <bits/stdc++.h>
 
@@ -93,6 +93,12 @@ int main() {
       arr.push_back({t, u, ru});
     }
   }
+  sort(arr.begin(), arr.end(), [&](const tup& lhs, const tup& rhs) {
+    auto [lt, lr, lx] = lhs;
+    auto [rt, rr, rx] = rhs;
+    return lt < rt || (lt == rt && lr > rr);
+  });
+  arr.erase(unique(arr.begin(), arr.end()), arr.end());
 
   vector<map<int, int, greater<int>>> memo(n + 1);
 
