@@ -1,6 +1,6 @@
 // Title : 불 뿌리기
 // Link  : https://www.acmicpc.net/problem/34718 
-// Time  : 964 ms
+// Time  : 884 ms
 // Memory: 74472 KB
 
 #include <bits/stdc++.h>
@@ -118,7 +118,6 @@ int main() {
       int dr = r - jt->second;
       if (dt > dr * k) break;
       it = mp.erase(jt);
-      dt > dr* k;
     }
     mp[d] = r;
     return true;
