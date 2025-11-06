@@ -1,7 +1,7 @@
 // Title : 불 뿌리기
 // Link  : https://www.acmicpc.net/problem/34718 
-// Time  : 1228 ms
-// Memory: 108772 KB
+// Time  : 964 ms
+// Memory: 74472 KB
 
 #include <bits/stdc++.h>
 
@@ -112,7 +112,14 @@ int main() {
       if (rd >= it->first) return false;
     }
 
-    while (it != mp.begin() && prev(it)->second <= r) it = mp.erase(prev(it));
+    while (it != mp.begin()) {
+      auto jt = prev(it);
+      int dt = d - jt->first;
+      int dr = r - jt->second;
+      if (dt > dr * k) break;
+      it = mp.erase(jt);
+      dt > dr* k;
+    }
     mp[d] = r;
     return true;
   };
