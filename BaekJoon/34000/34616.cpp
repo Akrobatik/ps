@@ -1,6 +1,6 @@
 // Title : Hoven
 // Link  : https://www.acmicpc.net/problem/34616 
-// Time  : 392 ms
+// Time  : 396 ms
 // Memory: 18276 KB
 
 #include <bits/stdc++.h>
@@ -76,7 +76,7 @@ int main() {
     for (auto e : views::reverse(ans)) cout << e << " ";
   };
 
-  int64_t lo = -1, hi = n;
+  int64_t lo = 0, hi = n;
   while (lo + 1 < hi) {
     int64_t mid = (lo + hi) >> 1;
     if (Calc(mid) > k) {
