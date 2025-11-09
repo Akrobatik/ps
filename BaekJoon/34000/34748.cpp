@@ -1,7 +1,7 @@
 // Title : K Network Stations
 // Link  : https://www.acmicpc.net/problem/34748 
-// Time  : 48 ms
-// Memory: 14432 KB
+// Time  : 44 ms
+// Memory: 10948 KB
 
 #include <bits/stdc++.h>
 
@@ -24,45 +24,32 @@ int main() {
 
   if (k == 1) {
     int64_t all = 0;
-    vector<int64_t> cnt(n + 1), sum(n + 1);
-
-    [&](this auto&& self, int cur, int par) -> void {
-      cnt[cur] = 1;
+    [&](this auto&& self, int cur, int par) -> int {
+      int res = 1;
       for (auto [nxt, w] : g[cur]) {
         if (nxt == par) continue;
-        self(nxt, cur);
-        cnt[cur] += cnt[nxt];
-        sum[cur] += sum[nxt] + cnt[nxt] * w;
-        all += cnt[nxt] * (n - cnt[nxt]) * w;
+        int val = self(nxt, cur);
+        all += (int64_t)val * (n - val) * w;
+        res += val;
       }
+      return res;
     }(1, 0);
 
     cout << all;
   } else {
-    vector<int64_t> cnt(n + 1), sum(n + 1);
-    [&](this auto&& self, int cur, int par) -> void {
-      cnt[cur] = 1;
+    int64_t maxx = 0, mu, mv, cu, cv;
+    [&](this auto&& self, int cur, int par) -> int {
+      int res = 1;
       for (auto [nxt, w] : g[cur]) {
         if (nxt == par) continue;
-        self(nxt, cur);
-        cnt[cur] += cnt[nxt];
-        sum[cur] += sum[nxt] + cnt[nxt] * w;
-      }
-    }(1, 0);
+        int val = self(nxt, cur);
 
-    int64_t maxx = 0, mu, mv;
-    [&](this auto&& self, int cur, int par) -> void {
-      for (auto [nxt, w] : g[cur]) {
-        if (nxt == par) continue;
-        self(nxt, cur);
-        int64_t lv = sum[nxt] + cnt[nxt] * w;
-        int64_t rv = sum[cur] - lv;
-        int64_t lrv = lv * rv;
-        if (maxx < lrv) maxx = lrv, mu = nxt, mv = cur;
+        int64_t lrv = (int64_t)val * (n - val) * w;
+        if (maxx < lrv) maxx = lrv, mu = nxt, mv = cur, cu = val, cv = n - val;
+        res += val;
       }
+      return res;
     }(1, 0);
-
-    int64_t cu = cnt[mu], cv = n - cu;
 
     auto Calc = [&](this auto&& self, int u, int p, int s) -> int {
       int64_t all = 0;
