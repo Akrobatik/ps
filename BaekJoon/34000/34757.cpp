@@ -1,7 +1,7 @@
 // Title : 제설 작업
 // Link  : https://www.acmicpc.net/problem/34757 
-// Time  : 1220 ms
-// Memory: 23152 KB
+// Time  : 888 ms
+// Memory: 47428 KB
 
 #include <bits/stdc++.h>
 
@@ -127,29 +127,28 @@ int main() {
   vector<tup> qr(q);
   for (auto& [l, r, t] : qr) cin >> l >> r >> t;
 
-  vector<pair<int, int>> cands;
-  vector<int> lo(q, 0), hi(q, m + 1);
+  vector<vector<int>> cands(m + 1);
+  vector<int> lo(q, 0), hi(q, m + 1), used;
   for (;;) {
-    cands.clear();
     for (int i = 0; i < q; i++) {
       if (lo[i] + 1 < hi[i]) {
         int mid = (lo[i] + hi[i]) >> 1;
-        cands.push_back({mid, i});
+        cands[mid].push_back(i);
       }
     }
-    if (cands.empty()) break;
-    sort(cands.begin(), cands.end());
+
+    used.clear();
+    for (int i = 1; i <= m; i++) {
+      if (cands[i].empty()) continue;
+      used.push_back(i);
+    }
+    if (used.empty()) break;
 
     Init();
-
-    int prv = 0, idx = 0, nc = cands.size();
-    while (idx < nc) {
-      int val = cands[idx].first, nxt = idx;
-      while (nxt < nc && cands[nxt].first == val) ++nxt;
+    int prv = 0;
+    for (auto val : used) {
       Build(prv, val);
-
-      for (int i = idx; i < nxt; i++) {
-        int qi = cands[i].second;
+      for (auto qi : cands[val]) {
         auto [l, r, t] = qr[qi];
         int64_t sum = seg.Query(l, r);
         if (sum >= t) {
@@ -158,8 +157,8 @@ int main() {
           lo[qi] = val;
         }
       }
-
-      prv = val, idx = nxt;
+      cands[val].clear();
+      prv = val;
     }
   }
 
