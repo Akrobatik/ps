@@ -24,8 +24,6 @@ int main() {
   int64_t ans = 0;
   for (auto [u, v] : adj) {
     int64_t uc = cnt[u], vc = cnt[v];
-    if (min<int64_t>(uc, vc) < 3) continue;
-
     int64_t ux = (uc - 1) * (uc - 2) / 2;
     int64_t vx = (vc - 1) * (vc - 2) / 2;
     ans += ux * vx;
