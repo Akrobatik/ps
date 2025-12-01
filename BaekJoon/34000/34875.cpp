@@ -1,7 +1,7 @@
 // Title : 자벌레 세기
 // Link  : https://www.acmicpc.net/problem/34875 
-// Time  : 136 ms
-// Memory: 20668 KB
+// Time  : 60 ms
+// Memory: 5536 KB
 
 #include <bits/stdc++.h>
 
@@ -14,29 +14,23 @@ int main() {
   int n;
   cin >> n;
 
-  vector<vector<int>> g(n + 1);
-  for (int i = 1; i < n; i++) {
-    int u, v;
+  vector<int> cnt(n + 1);
+  vector<pair<int, int>> adj(n - 1);
+  for (auto& [u, v] : adj) {
     cin >> u >> v;
-    g[u].push_back(v);
-    g[v].push_back(u);
+    ++cnt[u], ++cnt[v];
   }
 
-  int64_t cnt = 0;
-  for (int u = 1; u <= n; u++) {
-    int64_t uc = g[u].size();
-    if (uc < 3) continue;
+  int64_t ans = 0;
+  for (auto [u, v] : adj) {
+    int64_t uc = cnt[u], vc = cnt[v];
+    if (min<int64_t>(uc, vc) < 3) continue;
 
     int64_t ux = (uc - 1) * (uc - 2) / 2;
-    for (auto v : g[u]) {
-      int64_t vc = g[v].size();
-      if (vc < 3) continue;
-
-      int64_t vx = (vc - 1) * (vc - 2) / 2;
-      cnt += ux * vx;
-    }
+    int64_t vx = (vc - 1) * (vc - 2) / 2;
+    ans += ux * vx;
   }
-  cout << cnt / 2;
+  cout << ans;
 
   return 0;
 }
