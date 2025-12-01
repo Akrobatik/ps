@@ -1,6 +1,6 @@
 // Title : 사탕 나눠주기
 // Link  : https://www.acmicpc.net/problem/34873 
-// Time  : 36 ms
+// Time  : 20 ms
 // Memory: 2804 KB
 
 #include <bits/stdc++.h>
@@ -15,16 +15,12 @@ int main() {
   cin >> n;
   int m = n << 1;
 
-  vector<int> arr(m);
-  for (auto& e : arr) cin >> e;
-  sort(arr.begin(), arr.end());
-
+  vector<int> cnt(m + 1);
   bool ok = true;
-  int idx = 0;
-  while (idx < m) {
-    int val = arr[idx], nxt = idx;
-    while (nxt < m && val == arr[nxt]) ++nxt;
-    ok &= (nxt - idx <= 2), idx = nxt;
+  for (int i = 0; ok && i < m; i++) {
+    int x;
+    cin >> x;
+    ok = (++cnt[x] <= 2);
   }
   cout << (ok ? "Yes" : "No");
 
