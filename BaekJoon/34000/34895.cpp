@@ -1,13 +1,13 @@
 // Title : 이진수 MEX
 // Link  : https://www.acmicpc.net/problem/34895 
-// Time  : 28 ms
-// Memory: 35416 KB
+// Time  : 8 ms
+// Memory: 6744 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-constexpr int kMax = 25;
+constexpr int kMax = 22;
 bool mask[1 << kMax];
 
 int main() {
