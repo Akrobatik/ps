@@ -1,7 +1,7 @@
 // Title : 포스택
 // Link  : https://www.acmicpc.net/problem/25556 
-// Time  : 216 ms
-// Memory: 8760 KB
+// Time  : 12 ms
+// Memory: 2020 KB
 
 #include <bits/stdc++.h>
 
@@ -11,41 +11,22 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  map<int64_t, int64_t> memo[4];
-  int64_t sum = 0, all = 0;
+  vector<int> memo;
 
   int n;
   cin >> n;
   while (n--) {
-    int64_t x;
+    int x;
     cin >> x;
-
-    all += x;
-
-    queue<pair<int64_t, int64_t>> q;
-    q.push({x, x});
-    for (int i = 0; !q.empty() && i < 4; i++) {
-      int nq = q.size();
-      while (nq--) {
-        auto [v, r] = q.front();
-        q.pop();
-
-        int64_t rem = r;
-        auto it = memo[i].upper_bound(v);
-        while (rem && it != memo[i].end()) {
-          int64_t cut = min<int64_t>(rem, it->second);
-          sum -= cut, rem -= cut;
-          q.push({it->first, cut});
-          if ((it->second -= cut) == 0) it = memo[i].erase(it);
-        }
-
-        memo[i][v] += r;
-        sum += r;
-      }
+    auto it = lower_bound(memo.begin(), memo.end(), x, greater<int>());
+    if (it != memo.end()) {
+      *it = x;
+    } else {
+      memo.push_back(x);
     }
   }
 
-  cout << (sum == all ? "YES" : "NO");
+  cout << (memo.size() <= 4 ? "YES" : "NO");
 
   return 0;
 }
