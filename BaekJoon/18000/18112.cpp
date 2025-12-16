@@ -1,7 +1,7 @@
 // Title : 이진수 게임
 // Link  : https://www.acmicpc.net/problem/18112 
-// Time  : 40 ms
-// Memory: 6784 KB
+// Time  : 0 ms
+// Memory: 2024 KB
 
 #include <bits/stdc++.h>
 
@@ -17,11 +17,11 @@ int main() {
   int v1 = stoi(s1, 0, 2);
   int v2 = stoi(s2, 0, 2);
 
-  vector<int> memo(1 << 20, -1);
+  vector<int> memo(1 << 10, -1);
   queue<int> q;
 
   auto Push = [&](int x, int v) {
-    if (!(0 <= x && x < (1 << 20))) return;
+    if (!(0 <= x && x < (1 << 10))) return;
     if (memo[x] != -1) return;
     memo[x] = v;
     q.push(x);
