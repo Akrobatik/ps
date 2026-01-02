@@ -1,40 +1,81 @@
 // Title : 백설공주와 난쟁이
 // Link  : https://www.acmicpc.net/problem/2912 
-// Time  : 40 ms
-// Memory: 12784 KB
+// Time  : 44 ms
+// Memory: 12792 KB
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-constexpr int kMax = 1 << 19;
-
-pair<int, int> tree[kMax << 1];
-
-pair<int, int> Merge(const pair<int, int>& lhs, const pair<int, int>& rhs) {
-  int mx, mc;
-  auto [lx, lc] = lhs;
-  auto [rx, rc] = rhs;
-  if (lx == rx) {
-    mx = lx, mc = lc + rc;
-  } else if (lc > rc) {
-    mx = lx, mc = lc - rc;
-  } else if (lc < rc) {
-    mx = rx, mc = rc - lc;
-  } else {
-    mx = mc = 0;
+// https://github.com/Akrobatik/ps/blob/main/template/segment_tree.cpp
+template <typename V, typename OP>
+  requires requires(V a, V b) {
+    { OP{}(a, b) } -> convertible_to<V>;
   }
-  return {mx, mc};
-}
-
-int Query(int l, int r) {
-  pair<int, int> res{};
-  for (l += kMax, r += kMax + 1; l < r; l >>= 1, r >>= 1) {
-    if (l & 1) res = Merge(res, tree[l++]);
-    if (r & 1) res = Merge(res, tree[--r]);
+struct SegTree {
+  void Init(int n, const V& ival) {
+    nmax = bit_ceil((uint32_t)n);
+    iv = ival;
+    tree.assign(nmax << 1, iv);
   }
-  return res.first;
-}
+
+  void Set(int idx, const V& val) {
+    tree[idx + nmax] = val;
+  }
+
+  void Build() {
+    for (int i = nmax - 1; i > 0; i--) {
+      tree[i] = OP{}(tree[i << 1], tree[i << 1 | 1]);
+    }
+  }
+
+  void Update(int idx, const V& val) {
+    int node = idx + nmax;
+    tree[node] = val;
+    while (node >>= 1) {
+      tree[node] = OP{}(tree[node << 1], tree[node << 1 | 1]);
+    }
+  }
+
+  V Query(int idx) const {
+    return tree[idx + nmax];
+  }
+
+  V Query(int l, int r) const {
+    V lv = iv, rv = iv;
+    for (l += nmax, r += nmax + 1; l < r; l >>= 1, r >>= 1) {
+      if (l & 1) lv = OP{}(lv, tree[l++]);
+      if (r & 1) rv = OP{}(tree[--r], rv);
+    }
+    return OP{}(lv, rv);
+  }
+
+ private:
+  int nmax;
+  V iv;
+  vector<V> tree;
+};
+
+struct Node {
+  Node() : val(0), cnt(0) {}
+  Node(int v, int c) : val(v), cnt(c) {}
+
+  int val, cnt;
+};
+
+struct FOp {
+  Node operator()(const Node& a, const Node& b) const {
+    Node res;
+    if (a.val == b.val) {
+      res = {a.val, a.cnt + b.cnt};
+    } else if (a.cnt > b.cnt) {
+      res = {a.val, a.cnt - b.cnt};
+    } else if (a.cnt < b.cnt) {
+      res = {b.val, b.cnt - a.cnt};
+    }
+    return res;
+  }
+};
 
 int main() {
   ios::sync_with_stdio(false);
@@ -42,28 +83,29 @@ int main() {
 
   int n, c;
   cin >> n >> c;
+
+  SegTree<Node, FOp> seg;
+  seg.Init(n + 1, Node());
   vector<vector<int>> memo(c + 1);
-  for (int i = 0; i < n; i++) {
+  for (int i = 1; i <= n; i++) {
     int x;
     cin >> x;
-    tree[i + kMax] = {x, 1};
+    seg.Set(i, {x, 1});
     memo[x].push_back(i);
   }
+  seg.Build();
 
   auto Count = [&](int l, int r, int x) {
     return upper_bound(memo[x].begin(), memo[x].end(), r) - lower_bound(memo[x].begin(), memo[x].end(), l);
   };
-
-  int idx = (kMax + n + 2) >> 1;
-  while (--idx) tree[idx] = Merge(tree[idx << 1], tree[(idx << 1) + 1]);
 
   int m;
   cin >> m;
   while (m--) {
     int l, r;
     cin >> l >> r;
-    int x = Query(l - 1, r - 1);
-    if (x && ((r - l + 1) >> 1) < Count(l - 1, r - 1, x)) {
+    int x = seg.Query(l, r).val;
+    if (x && ((r - l + 1) >> 1) < Count(l, r, x)) {
       cout << "yes " << x << "\n";
     } else {
       cout << "no\n";
