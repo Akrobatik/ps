@@ -1,7 +1,7 @@
 // Title : 테트로미노 (2)
 // Link  : https://www.acmicpc.net/problem/15660 
-// Time  : 1224 ms
-// Memory: 373644 KB
+// Time  : 828 ms
+// Memory: 224136 KB
 
 #include <bits/stdc++.h>
 
@@ -100,56 +100,43 @@ int main() {
     return true;
   };
 
-  vector<Block> cands;
-  for (auto& block : kBlocks) {
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < m; j++) {
-        if (Check(i, j, block)) {
-          Block b = block;
-          for (auto& [y, x] : b) y += i, x += j;
-          cands.push_back(b);
-        }
-      }
-    }
-  }
-
   auto Calc = [&](const Block& block) {
     int res = 0;
     for (auto [y, x] : block) res += mat[y][x];
     return res;
   };
 
-  priority_queue<pair<int, Block>, vector<pair<int, Block>>, less<pair<int, Block>>> pq;
-  for (auto& block : cands) {
-    pq.push({Calc(block), block});
+  vector<pair<int, Block>> cands;
+  for (auto& block : kBlocks) {
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < m; j++) {
+        if (Check(i, j, block)) {
+          Block b = block;
+          for (auto& [y, x] : b) y += i, x += j;
+          cands.push_back({Calc(b), b});
+        }
+      }
+    }
   }
+  sort(cands.begin(), cands.end(), greater<pair<int, Block>>());
 
-  int maxx = 0;
+  int maxx = 0, nc = cands.size();
   vector<vector<int8_t>> vis(n, vector<int8_t>(m));
-  vector<pair<int, Block>> tmp;
-  for (auto& block : cands) {
-    int cur = Calc(block);
-    for (auto [y, x] : block) vis[y][x] = 1;
-    while (!pq.empty()) {
-      auto elem = pq.top();
-      pq.pop();
-
-      tmp.push_back(elem);
-
+  for (int i = 0; i < nc; i++) {
+    int cur = cands[i].first;
+    for (auto [y, x] : cands[i].second) vis[y][x] = 1;
+    for (int j = i + 1; j < nc && cur + cands[j].first > maxx; j++) {
       bool ok = true;
-      for (auto [y, x] : elem.second) {
+      for (auto [y, x] : cands[j].second) {
         ok &= (vis[y][x] == 0);
       }
 
       if (ok) {
-        maxx = max<int>(maxx, cur + elem.first);
+        maxx = cur + cands[j].first;
         break;
       }
     }
-    for (auto& e : tmp) pq.push(e);
-    tmp.clear();
-
-    for (auto [y, x] : block) vis[y][x] = 0;
+    for (auto [y, x] : cands[i].second) vis[y][x] = 0;
   }
   cout << maxx;
 
