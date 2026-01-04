@@ -1,7 +1,7 @@
 // Title : 수열과 쿼리 1.5
 // Link  : https://www.acmicpc.net/problem/17410 
-// Time  : 1412 ms
-// Memory: 44272 KB
+// Time  : 460 ms
+// Memory: 15348 KB
 
 #include <bits/stdc++.h>
 
@@ -74,17 +74,15 @@ int main() {
   vector<int> arr(n);
   for (auto& e : arr) cin >> e;
 
-  int s = sqrt(n) + 1;
+  int bs = 1 << 10;
+  int s = (n + bs - 1) / bs;
   vector<SegTree<Node, FOp>> bkts(s);
   for (auto& seg : bkts) seg.Init(10001, 0);
-
   for (int i = 0; i < n; i++) {
-    auto& seg = bkts[i / s];
+    auto& seg = bkts[i / bs];
     seg.Set(arr[i], seg.Query(arr[i]) + 1);
   }
-  for (int i = 0; i < s; i++) {
-    bkts[i].Build();
-  }
+  for (auto& seg : bkts) seg.Build();
 
   int m;
   cin >> m;
@@ -95,7 +93,7 @@ int main() {
       int i, v;
       cin >> i >> v, --i;
 
-      auto& seg = bkts[i / s];
+      auto& seg = bkts[i / bs];
       seg.Update(arr[i], seg.Query(arr[i]) - 1);
       seg.Update(v, seg.Query(v) + 1);
       arr[i] = v;
@@ -103,9 +101,9 @@ int main() {
       int i, j, k;
       cin >> i >> j >> k, --i, --j;
 
-      int cnt = 0, lb = i / s, ub = j / s;
+      int cnt = 0, lb = i / bs, ub = j / bs;
       for (int b = lb; b <= ub; b++) {
-        int st = b * s, en = st + s - 1;
+        int st = b * bs, en = st + bs - 1;
         if (i <= st && en <= j) {
           cnt += bkts[b].Query(k + 1, 10000);
         } else {
