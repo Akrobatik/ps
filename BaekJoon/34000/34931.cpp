@@ -21,32 +21,17 @@ int main() {
     while (nxt < n && key == s[nxt]) ++nxt, key ^= 3;
 
     int cnt = nxt - idx;
-    if (cnt & 1) {
-      int half = (cnt + 1) >> 1;
-      int ub = min<int>(half, t + 1);
-      key = s[idx];
-      for (int i = 0; i < ub; i++) {
-        s[idx + i] = key;
-        s[nxt - i - 1] = key;
-      }
-      for (int i = ub; i < half; i++) {
-        key ^= 3;
-        s[idx + i] = key;
-        s[nxt - i - 1] = key;
-      }
-    } else {
-      int half = cnt >> 1;
-      int ub = min<int>(half, t + 1);
-      key = s[idx];
-      for (int i = 0; i < ub; i++) {
-        s[idx + i] = key;
-        s[nxt - i - 1] = key ^ 3;
-      }
-      for (int i = ub; i < half; i++) {
-        key ^= 3;
-        s[idx + i] = key;
-        s[nxt - i - 1] = key ^ 3;
-      }
+    int half = (cnt + 1) >> 1;
+    int ub = min<int>(half, t + 1);
+    int akey = s[idx], bkey = (cnt & 1) ? 0 : 3;
+    for (int i = 0; i < ub; i++) {
+      s[idx + i] = akey;
+      s[nxt - i - 1] = akey ^ bkey;
+    }
+    for (int i = ub; i < half; i++) {
+      akey ^= 3;
+      s[idx + i] = akey;
+      s[nxt - i - 1] = akey ^ bkey;
     }
     idx = nxt;
   }
