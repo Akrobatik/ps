@@ -1,7 +1,7 @@
 // Title : ProblemSolving이 아니에요
 // Link  : https://www.acmicpc.net/problem/35154 
-// Time  : 104 ms
-// Memory: 124160 KB
+// Time  : 0 ms
+// Memory: 2180 KB
 
 #include <bits/stdc++.h>
 
@@ -113,36 +113,30 @@ constexpr int kMod = 998244353;
 using ModInt = ModInt32<kMod>;
 
 constexpr int kMax = 5000;
-
-bool ok[kMax + 1][kMax + 1];
-ModInt memo[kMax + 1][kMax + 1];
-ModInt ans[kMax + 1];
+ModInt memo[kMax + 1];
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  memo[0][0] = 1;
-  ok[0][0] = true;
+  vector<ModInt> fact(kMax + 1), ifac(kMax + 1);
+  fact[0] = 1;
+  for (int i = 1; i <= kMax; i++) fact[i] = fact[i - 1] * i;
+  ifac[kMax] = fact[kMax].Inv();
+  for (int i = kMax; i > 0; i--) ifac[i - 1] = ifac[i] * i;
+
+  auto Comb = [&](int a, int b) {
+    if (b < 0 || a < b) return ModInt();
+    return fact[a] * ifac[b] * ifac[a - b];
+  };
+
+  memo[0] = 1;
   for (int i = 0; i < kMax; i++) {
-    for (int j = 0; j <= kMax; j++) {
-      if (!ok[i][j]) continue;
-
-      if (i + 2 <= kMax) {
-        memo[i + 2][j + 1] += memo[i][j];
-        ok[i + 2][j + 1] = true;
-      }
-      if (j) {
-        memo[i + 1][j - 1] += memo[i][j];
-        ok[i + 1][j - 1] = true;
-      }
-    }
-  }
-
-  for (int i = 2; i <= kMax; i++) {
-    for (int j = 0; j <= kMax; j++) {
-      if (!ok[i][j]) continue;
-      ans[i] += memo[i][j];
+    if (i + 2 <= kMax) memo[i + 2] += memo[i];
+    memo[i + 1] += memo[i];
+    if (i % 3 == 0) {
+      int x = i / 3;
+      memo[i + 1] -= Comb(x + x, x) - Comb(x + x, x - 1);
     }
   }
 
@@ -151,7 +145,7 @@ int main() {
   while (t--) {
     int n;
     cin >> n;
-    cout << (n == 1 ? -1 : ans[n].val) << "\n";
+    cout << (n == 1 ? -1 : memo[n].val) << "\n";
   }
 
   return 0;
