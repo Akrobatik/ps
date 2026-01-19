@@ -1,0 +1,255 @@
+// Title : $151$
+// Link  : https://www.acmicpc.net/problem/35148 
+// Time  : 2552 ms
+// Memory: 14284 KB
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// https://github.com/Akrobatik/ps/blob/main/template/modint.cpp
+template <int32_t MOD>
+struct ModInt32 {
+  using CT = conditional_t<MOD <= numeric_limits<int32_t>::max() / 2, int32_t, int64_t>;
+
+  constexpr ModInt32() : val(0) {}
+  constexpr ModInt32(int32_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
+  constexpr ModInt32(int64_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
+  constexpr ModInt32(__int128_t x) : val((x %= MOD) < 0 ? x + MOD : x) {}
+
+  constexpr ModInt32 Pow(int64_t exp) const {
+    int64_t n = val, x = 1;
+    while (exp) {
+      if (exp & 1) x = x * n % MOD;
+      n = n * n % MOD;
+      exp >>= 1;
+    }
+
+    ModInt32 res;
+    res.val = x;
+    return res;
+  }
+
+  constexpr ModInt32 Inv() const {
+    return Pow(MOD - 2);
+  }
+
+  constexpr ModInt32& operator++() {
+    if (++val == MOD) val = 0;
+    return *this;
+  }
+
+  constexpr ModInt32 operator++(int) {
+    ModInt32 tmp(*this);
+    operator++();
+    return tmp;
+  }
+
+  constexpr ModInt32& operator+=(const ModInt32& other) {
+    CT x = (CT)val + other.val;
+    if (x >= MOD) x -= MOD;
+    val = x;
+    return *this;
+  }
+
+  constexpr ModInt32& operator-=(const ModInt32& other) {
+    CT x = (CT)val + (MOD - other.val);
+    if (x >= MOD) x -= MOD;
+    val = x;
+    return *this;
+  }
+
+  constexpr ModInt32& operator*=(const ModInt32& other) {
+    val = (int64_t)val * other.val % MOD;
+    return *this;
+  }
+
+  constexpr ModInt32& operator/=(const ModInt32& other) {
+    *this *= other.Inv();
+    return *this;
+  }
+
+  constexpr ModInt32 operator-() const {
+    ModInt32 res;
+    if (val) res.val = MOD - val;
+    return res;
+  }
+
+  constexpr ModInt32 operator+(const ModInt32& rhs) const {
+    return ModInt32(*this) += rhs;
+  }
+
+  constexpr ModInt32 operator-(const ModInt32& rhs) const {
+    return ModInt32(*this) -= rhs;
+  }
+
+  constexpr ModInt32 operator*(const ModInt32& rhs) const {
+    return ModInt32(*this) *= rhs;
+  }
+
+  constexpr ModInt32 operator/(const ModInt32& rhs) const {
+    return ModInt32(*this) /= rhs;
+  }
+
+  constexpr bool operator!() const {
+    return val == 0;
+  }
+
+  friend istream& operator>>(istream& is, ModInt32& num) {
+    is >> num.val;
+    if ((num.val %= MOD) < 0) num.val += MOD;
+    return is;
+  }
+
+  friend ostream& operator<<(ostream& os, const ModInt32& num) {
+    os << num.val;
+    return os;
+  }
+
+  int32_t val;
+};
+
+template <int32_t MOD1, int32_t BASE1, int32_t MOD2, int32_t BASE2>
+struct PolyHash {
+  using M1 = ModInt32<MOD1>;
+  using M2 = ModInt32<MOD2>;
+
+  PolyHash() : b1(BASE1), b2(BASE2), p1{1}, p2{1}, r1{1}, r2{1}, h1{0}, h2{0} {}
+
+  void Init(string_view sv) {
+    n = sv.size();
+    int old = p1.size();
+    p1.resize(n + 1), p2.resize(n + 1);
+    for (int i = old; i <= n; i++) {
+      p1[i] = p1[i - 1] * b1;
+      p2[i] = p2[i - 1] * b2;
+    }
+
+    r1.resize(n + 1), r2.resize(n + 1);
+    r1[n] = p1[n].Inv(), r2[n] = p2[n].Inv();
+    for (int i = n - 1; i >= old; i--) {
+      r1[i] = r1[i + 1] * b1;
+      r2[i] = r2[i + 1] * b2;
+    }
+
+    h1.resize(n + 1), h2.resize(n + 1);
+    for (int i = 0; i < n; i++) {
+      int x = (int)sv[i] + 1;
+      h1[i + 1] = h1[i] + p1[i] * x;
+      h2[i + 1] = h2[i] + p2[i] * x;
+    }
+  }
+
+  bool Match(int i, int j, int len) {
+    if (i + len > n || j + len > n) return false;
+    return GetHash(i, len) == GetHash(j, len);
+  }
+
+  int64_t GetHash(string_view sv) {
+    int len = sv.size();
+    if (len > n) return -1;
+
+    M1 x1 = 0;
+    M2 x2 = 0;
+    for (int i = 0; i < len; i++) {
+      int x = (int)sv[i] + 1;
+      x1 += p1[i] * x;
+      x2 += p2[i] * x;
+    }
+    return (((int64_t)x1.val) << 32) | x2.val;
+  }
+
+  int64_t GetHash(int i, int len) {
+    if (i + len > n) return -1;
+    M1 x1 = h1[i + len] - h1[i];
+    M2 x2 = h2[i + len] - h2[i];
+    x1 *= r1[i];
+    x2 *= r2[i];
+    return (((int64_t)x1.val) << 32) | x2.val;
+  }
+
+ private:
+  int n;
+  M1 b1;
+  M2 b2;
+  vector<M1> p1, h1, r1;
+  vector<M2> p2, h2, r2;
+};
+
+constexpr int kMod1 = 1e9 + 7;
+constexpr int kBase1 = 337;
+constexpr int kMod2 = 1e9 + 9;
+constexpr int kBase2 = 331;
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n, m;
+  cin >> n >> m;
+
+  int nm = n * m;
+  string s1(nm, '\0'), s2(nm, '\0');
+  int idx = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      char c;
+      cin >> c;
+      switch (c) {
+        case '0':
+        case '1':
+        case '2':
+        case '5':
+        case '8': {
+          s1[idx] = c;
+          s2[nm - idx - 1] = c;
+        } break;
+
+        case '6':
+        case '9': {
+          s1[idx] = c;
+          s2[nm - idx - 1] = c ^ 15;
+        } break;
+
+        default: {
+          s1[idx] = 'X';
+          s2[nm - idx - 1] = 'Y';
+        } break;
+      }
+      ++idx;
+    }
+  }
+
+  PolyHash<kMod1, kBase1, kMod2, kBase2> ph1, ph2;
+  ph1.Init(s1), ph2.Init(s2);
+
+  auto Cmp = [&](int y1, int y2, int x1, int x2) {
+    int len = x2 - x1 + 1;
+    int64_t k1 = ph1.GetHash(y1 * m + x1, len);
+    int64_t k2 = ph2.GetHash(nm - (y2 * m + x2) - 1, len);
+    return k1 == k2;
+  };
+
+  int64_t ans = 0;
+  for (int h = 1; h <= 2; h++) {
+    for (int w = 1; w <= 2; w++) {
+      for (int y1 = 0; y1 + h <= n; y1++) {
+        int y2 = y1 + h - 1;
+        int yadd = min<int>(y1, n - y2 - 1);
+        for (int x1 = 0; x1 + w <= m; x1++) {
+          int x2 = x1 + w - 1;
+          int xadd = min<int>(x1, m - x2 - 1);
+          if (!Cmp(y1, y2, x1, x2)) continue;
+
+          for (int i = 0; xadd >= 0 && i <= yadd; i++) {
+            while (xadd >= 0 && !Cmp(y1 - i, y2 + i, x1 - xadd, x2 + xadd)) --xadd;
+            ans += xadd + 1;
+          }
+        }
+      }
+    }
+  }
+  cout << ans;
+
+  return 0;
+}
