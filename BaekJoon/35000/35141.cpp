@@ -1,7 +1,7 @@
 // Title : Palindrome Partition
 // Link  : https://www.acmicpc.net/problem/35141 
-// Time  : 4 ms
-// Memory: 2532 KB
+// Time  : 8 ms
+// Memory: 2020 KB
 
 #include <bits/stdc++.h>
 
@@ -11,11 +11,9 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  string s;
-  cin >> s;
-
   int cnt[256] = {};
-  for (auto c : s) ++cnt[c];
+  char c;
+  while (cin >> c) ++cnt[c];
 
   vector<int> arr;
   for (int i = 'a'; i <= 'z'; i++) {
