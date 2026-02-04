@@ -1,6 +1,6 @@
 // Title : 멋진 부분집합
 // Link  : https://www.acmicpc.net/problem/27470 
-// Time  : 84 ms
+// Time  : 332 ms
 // Memory: 8524 KB
 
 #include <bits/stdc++.h>
@@ -63,7 +63,7 @@ int main() {
   };
 
   mt19937 gen(random_device{}());
-  int t = 8, dv = 0;
+  int t = 50, dv = 0;
   while (!dv && t--) {
     int id = gen() % n;
     Fact(arr[id], fact);
