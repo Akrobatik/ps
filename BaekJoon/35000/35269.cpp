@@ -1,7 +1,7 @@
 // Title : 벽력일섬
 // Link  : https://www.acmicpc.net/problem/35269 
-// Time  : 1800 ms
-// Memory: 208640 KB
+// Time  : 776 ms
+// Memory: 64464 KB
 
 #include <bits/stdc++.h>
 
@@ -172,45 +172,53 @@ struct FCompo {
   }
 };
 
-struct MergeSortTree {
- public:
-  void Init(const vector<vector<int>>& v) {
-    int n = v.size();
+// https://github.com/Akrobatik/ps/blob/main/template/segment_tree.cpp
+template <typename V, typename OP>
+  requires requires(V a, V b) {
+    { OP{}(a, b) } -> convertible_to<V>;
+  }
+struct SegTree {
+  void Init(int n, const V& ival) {
     nmax = bit_ceil((uint32_t)n);
-    tree.assign(nmax << 1, vector<int>());
+    iv = ival;
+    tree.assign(nmax << 1, iv);
+  }
 
-    for (int i = 0; i < n; i++) {
-      tree[i + nmax] = v[i];
-      sort(tree[i + nmax].begin(), tree[i + nmax].end());
-    }
+  void Set(int idx, const V& val) {
+    tree[idx + nmax] = val;
+  }
 
+  void Build() {
     for (int i = nmax - 1; i > 0; i--) {
-      auto& node = tree[i];
-      auto& lnode = tree[i << 1];
-      auto& rnode = tree[i << 1 | 1];
-      node.resize(lnode.size() + rnode.size());
-      merge(lnode.begin(), lnode.end(), rnode.begin(), rnode.end(), node.begin());
+      tree[i] = OP{}(tree[i << 1], tree[i << 1 | 1]);
     }
   }
 
-  int Query(int l, int r) {
-    int bnd = r;
-
-    auto Q = [&](int i) {
-      return upper_bound(tree[i].begin(), tree[i].end(), bnd) - tree[i].begin();
-    };
-
-    int res = 0;
-    for (l += nmax, r += nmax + 1; l < r; l >>= 1, r >>= 1) {
-      if (l & 1) res += Q(l++);
-      if (r & 1) res += Q(--r);
+  void Update(int idx, const V& val) {
+    int node = idx + nmax;
+    tree[node] = val;
+    while (node >>= 1) {
+      tree[node] = OP{}(tree[node << 1], tree[node << 1 | 1]);
     }
-    return res;
+  }
+
+  V Query(int idx) const {
+    return tree[idx + nmax];
+  }
+
+  V Query(int l, int r) const {
+    V lv = iv, rv = iv;
+    for (l += nmax, r += nmax + 1; l < r; l >>= 1, r >>= 1) {
+      if (l & 1) lv = OP{}(lv, tree[l++]);
+      if (r & 1) rv = OP{}(tree[--r], rv);
+    }
+    return OP{}(lv, rv);
   }
 
  private:
   int nmax;
-  vector<vector<int>> tree;
+  V iv;
+  vector<V> tree;
 };
 
 constexpr pair<int, int> kDelta[] = {
@@ -229,15 +237,10 @@ int main() {
   for (auto& e : arr) cin >> e[0];
   for (auto& e : arr) cin >> e[1];
 
-  vector<int> fwd(kMax + 1);
-  for (auto& e : arr) ++fwd[e[0]], ++fwd[e[1]];
+  vector<int> cnt(kMax + 1);
+  for (auto& e : arr) ++cnt[e[0]], ++cnt[e[1]];
 
-  for (int i = 0, x = 0; i <= kMax; i++) {
-    fwd[i] += x;
-    x = fwd[i];
-  }
-
-  vector<vector<int>> adj(kMax + 1);
+  vector<vector<pair<int, int>>> qry(kMax + 1), upd(kMax + 1);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < 2; j++) {
       for (auto [dy, dx] : kDelta) {
@@ -246,21 +249,16 @@ int main() {
 
         int u = arr[i][j], v = arr[y][x];
         if (u > v) swap(u, v);
-        adj[u].push_back(v);
+        upd[v].push_back({u, -1});
       }
     }
   }
 
-  vector<vector<int>> cube(kMax + 1);
   for (int i = 1; i < n; i++) {
     int minn = min<int>({arr[i - 1][0], arr[i - 1][1], arr[i][0], arr[i][1]});
     int maxx = max<int>({arr[i - 1][0], arr[i - 1][1], arr[i][0], arr[i][1]});
-    cube[minn].push_back(maxx);
+    upd[maxx].push_back({minn, 1});
   }
-
-  MergeSortTree atr, ctr;
-  atr.Init(adj);
-  ctr.Init(cube);
 
   LazySegTree<Node, Lazy, FOp, FApply, FCompo> seg;
   seg.Init(kMax + 1, Node(), 0);
@@ -271,18 +269,33 @@ int main() {
 
   int m;
   cin >> m;
-  while (m--) {
+  for (int i = 0; i < m; i++) {
     int l, r;
     cin >> l >> r;
     l = seg.WalkL(l), r = seg.WalkR(r);
-    if (l > r) {
-      cout << "0\n";
-      continue;
-    }
-
+    if (l > r) continue;
     seg.Update(l, r, 1);
-    cout << fwd[r] - (l > 0 ? fwd[l - 1] : 0) - atr.Query(l, r) + ctr.Query(l, r) << "\n";
+    qry[r].push_back({l, i});
   }
+
+  SegTree<int, plus<int>> sg;
+  sg.Init(kMax + 1, 0);
+  for (int i = 0; i <= kMax; i++) {
+    sg.Set(i, cnt[i]);
+  }
+  sg.Build();
+
+  vector<int> ans(m);
+  for (int i = 0; i <= kMax; i++) {
+    for (auto [a, b] : upd[i]) {
+      sg.Update(a, sg.Query(a) + b);
+    }
+    for (auto [a, b] : qry[i]) {
+      ans[b] = sg.Query(a, i);
+    }
+  }
+
+  for (auto e : ans) cout << e << "\n";
 
   return 0;
 }
