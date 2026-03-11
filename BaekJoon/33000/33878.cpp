@@ -1,7 +1,9 @@
 // Title : Лягушки на дереве
 // Link  : https://www.acmicpc.net/problem/33878 
-// Time  : 456 ms
-// Memory: 89668 KB
+// Time  : 812 ms
+// Memory: 166056 KB
+
+#pragma GCC optimize("O3,unroll-loops")
 
 #include <bits/stdc++.h>
 
@@ -22,31 +24,26 @@ int main() {
     g[v].push_back(u);
   }
 
-  vector<int> par(n + 1), dist(n + 1), deg(n + 1);
+  int cnt[2] = {};
 
   [&](this auto&& self, int u, int p, int d) -> void {
-    par[u] = p, dist[u] = d, deg[u] = g[u].size() - (p != 0);
+    ++cnt[d & 1];
     for (auto v : g[u]) {
       if (v == p) continue;
       self(v, u, d + 1);
     }
   }(1, 0, 0);
 
-  int cnt[2] = {};
-  for (int i = 1; i <= n; i++) {
-    ++cnt[dist[i] & 1];
-  }
-
   int lmt = min<int>(cnt[0], cnt[1]);
 
-  queue<int> q;
-  for (int i = 1; i <= n; i++) {
-    if (deg[i]) continue;
-    q.push(i);
-  }
-
   vector<pair<int, int>> ans;
+  vector<int> dist(n + 1), rep(n + 1);
   vector<array<set<pair<int, int>, greater<pair<int, int>>>, 2>> memo(n + 1);
+
+  auto Get = [&](int u, int v) {
+    int du = dist[u], dv = dist[v];
+    return max<int>((du + dv - bnd) / 2, 0);
+  };
 
   auto Match = [&](int x) {
     int swp = (memo[x][0].size() > memo[x][1].size());
@@ -58,36 +55,34 @@ int main() {
     auto it = m1.begin();
     while (it != m1.end()) {
       auto jt = m2.lower_bound({rbnd - it->first, INT_MAX});
-      if (jt == m2.end()) {
-        ++it;
-      } else {
-        ans.push_back({it->second, jt->second});
-        it = m1.erase(it);
-        m2.erase(jt);
-
-        --lmt;
+      if (jt != m2.end()) {
+        int u = it->second, v = jt->second;
+        int tgt = rep[Get(u, v)];
+        if (tgt == x) {
+          --lmt;
+          ans.push_back({u, v});
+          it = m1.erase(it);
+          jt = m2.erase(jt);
+          continue;
+        }
       }
+      ++it;
     }
   };
 
-  auto Out = [&](int u, int i, int base) {
-    auto& m = memo[u][i];
-    auto it = m.begin();
-    while (it != m.end() && it->first - base > bnd) it = m.erase(it);
-  };
+  [&](this auto&& self, int u, int p, int d) -> void {
+    dist[u] = d, rep[d] = u;
 
-  while (!q.empty()) {
-    int u = q.front();
-    q.pop();
+    for (auto v : g[u]) {
+      if (v == p) continue;
 
-    int p = par[u], d = dist[u];
-    if (--deg[p] == 0) q.push(p);
+      self(v, u, d + 1);
 
-    for (int i = 0; i < 2; i++) {
-      for (auto v : g[u]) {
-        if (v == p) continue;
+      for (int i = 0; i < 2; i++) {
+        auto& mv = memo[v][i];
+        auto it = mv.begin();
+        while (it != mv.end() && it->first - d > bnd) it = mv.erase(it);
 
-        Out(v, i, d);
         if (memo[u][i].size() < memo[v][i].size()) {
           swap(memo[u][i], memo[v][i]);
           while (memo[u][i].size() > lmt) memo[u][i].erase(memo[u][i].begin());
@@ -104,7 +99,7 @@ int main() {
     if (memo[u][d & 1].size() > lmt) memo[u][d & 1].erase(memo[u][d & 1].begin());
 
     Match(u);
-  }
+  }(1, 0, 0);
 
   cout << ans.size() << "\n";
   for (auto [u, v] : ans) cout << u << " " << v << "\n";
