@@ -21,7 +21,7 @@ int main() {
     int key = 0;
     for (auto& c : views::reverse(s)) {
       c ^= key;
-      if (c == 'O') key ^= 2;
+      key ^= c ^ 77;
     }
 
     cout << "YES\n";
