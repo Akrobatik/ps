@@ -1,6 +1,6 @@
 // Title : 고속 프리렌 변환
 // Link  : https://www.acmicpc.net/problem/35433 
-// Time  : 3136 ms
+// Time  : 652 ms
 // Memory: 80148 KB
 
 #include <bits/stdc++.h>
@@ -12,12 +12,12 @@ void Solve() {
   int n, x;
   cin >> n >> x;
 
-  int mul = 1, mlen = n + 1;
+  int mul = 1, div = 1, mlen = n + 1;
   vector<int> arr(n);
   for (int i = 0; i < n; i++) {
     int a, l;
     cin >> a >> l;
-    mul *= a, mlen += l;
+    mul *= a, div *= x - 1, mlen += l;
     arr[i] = l;
   }
 
@@ -37,30 +37,17 @@ void Solve() {
     digits[len] += mul * sign;
   }
 
-  int carry = 0;
+  int carry = 0, flip = n & 1;
   for (int i = 0; i < mlen; i++) {
     int val = digits[i] + carry;
     int rem = val % x;
     if (rem < 0) rem += x;
 
-    digits[i] = rem;
-    carry = (val - rem) / x;
+    digits[i] = (flip ? (rem ? x - rem : 0) : rem);
+    carry = (val - digits[i] * div) / x;
   }
 
   while (!digits.empty() && digits.back() == 0) digits.pop_back();
-
-  while (n--) {
-    carry = 0;
-    for (int i = 0; i < digits.size(); i++) {
-      int val = digits[i] + carry;
-      int rem = val % x;
-      if (rem < 0) rem += x;
-
-      digits[i] = (rem ? x - rem : 0);
-      carry = (val - digits[i] * (x - 1)) / x;
-    }
-    while (!digits.empty() && digits.back() == 0) digits.pop_back();
-  }
 
   for (auto e : views::reverse(digits)) cout << e;
 }
