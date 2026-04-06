@@ -1,19 +1,17 @@
 // Title : 고속 프리렌 변환
 // Link  : https://www.acmicpc.net/problem/35433 
-// Time  : 276 ms
-// Memory: 11928 KB
+// Time  : 88 ms
+// Memory: 11956 KB
+
+// #pragma GCC optimize("O3")
+#pragma GCC optimize("O3,unroll-loops")
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-
-  int n, x;
-  cin >> n >> x;
-
+template <int x>
+void Solve(int n) {
   int64_t mul = 1, div = 1, mlen = n + 1;
   vector<int> arr(n);
   for (int i = 0; i < n; i++) {
@@ -48,14 +46,42 @@ int main() {
     if (rem < 0) rem += x;
 
     int64_t d = flip ? (rem ? x - rem : 0) : rem;
-    digits[i] = d + '0';
+    digits[i] = (char)d + '0';
     carry = (val - div * d) / x;
   }
 
-  while (!digits.empty() && digits.back() == '0') digits.pop_back();
+  while (digits.back() == '0') digits.pop_back();
   reverse(digits.begin(), digits.end());
 
   cout << digits;
+}
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n, x;
+  cin >> n >> x;
+
+  if (x == 2) {
+    Solve<2>(n);
+  } else if (x == 3) {
+    Solve<3>(n);
+  } else if (x == 4) {
+    Solve<4>(n);
+  } else if (x == 5) {
+    Solve<5>(n);
+  } else if (x == 6) {
+    Solve<6>(n);
+  } else if (x == 7) {
+    Solve<7>(n);
+  } else if (x == 8) {
+    Solve<8>(n);
+  } else if (x == 9) {
+    Solve<9>(n);
+  } else {
+    Solve<10>(n);
+  }
 
   return 0;
 }
