@@ -1,7 +1,7 @@
 // Title : 루미상관 수
 // Link  : https://www.acmicpc.net/problem/35483 
-// Time  : 88 ms
-// Memory: 7172 KB
+// Time  : 4 ms
+// Memory: 2920 KB
 
 #include <bits/stdc++.h>
 
@@ -11,21 +11,20 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  set<int> st;
+  vector<int> arr;
   for (int i = 1; i < 10; i++) {
-    st.insert(i);
+    arr.push_back(i);
   }
-
-  for (int i = 1; i < 10000; i++) {
-    int x = 1;
+  for (int i = 1, x = 1; i < 10000; i++) {
     while (x * 10 <= i) x *= 10;
-    x *= 10;
+    int y = x * 10;
 
-    st.insert(i * x + i);
+    arr.push_back(i * (y + 1));
     for (int j = 0; j < 10; j++) {
-      st.insert((i * 10 + j) * x + i);
+      arr.push_back((i * 10 + j) * y + i);
     }
   }
+  sort(arr.begin(), arr.end());
 
   int t;
   cin >> t;
@@ -33,9 +32,17 @@ int main() {
     int n;
     cin >> n;
 
-    int cnt = 0;
-    for (auto e : st) {
-      cnt += st.contains(n - e);
+    int cnt = 0, l = 0, r = arr.size() - 1;
+    while (l <= r) {
+      int sum = arr[l] + arr[r];
+      if (sum < n) {
+        ++l;
+      } else if (sum > n) {
+        --r;
+      } else {
+        cnt += (l == r ? 1 : 2);
+        ++l, --r;
+      }
     }
     cout << cnt << "\n";
   }
