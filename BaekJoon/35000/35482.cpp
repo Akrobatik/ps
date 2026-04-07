@@ -1,7 +1,7 @@
 // Title : StackExplosion
 // Link  : https://www.acmicpc.net/problem/35482 
-// Time  : 328 ms
-// Memory: 21564 KB
+// Time  : 232 ms
+// Memory: 9840 KB
 
 #include <bits/stdc++.h>
 
@@ -14,28 +14,26 @@ int main() {
   int n;
   cin >> n;
 
-  vector<int64_t> lmt(n), val(n);
-  for (auto& e : lmt) cin >> e;
-  for (auto& e : val) cin >> e;
+  vector<pair<int, int>> arr(n);
+  for (auto& pr : arr) cin >> pr.first;
+  for (auto& pr : arr) cin >> pr.second;
 
-  vector<int> ord(n);
-  iota(ord.begin(), ord.end(), 0);
-  sort(ord.begin(), ord.end(), [&](int lhs, int rhs) {
-    int64_t lv = lmt[lhs] - val[lhs];
-    int64_t rv = lmt[rhs] - val[rhs];
-    return lv < rv;
+  sort(arr.begin(), arr.end(), [&](const pair<int, int>& lhs, const pair<int, int>& rhs) {
+    return lhs.first - lhs.second < rhs.first - rhs.second;
   });
 
-  int idx = 0;
-  int64_t add = 0, cnt = 0;
-  while (idx < n && val[ord[idx]] + add > lmt[ord[idx]]) {
+  int idx = 0, cnt = 0;
+  int64_t add = 0;
+  while (idx < n && arr[idx].first < add + arr[idx].second) {
     int nxt = idx;
     int64_t cadd = 0;
-    while (nxt < n && val[ord[nxt]] + add > lmt[ord[nxt]]) {
-      cadd += (val[ord[nxt]] + add) >> 1, ++cnt;
-      ++nxt;
+    while (nxt < n && arr[nxt].first < add + arr[nxt].second) {
+      cadd += (add + arr[nxt++].second) >> 1;
+      ++cnt;
     }
-    idx = nxt, add += cadd;
+
+    idx = nxt;
+    add += cadd;
   }
   cout << cnt;
 
