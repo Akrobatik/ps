@@ -7,6 +7,14 @@
 
 using namespace std;
 
+int Query(int a, int b, int d) {
+  cout << "? " << a << " " << b << " " << d << endl;
+
+  int res;
+  cin >> res;
+  return res;
+}
+
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
@@ -14,15 +22,7 @@ int main() {
   int n;
   cin >> n;
 
-  auto Query = [&](int a, int b, int d) {
-    cout << "? " << a << " " << b << " " << min<int>(d, n) << endl;
-
-    int res;
-    cin >> res;
-    return res;
-  };
-
-  int lo = 0, hi = 512;
+  int lo = 0, hi = (n >> 1) + 1;
   while (lo + 1 < hi) {
     int mid = (lo + hi) >> 1;
     if (Query(0, n, mid) == 0) {
