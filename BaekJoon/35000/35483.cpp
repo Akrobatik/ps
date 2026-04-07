@@ -1,15 +1,16 @@
 // Title : 루미상관 수
 // Link  : https://www.acmicpc.net/problem/35483 
 // Time  : 0 ms
-// Memory: 2004 KB
+// Memory: 2916 KB
 
-#include <stdio.h>
-
-#include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
 int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+
   vector<int> arr;
 
   auto F1 = [&](int st, int en, int mul) {
@@ -38,10 +39,10 @@ int main() {
   F2(1000, 10000, 100001);
 
   int t;
-  scanf("%d\n", &t);
+  cin >> t;
   while (t--) {
     int n;
-    scanf("%d\n", &n);
+    cin >> n;
 
     int cnt = 0, l = 0, r = arr.size() - 1;
     while (l <= r) {
@@ -55,7 +56,7 @@ int main() {
         ++l, --r;
       }
     }
-    printf("%d\n", cnt);
+    cout << cnt << "\n";
   }
 
   return 0;
