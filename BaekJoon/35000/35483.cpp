@@ -1,7 +1,7 @@
 // Title : 루미상관 수
 // Link  : https://www.acmicpc.net/problem/35483 
-// Time  : 4 ms
-// Memory: 2920 KB
+// Time  : 0 ms
+// Memory: 2916 KB
 
 #include <bits/stdc++.h>
 
@@ -12,19 +12,31 @@ int main() {
   cin.tie(nullptr);
 
   vector<int> arr;
-  for (int i = 1; i < 10; i++) {
-    arr.push_back(i);
-  }
-  for (int i = 1, x = 1; i < 10000; i++) {
-    while (x * 10 <= i) x *= 10;
-    int y = x * 10;
 
-    arr.push_back(i * (y + 1));
-    for (int j = 0; j < 10; j++) {
-      arr.push_back((i * 10 + j) * y + i);
+  auto F1 = [&](int st, int en, int mul) {
+    for (int i = st, iv = st * mul; i < en; i++, iv += mul) {
+      arr.push_back(iv);
     }
-  }
-  sort(arr.begin(), arr.end());
+  };
+
+  auto F2 = [&](int st, int en, int mul) {
+    int imul = mul, jmul = mul / 10;
+    for (int i = st, iv = st * imul; i < en; i++, iv += imul) {
+      for (int j = 0, jv = 0; j < 10; j++, jv += jmul) {
+        arr.push_back(iv + jv);
+      }
+    }
+  };
+
+  F1(1, 10, 1);
+  F1(1, 10, 11);
+  F2(1, 10, 101);
+  F1(10, 100, 101);
+  F2(10, 100, 1001);
+  F1(100, 1000, 1001);
+  F2(100, 1000, 10001);
+  F1(1000, 10000, 10001);
+  F2(1000, 10000, 100001);
 
   int t;
   cin >> t;
